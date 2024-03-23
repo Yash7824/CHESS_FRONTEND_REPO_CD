@@ -1,6 +1,6 @@
 # Chess 
 
-Chess is a board game for two players, called White and Black, each controlling an army of chess pieces, with the objective to checkmate the opponent's king. <br>
+Chess is a board game for two players, called White and Black, each controlling an army of chess pieces, with the objective to checkmate the opponent's king. <br><br>
 Creating an online 2 player chess game where user can login and compete with their friends.
 
 ## Setup

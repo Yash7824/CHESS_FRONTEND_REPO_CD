@@ -19,7 +19,7 @@
           [src]="getImageSource(chess_Board[i][j])"
           alt=""
           *ngIf="getImageSource(chess_Board[i][j]) != ''"
-          [draggable]="true"
+          [draggable]="isPlayerTurn(currentPlayer)"
           (dragstart)="onDragStart($event, i, j)"
         />
       </div>

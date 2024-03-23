@@ -138,38 +138,13 @@ export class HomeComponent {
 
     // Retrieve the data transferred during drag
     const data = JSON.parse(event.dataTransfer!.getData('text/plain'));
-    const piece = this.chess_Board[data.row][data.col];
+    let fromRow = data.row, fromCol = data.col, toRow = row, toCol = col;
+    
+    this.movePiece(fromRow, fromCol, toRow, toCol);
+  }
 
-    //Toggle Player
-    // if(this.IsBlackPiece(data.row, data.col) && !this.IsInvalidMove(piece, data.row, data.col, row, col)){
-    //   if(this.currentPlayer == 'black'){
-    //     // Move the piece to the new position
-    //     this.movePiece(data.row, data.col, row, col);
-    //     this.currentPlayer = 'white';
-
-    //   }else if(this.currentPlayer == 'white'){
-    //     alert('Its white turn');
-    //     this.currentPlayer = 'white';
-    //   }
-
-    // }else if(this.IsWhitePiece(data.row, data.col) && !this.IsInvalidMove(piece, data.row, data.col, row, col)){
-    //   if(this.currentPlayer == 'white'){
-    //     // Move the piece to the new position
-    //     this.movePiece(data.row, data.col, row, col);
-    //     this.currentPlayer = 'black';
-
-    //   }else if(this.currentPlayer == 'black'){
-    //     alert('Its Black turn');
-    //     this.currentPlayer = 'black';
-    //   }
-    // }else if(this.IsInvalidMove(piece, data.row, data.col, row, col)){
-    //   if(this.IsWhitePiece(data.row, data.col) && this.currentPlayer == 'white') this.currentPlayer = 'white';
-    //   else if(this.IsBlackPiece(data.row, data.col) && this.currentPlayer == 'black') this.currentPlayer = 'black';
-    //   this.movePiece(data.row, data.col, row, col);
-    // }
-    // console.log(this.currentPlayer)
-
-    this.movePiece(data.row, data.col, row, col);
+  toggleCurrentPlayer() {
+    this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
   }
 
   isPlayerTurn(player: string) {
@@ -275,6 +250,7 @@ export class HomeComponent {
     toRow: number,
     toCol: number
   ): boolean {
+    debugger;
     if (fromRow == toRow && fromCol == toCol) return true;
 
     switch (piece) {
@@ -283,8 +259,17 @@ export class HomeComponent {
         if (
           toRow == fromRow - 1 &&
           (toCol == fromCol - 1 || toCol == fromCol + 1)
-        )
+        ){
           return true;
+        } 
+        if(toCol == fromCol && (toRow > fromRow)){
+          return true;
+        }
+
+        if(!this.IsEmptyTile(toRow, toCol)){
+          return true;
+        }
+          
         break;
       }
 
@@ -314,6 +299,7 @@ export class HomeComponent {
           alert('Invalid rook move as tiles are not empty in between');
           return true;
         }
+
         break;
       }
 
@@ -331,8 +317,14 @@ export class HomeComponent {
             (toCol == fromCol + 2 &&
               (toRow == fromRow + 1 || toRow == fromRow - 1))
           )
-        )
+        ){
           return true;
+        }
+
+        if(!this.IsEmptyTile(toRow, toCol)){
+          return true;
+        }
+          
         break;
       }
 
@@ -507,8 +499,18 @@ export class HomeComponent {
         if (
           toRow == fromRow + 1 &&
           (toCol == fromCol - 1 || toCol == fromCol + 1)
-        )
+        ){
           return true;
+        }
+
+        if(toCol == fromCol && (toRow < fromRow)){
+          return true;
+        }
+
+        if(!this.IsEmptyTile(toRow, toCol)){
+          return true;
+        }
+          
         break;
       }
     }
@@ -532,6 +534,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     // If the tile is empty
@@ -547,9 +550,11 @@ export class HomeComponent {
         if (fromRow == 6 && toRow >= fromRow - 2 && toRow < fromRow) {
           this.chess_Board[toRow][toCol] = piece;
           this.chess_Board[fromRow][fromCol] = '';
+          this.toggleCurrentPlayer();
         } else if (fromRow != 6 && toRow >= fromRow - 1 && toRow < fromRow) {
           this.chess_Board[toRow][toCol] = piece;
           this.chess_Board[fromRow][fromCol] = '';
+          this.toggleCurrentPlayer();
         }
       }
     }
@@ -569,6 +574,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
     // If the tile is empty
     if (this.IsEmptyTile(toRow, toCol)) {
@@ -586,6 +592,7 @@ export class HomeComponent {
       ) {
         this.chess_Board[toRow][toCol] = piece;
         this.chess_Board[fromRow][fromCol] = '';
+        this.toggleCurrentPlayer();
       }
     }
   }
@@ -612,6 +619,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     // If the tile is empty
@@ -635,6 +643,7 @@ export class HomeComponent {
       ) {
         this.chess_Board[toRow][toCol] = piece;
         this.chess_Board[fromRow][fromCol] = '';
+        this.toggleCurrentPlayer();
       }
     }
   }
@@ -654,6 +663,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     // If the tile is Empty
@@ -676,6 +686,7 @@ export class HomeComponent {
           ) {
             this.chess_Board[toRow][toCol] = piece;
             this.chess_Board[fromRow][fromCol] = '';
+            this.toggleCurrentPlayer();
           }
         }
       }
@@ -696,11 +707,12 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     // If Tile is Empty
     if (this.IsEmptyTile(toRow, toCol)) {
-      // Bishop Part
+
       for (let i = 1; i <= 7; i++) {
         if (!this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
           if (
@@ -713,6 +725,7 @@ export class HomeComponent {
           ) {
             this.chess_Board[toRow][toCol] = piece;
             this.chess_Board[fromRow][fromCol] = '';
+            this.toggleCurrentPlayer();
           }
         }
       }
@@ -734,6 +747,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     if (this.IsEmptyTile(toRow, toCol)) {
@@ -751,6 +765,7 @@ export class HomeComponent {
       ) {
         this.chess_Board[toRow][toCol] = piece;
         this.chess_Board[fromRow][fromCol] = '';
+        this.toggleCurrentPlayer();
       }
     }
   }
@@ -773,6 +788,7 @@ export class HomeComponent {
       let piece = this.chess_Board[fromRow][fromCol]; //black_pawn
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     // If the tile is empty
@@ -787,9 +803,12 @@ export class HomeComponent {
         if (fromRow == 1 && toRow <= fromRow + 2 && toRow > fromRow) {
           this.chess_Board[toRow][toCol] = piece;
           this.chess_Board[fromRow][fromCol] = '';
+          this.toggleCurrentPlayer();
+
         } else if (fromRow != 1 && toRow <= fromRow + 1 && toRow > fromRow) {
           this.chess_Board[toRow][toCol] = piece;
           this.chess_Board[fromRow][fromCol] = '';
+          this.toggleCurrentPlayer();
         }
       }
     }
@@ -809,6 +828,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
     // If the tile is empty
     if (this.IsEmptyTile(toRow, toCol)) {
@@ -826,6 +846,7 @@ export class HomeComponent {
       ) {
         this.chess_Board[toRow][toCol] = piece;
         this.chess_Board[fromRow][fromCol] = '';
+        this.toggleCurrentPlayer();
       }
     }
   }
@@ -852,6 +873,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     // If the tile is empty
@@ -875,6 +897,7 @@ export class HomeComponent {
       ) {
         this.chess_Board[toRow][toCol] = piece;
         this.chess_Board[fromRow][fromCol] = '';
+        this.toggleCurrentPlayer();
       }
     }
   }
@@ -894,6 +917,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     // If the tile is Empty
@@ -916,6 +940,7 @@ export class HomeComponent {
           ) {
             this.chess_Board[toRow][toCol] = piece;
             this.chess_Board[fromRow][fromCol] = '';
+            this.toggleCurrentPlayer();
           }
         }
       }
@@ -937,6 +962,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     // If Tile is Empty
@@ -954,6 +980,7 @@ export class HomeComponent {
           ) {
             this.chess_Board[toRow][toCol] = piece;
             this.chess_Board[fromRow][fromCol] = '';
+            this.toggleCurrentPlayer();
           }
         }
       }
@@ -975,6 +1002,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.toggleCurrentPlayer();
     }
 
     if (this.IsEmptyTile(toRow, toCol)) {
@@ -992,6 +1020,7 @@ export class HomeComponent {
       ) {
         this.chess_Board[toRow][toCol] = piece;
         this.chess_Board[fromRow][fromCol] = '';
+        this.toggleCurrentPlayer();
       }
     }
   }

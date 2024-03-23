@@ -21,4 +21,8 @@ npm install
   npm install -g @angular/cli
   ```
 
+## Deploy
+Deployed on Netlify: 
+[Play Game](https://65ff24003840ca3a24d9af81--sensational-strudel-c006d9.netlify.app/)
+
 

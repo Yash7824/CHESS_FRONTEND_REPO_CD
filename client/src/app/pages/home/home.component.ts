@@ -132,7 +132,7 @@ export class HomeComponent {
   }
 
   onDrop(event: DragEvent, row: number, col: number): void {
-    // debugger;
+    // 
     // Prevent default drop behavior
     event.preventDefault();
 
@@ -288,24 +288,25 @@ export class HomeComponent {
         break;
       }
 
-      case 'R': {
+      case 'R':
+      case 'r': {
         if (toRow != fromRow && toCol == fromCol) {
           if (toRow > fromRow) {
-            for (let i = fromRow + 1; i <= toRow; i++) {
+            for (let i = fromRow + 1; i < toRow; i++) {
               if (!this.IsEmptyTile(i, toCol)) return true;
             }
           } else {
-            for (let i = toRow; i < fromRow; i++) {
+            for (let i = fromRow - 1; i > toRow; i--) {
               if (!this.IsEmptyTile(i, toCol)) return true;
             }
           }
         } else if (toRow == fromRow && toCol != fromCol) {
           if (toCol > fromCol) {
-            for (let i = fromCol + 1; i <= toCol; i++) {
+            for (let i = fromCol + 1; i < toCol; i++) {
               if (!this.IsEmptyTile(toRow, i)) return true;
             }
           } else {
-            for (let i = toCol; i < fromCol; i++) {
+            for (let i = fromCol - 1; i > toCol; i--) {
               if (!this.IsEmptyTile(toRow, i)) return true;
             }
           }
@@ -316,7 +317,8 @@ export class HomeComponent {
         break;
       }
 
-      case 'N': {
+      case 'N':
+      case 'n': {
         // moving apart from L shape
         if (
           !(
@@ -334,43 +336,169 @@ export class HomeComponent {
         break;
       }
 
-      case 'B': {
-        // Up and Left
-        if (toRow < fromRow && toCol < fromCol) {
-          for (
-            let i = fromRow - 1, j = fromCol - 1;
-            i > toRow && j > toCol;
-            i--, j--
+      case 'B':
+      case 'b': {
+        let correctMovement: boolean = false;
+        for (let i = 1; i <= 7; i++) {
+          if (
+            (toRow == fromRow - i && toCol == fromCol - i) ||
+            (toRow == fromRow - i && toCol == fromCol + i) ||
+            (toRow == fromRow + i && toCol == fromCol - i) ||
+            (toRow == fromRow + i && toCol == fromCol + i)
           ) {
-            if (!this.IsEmptyTile(i, j)) return true;
+            correctMovement = true;
+            break;
           }
-        } else if (toRow < fromRow && toCol > fromCol) {
-          for (
-            let i = fromRow - 1, j = fromCol + 1;
-            i > toRow && j < toCol;
-            i--, j++
-          ) {
-            if (!this.IsEmptyTile(i, j)) return true;
+        }
+
+        if (correctMovement) {
+          // Up and Left
+          if (toRow < fromRow && toCol < fromCol) {
+            for (
+              let i = fromRow - 1, j = fromCol - 1;
+              i > toRow && j > toCol;
+              i--, j--
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow < fromRow && toCol > fromCol) {
+            for (
+              let i = fromRow - 1, j = fromCol + 1;
+              i > toRow && j < toCol;
+              i--, j++
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow > fromRow && toCol < fromCol) {
+            for (
+              let i = fromRow + 1, j = fromCol - 1;
+              i < toRow && j > toCol;
+              i++, j--
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow > fromRow && toCol > fromCol) {
+            for (
+              let i = fromRow + 1, j = fromCol + 1;
+              i < toRow && j < toCol;
+              i++, j++
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
           }
-        } else if (toRow > fromRow && toCol < fromCol) {
-          for (
-            let i = fromRow + 1, j = fromCol - 1;
-            i < toRow && j > toCol;
-            i++, j--
-          ) {
-            if (!this.IsEmptyTile(i, j)) return true;
-          }
-        } else if (toRow > fromRow && toCol > fromCol) {
-          for (
-            let i = fromRow + 1, j = fromCol + 1;
-            i < toRow && j < toCol;
-            i++, j++
-          ) {
-            if (!this.IsEmptyTile(i, j)) return true;
-          }
-        } else if (toRow != fromRow && toCol == fromCol) return true;
-        else if (toRow == fromRow && toCol != fromCol) return true;
+        } else if (correctMovement == false) {
+          return true;
+        }
+
+        if (toRow != fromRow && toCol == fromCol) return true;
+        if (toRow == fromRow && toCol != fromCol) return true;
+
         return false;
+        break;
+      }
+
+      case 'Q':
+      case 'q': {
+        // Bishop Part
+        let correctMovement: boolean = false;
+        for (let i = 1; i <= 7; i++) {
+          if (
+            (toRow == fromRow - i && toCol == fromCol - i) ||
+            (toRow == fromRow - i && toCol == fromCol + i) ||
+            (toRow == fromRow + i && toCol == fromCol - i) ||
+            (toRow == fromRow + i && toCol == fromCol + i) ||
+            (toRow != fromRow && toCol == fromCol) ||
+            (toRow == fromRow && toCol != fromCol)
+          ) {
+            correctMovement = true;
+            break;
+          }
+        }
+
+        if (correctMovement) {
+          if (toRow < fromRow && toCol < fromCol) {
+            for (
+              let i = fromRow - 1, j = fromCol - 1;
+              i > toRow && j > toCol;
+              i--, j--
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow < fromRow && toCol > fromCol) {
+            for (
+              let i = fromRow - 1, j = fromCol + 1;
+              i > toRow && j < toCol;
+              i--, j++
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow > fromRow && toCol < fromCol) {
+            for (
+              let i = fromRow + 1, j = fromCol - 1;
+              i < toRow && j > toCol;
+              i++, j--
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow > fromRow && toCol > fromCol) {
+            for (
+              let i = fromRow + 1, j = fromCol + 1;
+              i < toRow && j < toCol;
+              i++, j++
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          }
+          // Rook Part
+          else if (toRow != fromRow && toCol == fromCol) {
+            if (toRow > fromRow) {
+              for (let i = fromRow + 1; i < toRow; i++) {
+                if (!this.IsEmptyTile(i, toCol)) return true;
+              }
+            } else {
+              for (let i = fromRow - 1; i > toRow; i--) {
+                if (!this.IsEmptyTile(i, toCol)) return true;
+              }
+            }
+          } else if (toRow == fromRow && toCol != fromCol) {
+            if (toCol > fromCol) {
+              for (let i = fromCol + 1; i < toCol; i++) {
+                if (!this.IsEmptyTile(toRow, i)) return true;
+              }
+            } else {
+              for (let i = fromCol - 1; i > toCol; i--) {
+                if (!this.IsEmptyTile(toRow, i)) return true;
+              }
+            }
+          }
+        } else {
+          return true;
+        }
+
+        return false;
+        break;
+      }
+
+      case 'K': 
+      case 'k': {
+        let correctMovement: boolean = false;
+
+        if (
+          (toRow == fromRow - 1 && toCol == fromCol - 1) ||
+          (toRow == fromRow - 1 && toCol == fromCol) ||
+          (toRow == fromRow - 1 && toCol == fromCol + 1) ||
+          (toRow == fromRow && toCol == fromCol - 1) ||
+          (toRow == fromRow && toCol == fromCol + 1) ||
+          (toRow == fromRow + 1 && toCol == fromCol - 1) ||
+          (toRow == fromRow + 1 && toCol == fromCol) ||
+          (toRow == fromRow + 1 && toCol == fromCol + 1)
+        ) {
+          correctMovement = true;
+          break;
+        }
+
+        if(correctMovement) return false;
+        else return true; 
         break;
       }
 
@@ -379,23 +507,6 @@ export class HomeComponent {
         if (
           toRow == fromRow + 1 &&
           (toCol == fromCol - 1 || toCol == fromCol + 1)
-        )
-          return true;
-        break;
-      }
-
-      case 'n': {
-        if (
-          !(
-            (toRow == fromRow - 2 &&
-              (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
-            (toRow == fromRow + 2 &&
-              (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
-            (toCol == fromCol - 2 &&
-              (toRow == fromRow + 1 || toRow == fromRow - 1)) ||
-            (toCol == fromCol + 2 &&
-              (toRow == fromRow + 1 || toRow == fromRow - 1))
-          )
         )
           return true;
         break;
@@ -410,7 +521,7 @@ export class HomeComponent {
     toRow: number,
     toCol: number
   ) {
-    // debugger;
+    // 
     const piece = this.chess_Board[fromRow][fromCol];
 
     // Attacking Black Pieces
@@ -451,49 +562,11 @@ export class HomeComponent {
     toCol: number
   ) {
     const piece = this.chess_Board[fromRow][fromCol];
-    debugger;
-
     //Attacking Black Pieces
-    if (this.IsBlackPiece(toRow, toCol)) {
-      // check whether tiles are empty between toRow and fromRow
-      if (toRow != fromRow && toCol == fromCol) {
-        if (toRow > fromRow) {
-          for (let i = fromRow + 1; i < toRow; i++) {
-            if (!this.IsEmptyTile(i, toCol)) {
-              alert('Invalid rook move as tiles are not empty in between');
-              return;
-            }
-          }
-        } else {
-          for (let i = toRow + 1; i < fromRow; i++) {
-            if (!this.IsEmptyTile(i, toCol)) {
-              alert('Invalid rook move as tiles are not empty in between');
-              return;
-            }
-          }
-        }
-      } else if (toCol != fromCol && toRow == fromRow) {
-        if (toCol > fromCol) {
-          for (let i = fromCol + 1; i < toCol; i++) {
-            if (!this.IsEmptyTile(toRow, i)) {
-              alert('Invalid rook move as tiles are not empty in between');
-              return;
-            }
-          }
-        } else {
-          for (let i = toCol + 1; i < fromCol; i++) {
-            if (!this.IsEmptyTile(toRow, i)) {
-              alert('Invalid rook move as tiles are not empty in between');
-              return;
-            }
-          }
-        }
-      } else if (toRow != fromRow && toCol != fromCol) {
-        alert('Invalid rook move as tiles are not empty in between');
-        return;
-      }
-
-      // If all the above validations are passed and there are no invalid moves
+    if (
+      this.IsBlackPiece(toRow, toCol) &&
+      !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+    ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
     }
@@ -573,7 +646,7 @@ export class HomeComponent {
     toCol: number
   ) {
     const piece = this.chess_Board[fromRow][fromCol];
-    debugger;
+    
     // Attack Black Pieces
     if (
       this.IsBlackPiece(toRow, toCol) &&
@@ -614,14 +687,73 @@ export class HomeComponent {
     fromCol: number,
     toRow: number,
     toCol: number
-  ) {}
+  ) {
+    const piece = this.chess_Board[fromRow][fromCol];
+    // Attack Black Pieces
+    if (
+      this.IsBlackPiece(toRow, toCol) &&
+      !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+    ) {
+      this.chess_Board[toRow][toCol] = piece;
+      this.chess_Board[fromRow][fromCol] = '';
+    }
+
+    // If Tile is Empty
+    if (this.IsEmptyTile(toRow, toCol)) {
+      // Bishop Part
+      for (let i = 1; i <= 7; i++) {
+        if (!this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
+          if (
+            (toRow == fromRow - i && toCol == fromCol - i) ||
+            (toRow == fromRow - i && toCol == fromCol + i) ||
+            (toRow == fromRow + i && toCol == fromCol - i) ||
+            (toRow == fromRow + i && toCol == fromCol + i) ||
+            (toRow != fromRow && toCol == fromCol) ||
+            (toRow == fromRow && toCol != fromCol)
+          ) {
+            this.chess_Board[toRow][toCol] = piece;
+            this.chess_Board[fromRow][fromCol] = '';
+          }
+        }
+      }
+    }
+  }
 
   whiteKingMovement(
     fromRow: number,
     fromCol: number,
     toRow: number,
     toCol: number
-  ) {}
+  ) {
+    const piece = this.chess_Board[fromRow][fromCol];
+
+    // Attack Black Pieces
+    if (
+      this.IsBlackPiece(toRow, toCol) &&
+      !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+    ) {
+      this.chess_Board[toRow][toCol] = piece;
+      this.chess_Board[fromRow][fromCol] = '';
+    }
+
+    if (this.IsEmptyTile(toRow, toCol)) {
+      // legal Moves
+      if (
+        ((toRow == fromRow - 1 && toCol == fromCol - 1) ||
+          (toRow == fromRow - 1 && toCol == fromCol) ||
+          (toRow == fromRow - 1 && toCol == fromCol + 1) ||
+          (toRow == fromRow && toCol == fromCol - 1) ||
+          (toRow == fromRow && toCol == fromCol + 1) ||
+          (toRow == fromRow + 1 && toCol == fromCol - 1) ||
+          (toRow == fromRow + 1 && toCol == fromCol) ||
+          (toRow == fromRow + 1 && toCol == fromCol + 1)) &&
+        !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+      ) {
+        this.chess_Board[toRow][toCol] = piece;
+        this.chess_Board[fromRow][fromCol] = '';
+      }
+    }
+  }
 
   // Black Pieces
   blackPawnMovement(
@@ -668,7 +800,35 @@ export class HomeComponent {
     fromCol: number,
     toRow: number,
     toCol: number
-  ) {}
+  ) {
+    const piece = this.chess_Board[fromRow][fromCol];
+    //Attacking White Pieces
+    if (
+      this.IsWhitePiece(toRow, toCol) &&
+      !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+    ) {
+      this.chess_Board[toRow][toCol] = piece;
+      this.chess_Board[fromRow][fromCol] = '';
+    }
+    // If the tile is empty
+    if (this.IsEmptyTile(toRow, toCol)) {
+      //Invalid Move
+      if (this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
+        alert('Invalid Rook Move');
+        this.resetToPreviousPosition(fromRow, fromCol, toRow, toCol);
+        return;
+      }
+
+      // legal Move
+      if (
+        (toRow != fromRow && toCol == fromCol) ||
+        (toRow == fromRow && toCol != fromCol)
+      ) {
+        this.chess_Board[toRow][toCol] = piece;
+        this.chess_Board[fromRow][fromCol] = '';
+      }
+    }
+  }
 
   blackKnightMovement(
     fromRow: number,
@@ -679,8 +839,6 @@ export class HomeComponent {
     const piece = this.chess_Board[fromRow][fromCol];
 
     // Attacking White Pieces
-    console.log(this.IsWhitePiece(toRow, toCol));
-
     if (
       ((toRow == fromRow - 2 &&
         (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
@@ -726,19 +884,115 @@ export class HomeComponent {
     fromCol: number,
     toRow: number,
     toCol: number
-  ) {}
+  ) {
+    const piece = this.chess_Board[fromRow][fromCol];
+    
+    // Attack White Pieces
+    if (
+      this.IsWhitePiece(toRow, toCol) &&
+      !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+    ) {
+      this.chess_Board[toRow][toCol] = piece;
+      this.chess_Board[fromRow][fromCol] = '';
+    }
+
+    // If the tile is Empty
+    if (this.IsEmptyTile(toRow, toCol)) {
+      /*
+      legal Moves
+      1. Towards Up and Left
+      2. Towards Up and Right
+      3, Towards Down and left
+      4. Towards Down and Right
+      */
+
+      for (let i = 1; i <= 7; i++) {
+        if (!this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
+          if (
+            (toRow == fromRow - i && toCol == fromCol - i) ||
+            (toRow == fromRow - i && toCol == fromCol + i) ||
+            (toRow == fromRow + i && toCol == fromCol - i) ||
+            (toRow == fromRow + i && toCol == fromCol + i)
+          ) {
+            this.chess_Board[toRow][toCol] = piece;
+            this.chess_Board[fromRow][fromCol] = '';
+          }
+        }
+      }
+    }
+  }
 
   blackQueenMovement(
     fromRow: number,
     fromCol: number,
     toRow: number,
     toCol: number
-  ) {}
+  ) {
+    const piece = this.chess_Board[fromRow][fromCol];
+    
+    // Attack White Pieces
+    if (
+      this.IsWhitePiece(toRow, toCol) &&
+      !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+    ) {
+      this.chess_Board[toRow][toCol] = piece;
+      this.chess_Board[fromRow][fromCol] = '';
+    }
+
+    // If Tile is Empty
+    if (this.IsEmptyTile(toRow, toCol)) {
+      // Bishop Part
+      for (let i = 1; i <= 7; i++) {
+        if (!this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
+          if (
+            (toRow == fromRow - i && toCol == fromCol - i) ||
+            (toRow == fromRow - i && toCol == fromCol + i) ||
+            (toRow == fromRow + i && toCol == fromCol - i) ||
+            (toRow == fromRow + i && toCol == fromCol + i) ||
+            (toRow != fromRow && toCol == fromCol) ||
+            (toRow == fromRow && toCol != fromCol)
+          ) {
+            this.chess_Board[toRow][toCol] = piece;
+            this.chess_Board[fromRow][fromCol] = '';
+          }
+        }
+      }
+    }
+  }
 
   blackKingMovement(
     fromRow: number,
     fromCol: number,
     toRow: number,
     toCol: number
-  ) {}
+  ) {
+    const piece = this.chess_Board[fromRow][fromCol];
+
+    // Attack White Pieces
+    if (
+      this.IsBlackPiece(toRow, toCol) &&
+      !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+    ) {
+      this.chess_Board[toRow][toCol] = piece;
+      this.chess_Board[fromRow][fromCol] = '';
+    }
+
+    if (this.IsEmptyTile(toRow, toCol)) {
+      // legal Moves
+      if (
+        ((toRow == fromRow - 1 && toCol == fromCol - 1) ||
+          (toRow == fromRow - 1 && toCol == fromCol) ||
+          (toRow == fromRow - 1 && toCol == fromCol + 1) ||
+          (toRow == fromRow && toCol == fromCol - 1) ||
+          (toRow == fromRow && toCol == fromCol + 1) ||
+          (toRow == fromRow + 1 && toCol == fromCol - 1) ||
+          (toRow == fromRow + 1 && toCol == fromCol) ||
+          (toRow == fromRow + 1 && toCol == fromCol + 1)) &&
+        !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+      ) {
+        this.chess_Board[toRow][toCol] = piece;
+        this.chess_Board[fromRow][fromCol] = '';
+      }
+    }
+  }
 }

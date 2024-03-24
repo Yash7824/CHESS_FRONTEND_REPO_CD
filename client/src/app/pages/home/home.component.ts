@@ -17,6 +17,8 @@ export class HomeComponent {
   @ViewChild('whitePawn') whitePawnRow!: ElementRef;
 
   currentPlayer: string = 'white';
+  IsWhiteKingChecked: string = '';
+  IsBlackKingChecked: string = '';
 
   chessPieces: any = {};
   constructor() {
@@ -33,6 +35,17 @@ export class HomeComponent {
     this.chessPieces.blackQueen = '../../../assets/images/black_queen.png';
     this.chessPieces.blackKing = '../../../assets/images/black_king.png';
   }
+
+  chess_board_OG = [
+    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+  ];
 
   chess_Board = [
     ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
@@ -59,6 +72,24 @@ export class HomeComponent {
   }
 
   setTileStyle(row: number, column: number) {
+    if (
+      this.IsBlackKingChecked == 'Black Under Check' &&
+      this.chess_Board[row][column] == 'k'
+    ) {
+      return {
+        'background-color': 'red',
+      };
+    }
+
+    if (
+      this.IsWhiteKingChecked == 'White Under Check' &&
+      this.chess_Board[row][column] == 'K'
+    ) {
+      return {
+        'background-color': 'red',
+      };
+    }
+
     let oddTile = {
       'background-color': '#5d7744',
     };
@@ -132,14 +163,17 @@ export class HomeComponent {
   }
 
   onDrop(event: DragEvent, row: number, col: number): void {
-    // 
+    //
     // Prevent default drop behavior
     event.preventDefault();
 
     // Retrieve the data transferred during drag
     const data = JSON.parse(event.dataTransfer!.getData('text/plain'));
-    let fromRow = data.row, fromCol = data.col, toRow = row, toCol = col;
-    
+    let fromRow = data.row,
+      fromCol = data.col,
+      toRow = row,
+      toCol = col;
+
     this.movePiece(fromRow, fromCol, toRow, toCol);
   }
 
@@ -158,6 +192,7 @@ export class HomeComponent {
     toCol: number
   ): void {
     const piece = this.chess_Board[fromRow][fromCol];
+
     //Implement logic to move the piece in your chessboard array
     switch (piece) {
       case 'P':
@@ -196,6 +231,66 @@ export class HomeComponent {
       case 'k':
         this.blackKingMovement(fromRow, fromCol, toRow, toCol);
         break;
+    }
+
+    // Checking whether the White King is Under Check
+    // here toRow and toCol are the co-ordinates of black piece after displacement.
+    if (this.IsWhiteKingUnderCheck('K', toRow, toCol)) {
+      this.IsWhiteKingChecked = 'White Under Check';
+
+      /* Remove the King from Check
+       1. If a White piece comes in between the King and the black (attacking) piece
+       2. If King Moves away from the attacking piece
+       3. If White captures the attacking piece
+       */
+      let attackingPiece = this.chess_Board[toRow][toCol];
+      switch (attackingPiece) {
+        case 'P': {
+        }
+      }
+    } else {
+      this.IsWhiteKingChecked = '';
+    }
+
+    // Checking whether the Black King is Under Check
+    if (this.IsBlackKingUnderCheck('k', toRow, toCol)) {
+      this.IsBlackKingChecked = 'Black Under Check';
+
+      // Remove the King from Check
+    } else {
+      this.IsBlackKingChecked = '';
+    }
+
+    // White Wins
+    let blackKingAbsent = true;
+    for (let i = 0; i < this.chess_Board.length; i++) {
+      for (let j = 0; j < this.chess_Board[i].length; j++) {
+        if (this.chess_Board[i][j] == 'k') {
+          blackKingAbsent = false;
+          break;
+        }
+      }
+    }
+
+    if (blackKingAbsent) {
+      alert('White Wins');
+      this.chess_Board = this.chess_board_OG;
+    }
+
+    // Black Wins
+    let whiteKingAbsent = true;
+    for (let i = 0; i < this.chess_Board.length; i++) {
+      for (let j = 0; j < this.chess_Board[i].length; j++) {
+        if (this.chess_Board[i][j] == 'K') {
+          whiteKingAbsent = false;
+          break;
+        }
+      }
+    }
+
+    if (whiteKingAbsent) {
+      alert('Black Won');
+      this.chess_Board = this.chess_board_OG;
     }
   }
 
@@ -243,6 +338,194 @@ export class HomeComponent {
     this.chess_Board[fromRow][fromCol] = piece;
   }
 
+  IsWhiteKingUnderCheck(
+    king: string,
+    fromRow: number,
+    fromCol: number
+  ): boolean {
+    // The Piece giving check to the King
+    const piece = this.chess_Board[fromRow][fromCol];
+    let kingRow!: number;
+    let kingCol!: number;
+
+    // King's location:
+    for (let i = 0; i < this.chess_Board.length; i++) {
+      for (let j = 0; j < this.chess_Board[i].length; j++) {
+        if (this.chess_Board[i][j] == king) {
+          kingRow = i;
+          kingCol = j;
+          break;
+        }
+      }
+    }
+
+    if (king == 'K') {
+      // If Black pawn is giving Check.
+      if (
+        piece == 'p' &&
+        ((kingRow == fromRow + 1 && kingCol == fromCol - 1) ||
+          (kingRow == fromRow + 1 && kingCol == fromCol + 1))
+      ) {
+        return true;
+      }
+
+      // If Black Rook is giving Check
+      if (
+        piece == 'r' &&
+        ((kingRow != fromRow && kingCol == fromCol) ||
+          (kingRow == fromRow && kingCol != fromCol)) &&
+        !this.IsInvalidMove(piece, fromRow, fromCol, kingRow, kingCol)
+      ) {
+        return true;
+      }
+
+      // If Black knight is giving Check.
+      if (
+        piece == 'n' &&
+        ((kingRow == fromRow - 2 &&
+          (kingCol == fromCol + 1 || kingCol == fromCol - 1)) ||
+          (kingRow == fromRow + 2 &&
+            (kingCol == fromCol + 1 || kingCol == fromCol - 1)) ||
+          (kingCol == fromCol - 2 &&
+            (kingRow == fromRow + 1 || kingRow == fromRow - 1)) ||
+          (kingCol == fromCol + 2 &&
+            (kingRow == fromRow + 1 || kingRow == fromRow - 1)))
+      ) {
+        return true;
+      }
+
+      // If Black bishop is giving Check
+      if (piece == 'b') {
+        for (let i = 1; i <= 7; i++) {
+          if (!this.IsInvalidMove(piece, fromRow, fromCol, kingRow, kingCol)) {
+            if (
+              (kingRow == fromRow - i && kingCol == fromCol - i) ||
+              (kingRow == fromRow - i && kingCol == fromCol + i) ||
+              (kingRow == fromRow + i && kingCol == fromCol - i) ||
+              (kingRow == fromRow + i && kingCol == fromCol + i)
+            ) {
+              return true;
+            }
+          }
+        }
+      }
+
+      // If Black Queen is giving Check
+      if (piece == 'q') {
+        for (let i = 1; i <= 7; i++) {
+          if (!this.IsInvalidMove(piece, fromRow, fromCol, kingRow, kingCol)) {
+            if (
+              (kingRow == fromRow - i && kingCol == fromCol - i) ||
+              (kingRow == fromRow - i && kingCol == fromCol + i) ||
+              (kingRow == fromRow + i && kingCol == fromCol - i) ||
+              (kingRow == fromRow + i && kingCol == fromCol + i) ||
+              (kingRow != fromRow && kingCol == fromCol) ||
+              (kingRow == fromRow && kingCol != fromCol)
+            ) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  IsBlackKingUnderCheck(
+    king: string,
+    fromRow: number,
+    fromCol: number
+  ): boolean {
+    // The Piece giving check to the King
+    const piece = this.chess_Board[fromRow][fromCol];
+    let kingRow!: number;
+    let kingCol!: number;
+
+    // King's location:
+    for (let i = 0; i < this.chess_Board.length; i++) {
+      for (let j = 0; j < this.chess_Board[i].length; j++) {
+        if (this.chess_Board[i][j] == king) {
+          kingRow = i;
+          kingCol = j;
+          break;
+        }
+      }
+    }
+
+    if (king == 'k') {
+      // If White pawn is giving Check.
+      if (
+        piece == 'P' &&
+        ((kingRow == fromRow - 1 && kingCol == fromCol - 1) ||
+          (kingRow == fromRow - 1 && kingCol == fromCol + 1))
+      ) {
+        return true;
+      }
+
+      // If White Rook is giving Check
+      if (
+        piece == 'R' &&
+        ((kingRow != fromRow && kingCol == fromCol) ||
+          (kingRow == fromRow && kingCol != fromCol)) &&
+        !this.IsInvalidMove(piece, fromRow, fromCol, kingRow, kingCol)
+      ) {
+        return true;
+      }
+
+      // If White knight is giving Check.
+      if (
+        piece == 'N' &&
+        ((kingRow == fromRow - 2 &&
+          (kingCol == fromCol + 1 || kingCol == fromCol - 1)) ||
+          (kingRow == fromRow + 2 &&
+            (kingCol == fromCol + 1 || kingCol == fromCol - 1)) ||
+          (kingCol == fromCol - 2 &&
+            (kingRow == fromRow + 1 || kingRow == fromRow - 1)) ||
+          (kingCol == fromCol + 2 &&
+            (kingRow == fromRow + 1 || kingRow == fromRow - 1)))
+      ) {
+        return true;
+      }
+
+      // If White bishop is giving Check
+      if (piece == 'B') {
+        for (let i = 1; i <= 7; i++) {
+          if (!this.IsInvalidMove(piece, fromRow, fromCol, kingRow, kingCol)) {
+            if (
+              (kingRow == fromRow - i && kingCol == fromCol - i) ||
+              (kingRow == fromRow - i && kingCol == fromCol + i) ||
+              (kingRow == fromRow + i && kingCol == fromCol - i) ||
+              (kingRow == fromRow + i && kingCol == fromCol + i)
+            ) {
+              return true;
+            }
+          }
+        }
+      }
+
+      // If White Queen is giving Check
+      if (piece == 'Q') {
+        for (let i = 1; i <= 7; i++) {
+          if (!this.IsInvalidMove(piece, fromRow, fromCol, kingRow, kingCol)) {
+            if (
+              (kingRow == fromRow - i && kingCol == fromCol - i) ||
+              (kingRow == fromRow - i && kingCol == fromCol + i) ||
+              (kingRow == fromRow + i && kingCol == fromCol - i) ||
+              (kingRow == fromRow + i && kingCol == fromCol + i) ||
+              (kingRow != fromRow && kingCol == fromCol) ||
+              (kingRow == fromRow && kingCol != fromCol)
+            ) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
   IsInvalidMove(
     piece: string,
     fromRow: number,
@@ -250,7 +533,6 @@ export class HomeComponent {
     toRow: number,
     toCol: number
   ): boolean {
-    debugger;
     if (fromRow == toRow && fromCol == toCol) return true;
 
     switch (piece) {
@@ -259,17 +541,17 @@ export class HomeComponent {
         if (
           toRow == fromRow - 1 &&
           (toCol == fromCol - 1 || toCol == fromCol + 1)
-        ){
+        ) {
           return true;
-        } 
-        if(toCol == fromCol && (toRow > fromRow)){
+        }
+        if (toCol == fromCol && toRow > fromRow) {
           return true;
         }
 
-        if(!this.IsEmptyTile(toRow, toCol)){
+        if (!this.IsEmptyTile(toRow, toCol)) {
           return true;
         }
-          
+
         break;
       }
 
@@ -317,14 +599,14 @@ export class HomeComponent {
             (toCol == fromCol + 2 &&
               (toRow == fromRow + 1 || toRow == fromRow - 1))
           )
-        ){
+        ) {
           return true;
         }
 
-        if(!this.IsEmptyTile(toRow, toCol)){
+        if (!this.IsEmptyTile(toRow, toCol)) {
           return true;
         }
-          
+
         break;
       }
 
@@ -471,7 +753,7 @@ export class HomeComponent {
         break;
       }
 
-      case 'K': 
+      case 'K':
       case 'k': {
         let correctMovement: boolean = false;
 
@@ -489,8 +771,8 @@ export class HomeComponent {
           break;
         }
 
-        if(correctMovement) return false;
-        else return true; 
+        if (correctMovement) return false;
+        else return true;
         break;
       }
 
@@ -499,18 +781,18 @@ export class HomeComponent {
         if (
           toRow == fromRow + 1 &&
           (toCol == fromCol - 1 || toCol == fromCol + 1)
-        ){
+        ) {
           return true;
         }
 
-        if(toCol == fromCol && (toRow < fromRow)){
+        if (toCol == fromCol && toRow < fromRow) {
           return true;
         }
 
-        if(!this.IsEmptyTile(toRow, toCol)){
+        if (!this.IsEmptyTile(toRow, toCol)) {
           return true;
         }
-          
+
         break;
       }
     }
@@ -523,7 +805,7 @@ export class HomeComponent {
     toRow: number,
     toCol: number
   ) {
-    // 
+    //
     const piece = this.chess_Board[fromRow][fromCol];
 
     // Attacking Black Pieces
@@ -655,7 +937,7 @@ export class HomeComponent {
     toCol: number
   ) {
     const piece = this.chess_Board[fromRow][fromCol];
-    
+
     // Attack Black Pieces
     if (
       this.IsBlackPiece(toRow, toCol) &&
@@ -712,7 +994,6 @@ export class HomeComponent {
 
     // If Tile is Empty
     if (this.IsEmptyTile(toRow, toCol)) {
-
       for (let i = 1; i <= 7; i++) {
         if (!this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
           if (
@@ -804,7 +1085,6 @@ export class HomeComponent {
           this.chess_Board[toRow][toCol] = piece;
           this.chess_Board[fromRow][fromCol] = '';
           this.toggleCurrentPlayer();
-
         } else if (fromRow != 1 && toRow <= fromRow + 1 && toRow > fromRow) {
           this.chess_Board[toRow][toCol] = piece;
           this.chess_Board[fromRow][fromCol] = '';
@@ -909,7 +1189,7 @@ export class HomeComponent {
     toCol: number
   ) {
     const piece = this.chess_Board[fromRow][fromCol];
-    
+
     // Attack White Pieces
     if (
       this.IsWhitePiece(toRow, toCol) &&
@@ -954,7 +1234,7 @@ export class HomeComponent {
     toCol: number
   ) {
     const piece = this.chess_Board[fromRow][fromCol];
-    
+
     // Attack White Pieces
     if (
       this.IsWhitePiece(toRow, toCol) &&
@@ -967,7 +1247,6 @@ export class HomeComponent {
 
     // If Tile is Empty
     if (this.IsEmptyTile(toRow, toCol)) {
-      // Bishop Part
       for (let i = 1; i <= 7; i++) {
         if (!this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
           if (
@@ -997,7 +1276,7 @@ export class HomeComponent {
 
     // Attack White Pieces
     if (
-      this.IsBlackPiece(toRow, toCol) &&
+      this.IsWhitePiece(toRow, toCol) &&
       !this.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
     ) {
       this.chess_Board[toRow][toCol] = piece;

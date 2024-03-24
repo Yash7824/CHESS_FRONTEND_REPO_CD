@@ -29,11 +29,25 @@
 
 .Turn--Container{
     display: flex;
-    margin-top: 20px;
+    width: 10vw;
+    margin-top: 25px;
     margin-left: 100px;
 }
 
 .Turn--Container span{
+    justify-content: center;
+    align-self: center;
+    font-size: medium;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.King--Check--Container{
+    display: flex;
+    margin-left: 270px;
+    margin-top: -10px;
+}
+
+.King--Check--Container span{
     justify-content: center;
     align-self: center;
     font-size: medium;

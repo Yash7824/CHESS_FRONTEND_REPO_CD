@@ -31,3 +31,11 @@
 <div class="Turn--Container">
   <span style="color: white"> {{currentPlayer | titlecase}}'s turn </span>
 </div>
+
+<div *ngIf="IsWhiteKingChecked" class="King--Check--Container">
+  <span style="color: red"> {{IsWhiteKingChecked}} </span>
+</div>
+
+<div *ngIf="IsBlackKingChecked" class="King--Check--Container">
+  <span style="color: red"> {{IsBlackKingChecked}} </span>
+</div>

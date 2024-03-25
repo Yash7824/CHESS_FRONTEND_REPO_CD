@@ -1,4 +1,11 @@
-<div class="container main--Board">
+<div class="home--Page">
+  <div *ngIf="IsWhiteKingChecked" class="King--Check--Container">
+    <span style="color: red"> {{ IsWhiteKingChecked }} </span>
+  </div>
+  
+  <div *ngIf="IsBlackKingChecked" class="King--Check--Container">
+    <span style="color: red"> {{ IsBlackKingChecked }} </span>
+  </div>
     <div class="text-center">
       <div
         class="row"

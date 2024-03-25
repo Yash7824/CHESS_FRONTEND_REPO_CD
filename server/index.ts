@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import createRoom from "./modules/createRoom";
 import joinRoom from "./modules/joinRoom";
 import disconnect from "./modules/disconnect";
+import { Room } from "./interfaces/room";
 
 dotenv.config();
 
@@ -27,13 +28,14 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Maintain a list of active rooms and users in each room
-const activeRooms: Map<string, Set<string>> = new Map();
-
+const activeRooms: Map<string, Room> = new Map();
+// Maps each socket id created for user to their username
+const socketIDToUserNameMapper: Map<string,string> = new Map();
 io.on("connection", (socket) => {
   console.log(`User:${socket.id} Connected`);
-  socket.on("create room", (roomName: string) => createRoom(socket, roomName, activeRooms));
-  socket.on("join room", (roomName: string) => joinRoom(io, socket, roomName, activeRooms));
-  socket.on("disconnect", () => disconnect(io, socket, activeRooms));
+  socket.on("create room", (roomName: string, userName: string) => createRoom(socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
+  socket.on("join room", (roomName: string, userName: string) => joinRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
+  socket.on("disconnect", () => disconnect(io, socket, activeRooms, socketIDToUserNameMapper));
 });
 
 server.listen(port, () => {

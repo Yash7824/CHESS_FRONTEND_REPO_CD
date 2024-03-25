@@ -1,33 +1,6 @@
-<div class="container main--Board">
-  <div class="text-center">
-    <div
-      class="row"
-      *ngFor="let row of chess_Board; let i = index"
-      id="r{{ i }}"
-    >
-      <div
-        class="column"
-        id="r{{ i }}c{{ j }}"
-        [ngStyle]="setTileStyle(i, j)"
-        *ngFor="let column of row; let j = index"
-        #column
-        (dragover)="allowDrop($event)"
-        (drop)="onDrop($event, i, j)"
-      >
-
-        <img
-          [src]="getImageSource(chess_Board[i][j])"
-          alt=""
-          *ngIf="getImageSource(chess_Board[i][j]) != ''"
-          [draggable]="isPlayerTurn(currentPlayer)"
-          (dragstart)="onDragStart($event, i, j)"
-        />
-      </div>
-    </div>
+<div class="menu__container" #menuContainer>
+  <div class="menu-options__container" #menuOptionsContainer>
+    <button class="join-room__btn" (click)="navigateTo('join')">Join Room</button>
+    <button class="join-room__btn" (click)="navigateTo('create')">Create Room</button>
   </div>
-
-</div>
-
-<div class="Turn--Container">
-  <span style="color: white"> {{currentPlayer | titlecase}}'s turn </span>
 </div>

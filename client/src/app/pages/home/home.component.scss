@@ -1,41 +1,10 @@
-
-.main--Board{
-    display: flex;
-    position: absolute;
-    top: 40px;
-    left: 50px;
-    width: 44vw;
-    height:90vh;
-    // background-color: white;
-    align-items: center;
-    justify-content: center;
-}
-
-.column{
-    display: flex;
-    width: 5vw;
-    height: 10vh;
-    border: 1px solid black;
-}
-
-.column img{
-    width: 4.5vw;
-    height: 8vh;
-    justify-content: center;
-    align-items: center;
-    margin-top: 5px;
-    margin-right: 5px;
-}
-
-.Turn--Container{
-    display: flex;
-    margin-top: 20px;
-    margin-left: 100px;
-}
-
-.Turn--Container span{
-    justify-content: center;
+.menu__container {
+    width: auto;
     align-self: center;
-    font-size: medium;
-    font-family: 'Courier New', Courier, monospace;
+    justify-self: center;
+}
+.menu-options__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

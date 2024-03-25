@@ -27,6 +27,6 @@ npm start
    
 ## Deploy
 Deployed on Netlify: 
-[Play Game](https://super-paletas-45cd30.netlify.app/)
+[Play Game](https://66018e269b64802c6c993d45--clinquant-choux-93011e.netlify.app/)
 
 

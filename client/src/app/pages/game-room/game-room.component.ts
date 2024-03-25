@@ -233,7 +233,6 @@ export class GameRoomComponent {
     toCol: number
   ): void {
     const piece = this.chess_Board[fromRow][fromCol];
-
     //Implement logic to move the piece in your chessboard array
     switch (piece) {
       case 'P':
@@ -1022,7 +1021,6 @@ export class GameRoomComponent {
     toCol: number
   ) {
     const piece = this.chess_Board[fromRow][fromCol];
-
     // Attack Black Pieces
     if (
       this.IsBlackPiece(toRow, toCol) &&
@@ -1313,7 +1311,6 @@ export class GameRoomComponent {
     toCol: number
   ) {
     const piece = this.chess_Board[fromRow][fromCol];
-
     // Attack White Pieces
     if (
       this.IsWhitePiece(toRow, toCol) &&
@@ -1358,7 +1355,6 @@ export class GameRoomComponent {
     toCol: number
   ) {
     const piece = this.chess_Board[fromRow][fromCol];
-
     // Attack White Pieces
     if (
       this.IsWhitePiece(toRow, toCol) &&

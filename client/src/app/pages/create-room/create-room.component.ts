@@ -5,10 +5,9 @@ import { SocketService } from 'src/app/services/SocketService';
 @Component({
   selector: 'app-create-room',
   templateUrl: './create-room.component.html',
-  styleUrls: ['./create-room.component.scss']
+  styleUrls: ['./create-room.component.scss'],
 })
 export class CreateRoomComponent {
-
 
   constructor( private router: Router, private socket: SocketService) {}
 

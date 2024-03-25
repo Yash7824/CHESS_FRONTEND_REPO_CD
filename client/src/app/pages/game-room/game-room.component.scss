@@ -1,41 +1,177 @@
-
-.main--Board{
+body, html {
+    height: 100%;
+    margin: 0;
     display: flex;
-    position: absolute;
-    top: 40px;
-    left: 50px;
-    width: 44vw;
-    height:90vh;
-    // background-color: white;
-    align-items: center;
-    justify-content: center;
-}
-
-.column{
-    display: flex;
-    width: 5vw;
-    height: 10vh;
-    border: 1px solid black;
-}
-
-.column img{
-    width: 4.5vw;
-    height: 8vh;
     justify-content: center;
     align-items: center;
-    margin-top: 5px;
-    margin-right: 5px;
-}
+  }
 
-.Turn--Container{
+  .home--Page{
+    height: 100%;
+    margin-top: 0;
+    margin-left: 470px;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 10px;
+  }
+
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 800px; 
+  }
+
+  .row {
+    display: flex;
+    justify-content: center;
+    margin: 0; 
+  }
+
+  .column {
+    width: 80px;
+    height: 80px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+  }
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  img:hover{
+    cursor: grab;
+  }
+
+  .Turn--Container {
+    text-align: center;
     margin-top: 20px;
-    margin-left: 100px;
-}
+  }
 
-.Turn--Container span{
-    justify-content: center;
-    align-self: center;
-    font-size: medium;
-    font-family: 'Courier New', Courier, monospace;
-}
+  .King--Check--Container {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* Media queries for responsiveness */
+  @media only screen and (max-width: 1667px) {
+    .home--Page{
+        margin-left: 470px;
+      }
+
+      .column {
+        width: 80px;
+        height: 80px; 
+      }
+  }
+
+  @media only screen and (max-width: 1345px){
+    .home--Page{
+        margin-left: 370px;  
+      }
+  }
+
+  @media only screen and (max-width: 1200px){
+    .home--Page{
+        margin-left: 270px;
+      }
+  }
+
+  @media only screen and (max-width: 1134px) {
+    .home--Page{
+        margin-left: 270px;
+      }
+
+      .column {
+        width: 80px;
+        height: 80px; 
+      }
+  }
+
+  @media only screen and (max-width: 934px) {
+    .home--Page{
+        margin-left: 40px;
+      }
+  }
+
+  @media only screen and (max-width: 706px) {
+    .home--Page{
+        margin-left: 20px;
+      }
+
+    .column {
+      width: 70px; 
+      height: 70px; 
+      font-size: 12px; 
+    }
+
+  }
+
+  @media only screen and (max-width: 605px) {
+    .column {
+        width: 60px; 
+        height: 60px; 
+        font-size: 12px; 
+      }
+  }
+
+  @media only screen and (max-width: 524px){
+    .column {
+        width: 55px; 
+        height: 55px; 
+        font-size: 12px; 
+      }
+  }
+
+  @media only screen and (max-width: 484px){
+    .column {
+        width: 50px; 
+        height: 50px; 
+        font-size: 12px; 
+      }
+  }
+
+  @media only screen and (max-width: 444px){
+    .column {
+        width: 45px; 
+        height: 45px; 
+        font-size: 12px; 
+      }
+  }
+
+  @media only screen and (max-width: 404px){
+    .column {
+        width: 40px; 
+        height: 40px; 
+        font-size: 12px; 
+      }
+  }
+
+  @media only screen and (max-width: 364px){
+    .column {
+        width: 35px; 
+        height: 35px; 
+        font-size: 12px; 
+      }
+  }
+
+  @media only screen and (max-width: 324px){
+    .column {
+        width: 30px; 
+        height: 30px; 
+        font-size: 12px; 
+      }
+  }
+
+  @media only screen and (max-width: 284px){
+    .column {
+        width: 25px; 
+        height: 25px; 
+        font-size: 12px; 
+      }
+  }

@@ -17,10 +17,14 @@ Creating an online 2 player chess game where user can login and compete with the
 npm install
 ```
 3. Make sure to have Angular installed in your PC.
-  ```git
-  npm install -g @angular/cli
-  ```
-
+```git
+npm install -g @angular/cli
+```
+4. For the server side as well install node packages and run the below command:
+```git
+npm start
+```
+   
 ## Deploy
 Deployed on Netlify: 
 [Play Game](https://super-paletas-45cd30.netlify.app/)

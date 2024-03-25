@@ -19,6 +19,7 @@ export class HomeComponent {
   currentPlayer: string = 'white';
   IsWhiteKingChecked: string = '';
   IsBlackKingChecked: string = '';
+  draggedPiece: any = {};
 
   chessPieces: any = {};
   constructor() {
@@ -152,6 +153,35 @@ export class HomeComponent {
     return pieceToDisplay;
   }
 
+  onTouchStart(event: TouchEvent, row: number, col: number){
+    this.draggedPiece = {row: row, col: col};
+    console.log(`fromRow=${row} fromCol=${col}`);
+    // console.log(this.draggedPiece);
+  }
+
+  onTouchMove(event: TouchEvent) {
+    // debugger;
+    if (!this.draggedPiece) return;
+    event.preventDefault();
+    const touch = event.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    console.log(element?.classList.value);
+    if (element && element.classList.value == 'ImagePiece') {
+      const [row, col] = element.id.split('C').map(Number);
+      this.draggedPiece = { row, col };
+    }
+  }
+
+  onTouchEnd(event: TouchEvent, row: number, col: number) {
+    // debugger;
+    console.log(`toRow=${row} toCol=${col}`);
+    if (this.draggedPiece) {
+      // Implement your logic here to move the piece to the destination cell
+      // console.log(`Piece dropped at row: ${this.draggedPiece.row}, col: ${this.draggedPiece.col}`);
+      this.draggedPiece = null;
+    }
+  }
+
   onDragStart(event: DragEvent, row: number, col: number): void {
     // Set data to be transferred during drag
     event.dataTransfer!.setData('text/plain', JSON.stringify({ row, col }));
@@ -163,8 +193,8 @@ export class HomeComponent {
   }
 
   onDrop(event: DragEvent, row: number, col: number): void {
-    //
     // Prevent default drop behavior
+    debugger;
     event.preventDefault();
 
     // Retrieve the data transferred during drag
@@ -173,6 +203,14 @@ export class HomeComponent {
       fromCol = data.col,
       toRow = row,
       toCol = col;
+
+      debugger;
+      if (this.draggedPiece) {
+        this.movePiece(fromRow, fromCol, toRow, toCol);
+        console.log(`Piece dropped at row: ${row}, col: ${col}`);
+        this.draggedPiece = null;
+        return;
+      }
 
     this.movePiece(fromRow, fromCol, toRow, toCol);
   }

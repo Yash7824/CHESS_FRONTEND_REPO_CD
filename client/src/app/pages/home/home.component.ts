@@ -20,6 +20,8 @@ export class HomeComponent {
   IsWhiteKingChecked: string = '';
   IsBlackKingChecked: string = '';
   draggedPiece: any = {};
+  hasWhiteKingMoved!: boolean
+  hasBlackKingMoved!: boolean
 
   chessPieces: any = {};
   constructor() {
@@ -62,6 +64,8 @@ export class HomeComponent {
   setColumnTile: any;
 
   ngOnInit() {
+    this.hasWhiteKingMoved = false;
+    this.hasBlackKingMoved = false;
     // console.log(this.gpElementRef?.nativeElement);
   }
 
@@ -153,14 +157,13 @@ export class HomeComponent {
     return pieceToDisplay;
   }
 
-  onTouchStart(event: TouchEvent, row: number, col: number){
-    this.draggedPiece = {row: row, col: col};
+  onTouchStart(event: TouchEvent, row: number, col: number) {
+    this.draggedPiece = { row: row, col: col };
     console.log(`fromRow=${row} fromCol=${col}`);
     // console.log(this.draggedPiece);
   }
 
   onTouchMove(event: TouchEvent) {
-    // debugger;
     if (!this.draggedPiece) return;
     event.preventDefault();
     const touch = event.touches[0];
@@ -173,7 +176,6 @@ export class HomeComponent {
   }
 
   onTouchEnd(event: TouchEvent, row: number, col: number) {
-    // debugger;
     console.log(`toRow=${row} toCol=${col}`);
     if (this.draggedPiece) {
       // Implement your logic here to move the piece to the destination cell
@@ -194,7 +196,6 @@ export class HomeComponent {
 
   onDrop(event: DragEvent, row: number, col: number): void {
     // Prevent default drop behavior
-    debugger;
     event.preventDefault();
 
     // Retrieve the data transferred during drag
@@ -204,13 +205,12 @@ export class HomeComponent {
       toRow = row,
       toCol = col;
 
-      debugger;
-      if (this.draggedPiece) {
-        this.movePiece(fromRow, fromCol, toRow, toCol);
-        console.log(`Piece dropped at row: ${row}, col: ${col}`);
-        this.draggedPiece = null;
-        return;
-      }
+    if (this.draggedPiece) {
+      this.movePiece(fromRow, fromCol, toRow, toCol);
+      console.log(`Piece dropped at row: ${row}, col: ${col}`);
+      this.draggedPiece = null;
+      return;
+    }
 
     this.movePiece(fromRow, fromCol, toRow, toCol);
   }
@@ -276,6 +276,17 @@ export class HomeComponent {
     if (this.IsWhiteKingUnderCheck('K', toRow, toCol)) {
       this.IsWhiteKingChecked = 'White Under Check';
 
+      // Find the location of White King
+      let kingRow, kingCol: any;
+      for (let i = 0; i < this.chess_Board.length; i++) {
+        for (let j = 0; j < this.chess_Board[i].length; j++) {
+          if (this.chess_Board[i][j] == 'K') {
+            (kingRow = i), (kingCol = j);
+            break;
+          }
+        }
+      }
+
       /* Remove the King from Check
        1. If a White piece comes in between the King and the black (attacking) piece
        2. If King Moves away from the attacking piece
@@ -283,7 +294,12 @@ export class HomeComponent {
        */
       let attackingPiece = this.chess_Board[toRow][toCol];
       switch (attackingPiece) {
-        case 'P': {
+        case 'p': {
+          if (
+            (kingRow == toRow + 1 && kingCol == toCol - 1) ||
+            (kingRow == toRow + 1 && kingCol == toCol + 1)
+          ) {
+          }
         }
       }
     } else {
@@ -335,6 +351,15 @@ export class HomeComponent {
   IsEmptyTile(row: number, col: number): boolean {
     if (this.chess_Board[row][col] == '') return true;
     return false;
+  }
+
+  findPiece(piece: string) {
+    for (let i = 0; i < this.chess_Board.length; i++) {
+      for (let j = 0; j < this.chess_Board[i].length; j++) {
+        if (this.chess_Board[i][j] == 'K') return { row: i, col: j };
+      }
+    }
+    return null;
   }
 
   IsWhitePiece(row: number, col: number): boolean {
@@ -573,9 +598,28 @@ export class HomeComponent {
   ): boolean {
     if (fromRow == toRow && fromCol == toCol) return true;
 
+    // Finding the locations of White and Black Kings.
+    let whiteKingRow, whiteKingCol, blackKingRow, blackKingCol: any;
+    for (let i = 0; i < this.chess_Board.length; i++) {
+      for (let j = 0; j < this.chess_Board[i].length; j++) {
+        if (this.chess_Board[i][j] == 'K') {
+          (whiteKingRow = i), (whiteKingCol = j);
+          break;
+        }
+      }
+    }
+
+    for (let i = 0; i < this.chess_Board.length; i++) {
+      for (let j = 0; j < this.chess_Board[i].length; j++) {
+        if (this.chess_Board[i][j] == 'k') {
+          (blackKingRow = i), (blackKingCol = j);
+          break;
+        }
+      }
+    }
+
     switch (piece) {
       case 'P': {
-        //moving diagonally
         if (
           toRow == fromRow - 1 &&
           (toCol == fromCol - 1 || toCol == fromCol + 1)
@@ -1066,6 +1110,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.hasWhiteKingMoved = true;
       this.toggleCurrentPlayer();
     }
 
@@ -1084,7 +1129,45 @@ export class HomeComponent {
       ) {
         this.chess_Board[toRow][toCol] = piece;
         this.chess_Board[fromRow][fromCol] = '';
+        this.hasWhiteKingMoved = true;
         this.toggleCurrentPlayer();
+        return;
+      }
+    }
+
+    // Castling
+    if (
+      this.chess_Board[7][4] == 'K' &&
+      this.chess_Board[7][0] == 'R' &&
+      this.IsEmptyTile(7, 1) &&
+      this.IsEmptyTile(7, 2) &&
+      this.IsEmptyTile(7, 3) &&
+      !this.hasWhiteKingMoved
+    ) {
+      if (toRow == fromRow && toCol == fromCol - 2) {
+        this.chess_Board[toRow][toCol] = 'K';
+        this.chess_Board[toRow][toCol + 1] = 'R';
+        this.chess_Board[fromRow][fromCol] = '';
+        this.chess_Board[7][0] = '';
+        this.hasWhiteKingMoved = true;
+        this.toggleCurrentPlayer();
+        return;
+      }
+    } else if (
+      this.chess_Board[7][4] == 'K' &&
+      this.chess_Board[7][7] == 'R' &&
+      this.IsEmptyTile(7, 5) &&
+      this.IsEmptyTile(7, 6) &&
+      !this.hasWhiteKingMoved
+    ) {
+      if (toRow == fromRow && toCol == fromCol + 2) {
+        this.chess_Board[toRow][toCol] = 'K';
+        this.chess_Board[toRow][toCol - 1] = 'R';
+        this.chess_Board[fromRow][fromCol] = '';
+        this.chess_Board[7][7] = '';
+        this.hasWhiteKingMoved = true;
+        this.toggleCurrentPlayer();
+        return;
       }
     }
   }
@@ -1319,6 +1402,7 @@ export class HomeComponent {
     ) {
       this.chess_Board[toRow][toCol] = piece;
       this.chess_Board[fromRow][fromCol] = '';
+      this.hasBlackKingMoved = true;
       this.toggleCurrentPlayer();
     }
 
@@ -1337,8 +1421,47 @@ export class HomeComponent {
       ) {
         this.chess_Board[toRow][toCol] = piece;
         this.chess_Board[fromRow][fromCol] = '';
+        this.hasBlackKingMoved = true;
         this.toggleCurrentPlayer();
+        return;
       }
     }
+
+    // Castling
+  if (
+    this.chess_Board[0][4] == 'k' &&
+    this.chess_Board[0][0] == 'r' &&
+    this.IsEmptyTile(0, 1) &&
+    this.IsEmptyTile(0, 2) &&
+    this.IsEmptyTile(0, 3) &&
+    !this.hasBlackKingMoved
+  ) {
+    if (toRow == fromRow && toCol == fromCol - 2) {
+      this.chess_Board[toRow][toCol] = 'k';
+      this.chess_Board[toRow][toCol + 1] = 'r';
+      this.chess_Board[fromRow][fromCol] = '';
+      this.chess_Board[0][0] = '';
+      this.hasBlackKingMoved = true;
+      this.toggleCurrentPlayer();
+      return;
+    }
+  } else if (
+    this.chess_Board[0][4] == 'k' &&
+    this.chess_Board[0][7] == 'r' &&
+    this.IsEmptyTile(0, 5) &&
+    this.IsEmptyTile(0, 6) &&
+    !this.hasBlackKingMoved
+  ) {
+    if (toRow == fromRow && toCol == fromCol + 2) {
+      this.chess_Board[toRow][toCol] = 'k';
+      this.chess_Board[toRow][toCol - 1] = 'r';
+      this.chess_Board[fromRow][fromCol] = '';
+      this.chess_Board[0][7] = '';
+      this.hasBlackKingMoved = true;
+      this.toggleCurrentPlayer();
+      return;
+    }
+  }
   }
 }
+

@@ -44,6 +44,10 @@ body, html {
     max-height: 100%;
   }
 
+  img:hover{
+    cursor: grab;
+  }
+
   .Turn--Container {
     text-align: center;
     margin-top: 20px;

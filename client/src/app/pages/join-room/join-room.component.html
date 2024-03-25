@@ -1,4 +1,7 @@
-<div>
-    <p>Join Room</p>
-    <input type="text" #roomInput (keyup.enter)="joinRoom(roomInput.value)" placeholder="enter room name..." />
+<div class="join-room__container">
+    <div class="join-room-form__container">
+        <input type="text" #userNameInput placeholder="John Doe" />
+        <input type="text" #roomNameInput placeholder="enter room name..." />
+        <button (click)="joinRoom(roomNameInput.value, userNameInput.value)"></button>
+    </div>    
 </div>

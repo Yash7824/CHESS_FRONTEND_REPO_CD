@@ -1,9 +1,11 @@
 import { Socket } from "socket.io";
+import { Room } from "../interfaces/room";
 
-const createRoom = (socket: Socket, roomName:string, activeRooms: Map<String, Set<String>>) => {
+const createRoom = (socket: Socket, roomName:string, userName:string, activeRooms: Map<String, Room>, socketIDToUserNameMapper: Map<string,string>) => {
     socket.join(roomName);
-    activeRooms.set(roomName, new Set([socket.id]));
-    console.log(`User ${socket.id} created and joined room: ${roomName}`);
+    activeRooms.set(roomName,{ name: roomName, users: new Set([userName])});
+    socketIDToUserNameMapper.set(socket.id, userName);
+    console.log(`User ${userName} created and joined room: ${roomName}`);
     socket.emit("roomCreated", roomName);
 }
 

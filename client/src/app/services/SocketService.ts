@@ -17,12 +17,12 @@ export class SocketService {
         this.socket = io("http://localhost:3000");
     }
 
-    joinRoom(roomName:string) {
-        this.socket.emit("join room", roomName);
+    joinRoom(roomName:string, userName:string) {
+        this.socket.emit("join room", roomName, userName);
     }
     
-    createRoom(roomName: string) {
-        this.socket.emit("create room", roomName);
+    createRoom(roomName: string, userName:string) {
+        this.socket.emit("create room", roomName, userName);
     } 
 
     receiveJoinedPlayers() {

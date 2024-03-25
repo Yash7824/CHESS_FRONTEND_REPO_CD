@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { connect } from 'socket.io-client';
 import { SocketService } from 'src/app/services/SocketService';
 
 

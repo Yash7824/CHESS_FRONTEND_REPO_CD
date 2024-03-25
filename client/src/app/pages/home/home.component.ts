@@ -17,10 +17,7 @@ import { SocketService } from 'src/app/services/SocketService';
 export class HomeComponent {
   constructor(private router: Router, private socket: SocketService) {}
 
-  ngOnInit() {
-  }
-
-  ngAfterViewInit() {}
+  ngOnInit() {}
 
   navigateTo(route: string) {
     this.router.navigate([`/${route}`]);

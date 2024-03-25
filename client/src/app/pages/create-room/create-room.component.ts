@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { SocketService } from 'src/app/services/SocketService';
 
 @Component({
@@ -9,7 +10,7 @@ import { SocketService } from 'src/app/services/SocketService';
 export class CreateRoomComponent {
 
 
-  constructor(private socket: SocketService) {}
+  constructor( private router: Router, private socket: SocketService) {}
 
   ngOnInit(): void {
 
@@ -18,8 +19,13 @@ export class CreateRoomComponent {
   }
 
 
-  createRoom(room: string) {
-    this.socket.createRoom(room);  
+  createRoom(roomName: string, userName:string) {
+    this.socket.createRoom(roomName, userName);  
+    this.navigateTo("game");
+  }
+
+  navigateTo(route: string) {
+    this.router.navigate([`/${route}`]);
   }
 
   receiveJoinedPlayers() {

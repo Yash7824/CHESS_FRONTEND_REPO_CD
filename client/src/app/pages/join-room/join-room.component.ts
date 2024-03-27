@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { connect } from 'socket.io-client';
+import { JoinRoom } from 'src/app/models/JoinRoom';
 import { SocketService } from 'src/app/services/SocketService';
 
 
@@ -12,13 +13,14 @@ import { SocketService } from 'src/app/services/SocketService';
 export class JoinRoomComponent {
 
   
-  constructor(private router: Router, private socket: SocketService) {}
+  constructor(private router: Router, public socket: SocketService) {}
 
   ngOnInit(): void {
    
   }
-  
 
+  joinroom : JoinRoom = { userName: '',roomName: ''}
+  
   joinRoom(roomName: string, userName: string) {
     this.socket.joinRoom(roomName, userName);  
     this.navigateTo("game");

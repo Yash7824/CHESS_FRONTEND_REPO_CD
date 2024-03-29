@@ -64,6 +64,18 @@ export class GameRoomComponent {
     this.hasBlackKingMoved = false;
   }
 
+  ngDoCheck(){
+    this.socket.chessPieceListen().subscribe({
+      next: (res: any) => {
+        for(let i=0; i<res.length; i++){
+          for(let j=0; j<res[i].length; j++){
+            this.chess_Board[i][j] = res[i][j];
+          }
+        }
+      }
+    })
+  }
+
   setTileStyle(row: number, column: number) {
     if (
       this.IsBlackKingChecked == 'Black Under Check' &&
@@ -310,16 +322,6 @@ export class GameRoomComponent {
 
     console.log(this.chess_Board);
     this.socket.chessPieceEmit(this.chess_Board);
-
-    this.socket.chessPieceListen().subscribe({
-      next: (res: any) => {
-        for(let i=0; i<res.length; i++){
-          for(let j=0; j<res[i].length; j++){
-            this.chess_Board[i][j] = res[i][j];
-          }
-        }
-      }
-    })
   }
 
   IsEmptyTile(row: number, col: number): boolean {

@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import createRoom from "./modules/createRoom";
 import joinRoom from "./modules/joinRoom";
 import disconnect from "./modules/disconnect";
+import updateChessBoardState from "./modules/updateChessBoardState";
 import { Room } from "./interfaces/room";
 
 dotenv.config();
@@ -35,6 +36,7 @@ io.on("connection", (socket) => {
   console.log(`User:${socket.id} Connected`);
   socket.on("create room", (roomName: string, userName: string) => createRoom(socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
   socket.on("join room", (roomName: string, userName: string) => joinRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
+  socket.on("updateChessboardState", (roomName: string, userName: string, chessBoardStateMatrix: Array<Array<string>>) => updateChessBoardState(io, socket, roomName, userName,chessBoardStateMatrix, socketIDToUserNameMapper));
   socket.on("disconnect", () => disconnect(io, socket, activeRooms, socketIDToUserNameMapper));
 });
 

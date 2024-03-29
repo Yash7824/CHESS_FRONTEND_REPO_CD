@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { RoomData } from 'src/app/models/RoomData';
 import { SocketService } from 'src/app/services/SocketService';
 
 @Component({
@@ -12,9 +13,10 @@ export class CreateRoomComponent {
 
   ngOnInit(): void {}
 
+  createroom: RoomData = { userName: '', roomName: ''}
   createRoom(roomName: string, userName: string) {
     this.socket.createRoom(roomName, userName);
-    this.navigateTo('game', { roomName: roomName, playerName: userName });
+    this.navigateTo('game', { playerName: userName, roomName: roomName });
   }
 
   navigateTo(route: string, params:Object) {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { connect } from 'socket.io-client';
+import { RoomData } from 'src/app/models/RoomData';
 import { SocketService } from 'src/app/services/SocketService';
 
 
@@ -12,16 +13,17 @@ import { SocketService } from 'src/app/services/SocketService';
 export class JoinRoomComponent {
 
   
-  constructor(private router: Router, private socket: SocketService) {}
+  constructor(private router: Router, public socket: SocketService) {}
 
   ngOnInit(): void {
    
   }
-  
 
-  joinRoom(roomName: string, userName: string) {
-    this.socket.joinRoom(roomName, userName);  
-    this.navigateTo("game",{ roomName: roomName, playerName: userName});
+  joinroom : RoomData = { userName: '', roomName: ''}
+  
+  joinRoom(userName: string, roomName: string) {
+    this.socket.joinRoom(userName, roomName);  
+    this.navigateTo("game", { playerName: userName, roomName: roomName});
   }
 
   navigateTo(route: string, params: Object) {

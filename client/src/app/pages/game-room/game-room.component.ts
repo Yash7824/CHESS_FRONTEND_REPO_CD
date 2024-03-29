@@ -197,8 +197,13 @@ export class GameRoomComponent {
     this.socket.sendUpdatedChessBoardState(this.roomData?.room, this?.roomData?.player,this.chess_Board);
   }
 
-  isPlayerTurn(player: string) {
-    return this.currentPlayer == player;
+  isPlayerTurn(player: string, row: number, col: number) {
+    if(this.IsWhitePiece(row, col) && player == 'white'){
+      return true;
+    } else if(this.IsBlackPiece(row, col) && player == 'black'){
+      return true;
+    }
+    return false;
   }
 
   movePiece(

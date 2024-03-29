@@ -1,9 +1,30 @@
 .joinRoom--Container {
     display: flex;
     flex-direction: column;
+    width: 100vw;
+    height: 100vh;
 }
 
 .joinRoomForm--Container {
     display: flex;
-    flex-direction: column;   
+    flex-direction: column;
+    margin-top: 100px;
+    margin-left: 500px;
+    width: 40vw;
+    height: 40vh;
+    row-gap: 20px;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 20%;
+    box-shadow: 0 0 10px 10px rgb(237, 137, 137);  
+}
+
+.joinRoomForm--Container input{
+    margin-top: -10px;
+    width: 20vw;
+}
+
+.joinRoomForm--Container h2{
+    color: rgb(59, 231, 59);
 }

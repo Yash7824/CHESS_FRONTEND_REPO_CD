@@ -6,6 +6,8 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { from, isEmpty } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { SocketService } from 'src/app/services/SocketService';
 
 
 @Component({
@@ -18,7 +20,7 @@ import { from, isEmpty } from 'rxjs';
 export class GameRoomComponent {
   @ViewChildren('column') columns!: QueryList<ElementRef>;
   @ViewChild('whitePawn') whitePawnRow!: ElementRef;
-
+  roomData: any = {}
   currentPlayer: string = 'white';
   IsWhiteKingChecked: string = '';
   IsBlackKingChecked: string = '';
@@ -27,7 +29,7 @@ export class GameRoomComponent {
   hasBlackKingMoved!: boolean
 
   chessPieces: any = {};
-  constructor() {
+  constructor(private socket: SocketService, private route: ActivatedRoute) {
     this.chessPieces.whitePawn = '../../../assets/images/white_pawn.png';
     this.chessPieces.whiteKnight = '../../../assets/images/white_knight.png';
     this.chessPieces.whiteBishop = '../../../assets/images/white_bishop.png';
@@ -69,6 +71,11 @@ export class GameRoomComponent {
   ngOnInit() {
     this.hasWhiteKingMoved = false;
     this.hasBlackKingMoved = false;
+    this.receiveJoinedPlayers();
+    this.getUpdatedChessBoardState();
+    this.route.queryParams.subscribe(params => {
+      this.roomData =  { player: params['playerName'], room: params['roomName']};
+    });
     // console.log(this.gpElementRef?.nativeElement);
   }
 
@@ -162,7 +169,6 @@ export class GameRoomComponent {
 
   onTouchStart(event: TouchEvent, row: number, col: number) {
     this.draggedPiece = { row: row, col: col };
-    console.log(`fromRow=${row} fromCol=${col}`);
     // console.log(this.draggedPiece);
   }
 
@@ -171,7 +177,6 @@ export class GameRoomComponent {
     event.preventDefault();
     const touch = event.touches[0];
     const element = document.elementFromPoint(touch.clientX, touch.clientY);
-    console.log(element?.classList.value);
     if (element && element.classList.value == 'ImagePiece') {
       const [row, col] = element.id.split('C').map(Number);
       this.draggedPiece = { row, col };
@@ -179,7 +184,6 @@ export class GameRoomComponent {
   }
 
   onTouchEnd(event: TouchEvent, row: number, col: number) {
-    console.log(`toRow=${row} toCol=${col}`);
     if (this.draggedPiece) {
       // Implement your logic here to move the piece to the destination cell
       // console.log(`Piece dropped at row: ${this.draggedPiece.row}, col: ${this.draggedPiece.col}`);
@@ -210,7 +214,6 @@ export class GameRoomComponent {
 
     if (this.draggedPiece) {
       this.movePiece(fromRow, fromCol, toRow, toCol);
-      console.log(`Piece dropped at row: ${row}, col: ${col}`);
       this.draggedPiece = null;
       return;
     }
@@ -220,6 +223,7 @@ export class GameRoomComponent {
 
   toggleCurrentPlayer() {
     this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
+    this.socket.sendUpdatedChessBoardState(this.roomData?.room, this?.roomData?.player,this.chess_Board);
   }
 
   isPlayerTurn(player: string) {
@@ -287,6 +291,7 @@ export class GameRoomComponent {
             break;
           }
         }
+       
       }
 
       /* Remove the King from Check
@@ -304,6 +309,7 @@ export class GameRoomComponent {
           }
         }
       }
+      this.socket.sendUpdatedChessBoardState(this.roomData?.room, this?.roomData?.player,this.chess_Board);
     } else {
       this.IsWhiteKingChecked = '';
     }
@@ -311,7 +317,6 @@ export class GameRoomComponent {
     // Checking whether the Black King is Under Check
     if (this.IsBlackKingUnderCheck('k', toRow, toCol)) {
       this.IsBlackKingChecked = 'Black Under Check';
-
       // Remove the King from Check
     } else {
       this.IsBlackKingChecked = '';
@@ -1461,6 +1466,21 @@ export class GameRoomComponent {
       return;
     }
   }
+  }
+  receiveJoinedPlayers() {
+    this.socket.receiveJoinedPlayers().subscribe((message) => {
+      alert(message);
+    })
+  }
+
+
+  getUpdatedChessBoardState() {
+    this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
+      if(message["chessBoardStateMatrix"].length > 0) {
+        console.log(message["chessBoardStateMatrix"].length);
+        this.chess_Board = message["chessBoardStateMatrix"];
+      }
+    })
   }
 }
 

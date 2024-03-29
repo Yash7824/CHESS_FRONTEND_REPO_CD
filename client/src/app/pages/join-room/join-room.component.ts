@@ -24,12 +24,15 @@ export class JoinRoomComponent {
   joinRoom(userName: string, roomName: string) {
     this.socket.activeRoomsListen();
     console.log(this.socket.activeRoomArray);
-    if(this.socket.activeRoomArray.includes(roomName)){
-      this.socket.joinRoom(userName, roomName);
-      this.navigateTo("game", { playerName: userName, roomName: roomName });
-    }else{
-      alert('Invalid room');
-    } 
+
+    this.socket.joinRoom(userName, roomName);
+    this.navigateTo("game", { playerName: userName, roomName: roomName });
+    // if(this.socket.activeRoomArray.includes(roomName)){
+    //   this.socket.joinRoom(userName, roomName);
+    //   this.navigateTo("game", { playerName: userName, roomName: roomName });
+    // }else{
+    //   alert('Invalid room');
+    // } 
   }
   
 

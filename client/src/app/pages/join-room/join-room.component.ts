@@ -21,8 +21,8 @@ export class JoinRoomComponent {
 
   joinroom : JoinRoom = { userName: '',roomName: ''}
   
-  joinRoom(roomName: string, userName: string) {
-    this.socket.joinRoom(roomName, userName);  
+  joinRoom(userName: string, roomName: string) {
+    this.socket.joinRoom(userName, roomName);  
     this.navigateTo("game");
   }
 

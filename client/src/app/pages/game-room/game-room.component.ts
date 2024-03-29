@@ -6,6 +6,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { from, isEmpty } from 'rxjs';
+import { SocketService } from 'src/app/services/SocketService';
 
 
 @Component({
@@ -25,9 +26,10 @@ export class GameRoomComponent {
   draggedPiece: any = {};
   hasWhiteKingMoved!: boolean
   hasBlackKingMoved!: boolean
+  inputText!: string
 
   chessPieces: any = {};
-  constructor() {
+  constructor(public socket: SocketService) {
     this.chessPieces.whitePawn = '../../../assets/images/white_pawn.png';
     this.chessPieces.whiteKnight = '../../../assets/images/white_knight.png';
     this.chessPieces.whiteBishop = '../../../assets/images/white_bishop.png';
@@ -53,30 +55,13 @@ export class GameRoomComponent {
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
   ];
 
-  chess_Board = [
-    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
-  ];
+  chess_Board = this.socket.chess_Board;
 
   setColumnTile: any;
 
   ngOnInit() {
     this.hasWhiteKingMoved = false;
     this.hasBlackKingMoved = false;
-    // console.log(this.gpElementRef?.nativeElement);
-  }
-
-  ngAfterViewInit() {
-    // this.columns.forEach(column => {
-    //   console.log(column.nativeElement.id);
-    // });
-    // console.log('col', this.whitePawnRow.nativeElement.id)
   }
 
   setTileStyle(row: number, column: number) {
@@ -117,44 +102,19 @@ export class GameRoomComponent {
   getImageSource(piece: string) {
     let pieceToDisplay: any = '';
     switch (piece) {
-      case 'r':
-        pieceToDisplay = this.chessPieces.blackRook;
-        break;
-      case 'n':
-        pieceToDisplay = this.chessPieces.blackKnight;
-        break;
-      case 'b':
-        pieceToDisplay = this.chessPieces.blackBishop;
-        break;
-      case 'q':
-        pieceToDisplay = this.chessPieces.blackQueen;
-        break;
-      case 'k':
-        pieceToDisplay = this.chessPieces.blackKing;
-        break;
-      case 'p':
-        pieceToDisplay = this.chessPieces.blackPawn;
-        break;
-      case 'R':
-        pieceToDisplay = this.chessPieces.whiteRook;
-        break;
-      case 'N':
-        pieceToDisplay = this.chessPieces.whiteKnight;
-        break;
-      case 'B':
-        pieceToDisplay = this.chessPieces.whiteBishop;
-        break;
-      case 'Q':
-        pieceToDisplay = this.chessPieces.whiteQueen;
-        break;
-      case 'K':
-        pieceToDisplay = this.chessPieces.whiteKing;
-        break;
-      case 'P':
-        pieceToDisplay = this.chessPieces.whitePawn;
-        break;
-      default:
-        pieceToDisplay = '';
+      case 'r': pieceToDisplay = this.chessPieces.blackRook; break;
+      case 'n': pieceToDisplay = this.chessPieces.blackKnight; break;
+      case 'b': pieceToDisplay = this.chessPieces.blackBishop; break;
+      case 'q': pieceToDisplay = this.chessPieces.blackQueen; break;
+      case 'k': pieceToDisplay = this.chessPieces.blackKing; break;
+      case 'p': pieceToDisplay = this.chessPieces.blackPawn; break;
+      case 'R': pieceToDisplay = this.chessPieces.whiteRook; break;
+      case 'N': pieceToDisplay = this.chessPieces.whiteKnight; break;
+      case 'B': pieceToDisplay = this.chessPieces.whiteBishop; break;
+      case 'Q': pieceToDisplay = this.chessPieces.whiteQueen; break;
+      case 'K': pieceToDisplay = this.chessPieces.whiteKing; break;
+      case 'P': pieceToDisplay = this.chessPieces.whitePawn; break;
+      default: pieceToDisplay = '';
     }
 
     return pieceToDisplay;
@@ -162,8 +122,6 @@ export class GameRoomComponent {
 
   onTouchStart(event: TouchEvent, row: number, col: number) {
     this.draggedPiece = { row: row, col: col };
-    console.log(`fromRow=${row} fromCol=${col}`);
-    // console.log(this.draggedPiece);
   }
 
   onTouchMove(event: TouchEvent) {
@@ -171,7 +129,6 @@ export class GameRoomComponent {
     event.preventDefault();
     const touch = event.touches[0];
     const element = document.elementFromPoint(touch.clientX, touch.clientY);
-    console.log(element?.classList.value);
     if (element && element.classList.value == 'ImagePiece') {
       const [row, col] = element.id.split('C').map(Number);
       this.draggedPiece = { row, col };
@@ -210,7 +167,6 @@ export class GameRoomComponent {
 
     if (this.draggedPiece) {
       this.movePiece(fromRow, fromCol, toRow, toCol);
-      console.log(`Piece dropped at row: ${row}, col: ${col}`);
       this.draggedPiece = null;
       return;
     }
@@ -232,6 +188,9 @@ export class GameRoomComponent {
     toRow: number,
     toCol: number
   ): void {
+
+    
+    // console.log(this.socket.chess_Board);
     const piece = this.chess_Board[fromRow][fromCol];
     //Implement logic to move the piece in your chessboard array
     switch (piece) {
@@ -348,6 +307,19 @@ export class GameRoomComponent {
       alert('Black Won');
       this.chess_Board = this.chess_board_OG;
     }
+
+    console.log(this.chess_Board);
+    this.socket.chessPieceEmit(this.chess_Board);
+
+    this.socket.chessPieceListen().subscribe({
+      next: (res: any) => {
+        for(let i=0; i<res.length; i++){
+          for(let j=0; j<res[i].length; j++){
+            this.chess_Board[i][j] = res[i][j];
+          }
+        }
+      }
+    })
   }
 
   IsEmptyTile(row: number, col: number): boolean {

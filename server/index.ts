@@ -7,6 +7,7 @@ import createRoom from "./modules/createRoom";
 import joinRoom from "./modules/joinRoom";
 import disconnect from "./modules/disconnect";
 import { Room } from "./interfaces/room";
+import chessPieceMovement from "./modules/chessPieceMovement";
 
 dotenv.config();
 
@@ -33,9 +34,10 @@ const activeRooms: Map<string, Room> = new Map();
 const socketIDToUserNameMapper: Map<string,string> = new Map();
 io.on("connection", (socket) => {
   console.log(`User:${socket.id} Connected`);
-  socket.on("create room", (roomName: string, userName: string) => createRoom(socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
+  socket.on("create room", (roomName: string, userName: string) => createRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
   socket.on("join room", (roomName: string, userName: string) => joinRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
   socket.on("disconnect", () => disconnect(io, socket, activeRooms, socketIDToUserNameMapper));
+  socket.on("ChessPieceMove", (chess_board: Array<Array<string>>) => chessPieceMovement(io, socket, chess_board, activeRooms, socketIDToUserNameMapper));
 });
 
 server.listen(port, () => {

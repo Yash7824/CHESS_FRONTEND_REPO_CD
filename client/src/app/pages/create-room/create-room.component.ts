@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { JoinRoom } from 'src/app/models/JoinRoom';
 import { SocketService } from 'src/app/services/SocketService';
 
 @Component({
@@ -11,16 +12,11 @@ export class CreateRoomComponent {
 
   constructor( private router: Router, private socket: SocketService) {}
 
-  ngOnInit(): void {
+  createroom : JoinRoom = { userName: '',roomName: ''}
 
-    this.receiveJoinedPlayers();
-   
-  }
-
-
-  createRoom(roomName: string, userName:string) {
-    this.socket.createRoom(roomName, userName);  
-    this.navigateTo("game");
+  createRoom(userName: string, roomName:string) {
+    this.socket.createRoom(userName, roomName);  
+    // this.navigateTo("game");
   }
 
   navigateTo(route: string) {
@@ -29,7 +25,7 @@ export class CreateRoomComponent {
 
   receiveJoinedPlayers() {
     this.socket.receiveJoinedPlayers().subscribe((message) => {
-      alert(message);
+      console.log(message);
     })
   }
 

@@ -28,6 +28,18 @@ export class SocketService {
     });
   }
 
+  getUpdatedChessBoardState() {
+    return new Observable((observer) => {
+      this.socket.on("getUpdatedChessBoardState", (message) => {
+        observer.next(message);
+      })
+    })
+  }
+
+  sendUpdatedChessBoardState(roomName:string, userName:string, chessBoardStateMatrix: Array<Array<string>>) {
+    this.socket.emit("updateChessboardState",roomName, userName, chessBoardStateMatrix);
+  }
+
   disconnect() {
     this.socket.emit('disconnect');
   }

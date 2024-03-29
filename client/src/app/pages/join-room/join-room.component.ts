@@ -21,11 +21,11 @@ export class JoinRoomComponent {
 
   joinRoom(roomName: string, userName: string) {
     this.socket.joinRoom(roomName, userName);  
-    this.navigateTo("game");
+    this.navigateTo("game",{ roomName: roomName, playerName: userName});
   }
 
-  navigateTo(route: string) {
-    this.router.navigate([`/${route}`]);
+  navigateTo(route: string, params: Object) {
+    this.router.navigate([`/${route}`],{ queryParams: params});
   }  
 
 }

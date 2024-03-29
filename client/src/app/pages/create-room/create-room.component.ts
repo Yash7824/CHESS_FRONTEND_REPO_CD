@@ -8,29 +8,16 @@ import { SocketService } from 'src/app/services/SocketService';
   styleUrls: ['./create-room.component.scss'],
 })
 export class CreateRoomComponent {
+  constructor(private router: Router, private socket: SocketService) {}
 
-  constructor( private router: Router, private socket: SocketService) {}
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-
-    this.receiveJoinedPlayers();
-   
+  createRoom(roomName: string, userName: string) {
+    this.socket.createRoom(roomName, userName);
+    this.navigateTo('game', { roomName: roomName, playerName: userName });
   }
 
-
-  createRoom(roomName: string, userName:string) {
-    this.socket.createRoom(roomName, userName);  
-    this.navigateTo("game");
+  navigateTo(route: string, params:Object) {
+    this.router.navigate([`/${route}`,], { queryParams: params});
   }
-
-  navigateTo(route: string) {
-    this.router.navigate([`/${route}`]);
-  }
-
-  receiveJoinedPlayers() {
-    this.socket.receiveJoinedPlayers().subscribe((message) => {
-      alert(message);
-    })
-  }
-
 }

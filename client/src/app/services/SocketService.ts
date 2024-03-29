@@ -19,6 +19,8 @@ export class SocketService {
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
   ];
 
+  activeRoomArray: string[] = []
+
   constructor() {
     this.socket = io('http://localhost:3000');
   }
@@ -27,8 +29,9 @@ export class SocketService {
     this.socket.emit('join room', roomName, userName);
   }
 
-  createRoom(userName: string, roomName: string) {
+  createRoom(userName: string, roomName: string) {;
     this.socket.emit('create room', roomName, userName);
+    this.socket.emit('Active Rooms');
   }
 
   receiveJoinedPlayers() {
@@ -64,6 +67,13 @@ export class SocketService {
       this.socket.on('Emitted Chess Piece', (data) => {
         subscriber.next(data);
       })
+    })
+  }
+
+  activeRoomsListen(){
+    this.socket.on('activeRooms', (data) => {
+      this.activeRoomArray = data;
+      console.log(data);
     })
   }
 }

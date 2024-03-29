@@ -5,10 +5,9 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { from, isEmpty } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { Room } from 'src/app/models/Room';
 import { SocketService } from 'src/app/services/SocketService';
-
 
 @Component({
   selector: 'app-game-room',
@@ -59,8 +58,9 @@ export class GameRoomComponent {
   chess_Board = this.socket.chess_Board;
 
   setColumnTile: any;
-
+  
   ngOnInit() {
+
     this.hasWhiteKingMoved = false;
     this.hasBlackKingMoved = false;
     this.receiveJoinedPlayers();

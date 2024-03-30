@@ -8,11 +8,14 @@ import joinRoom from "./modules/joinRoom";
 import disconnect from "./modules/disconnect";
 import updateChessBoardState from "./modules/updateChessBoardState";
 import { Room } from "./interfaces/room";
+import chessPieceMovement from "./modules/chessPieceMovement";
+import connectToMongo from "./config/db"
 
 dotenv.config();
 
 // Server Init and Config
 const app: Express = express();
+connectToMongo();
 const server: any = createServer(app);
 const port = process.env.PORT || 3000;
 const io = new Server(server, {
@@ -22,11 +25,15 @@ const io = new Server(server, {
   },
 });
 
+app.use(express.json());
 app.use(cors());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Typescript + Node.js + Express Server");
 });
+
+app.use('/api/auth', require('./routes/auth'))
+app.use('/api/admin', require('./routes/admin'))
 
 // Maintain a list of active rooms and users in each room
 const activeRooms: Map<string, Room> = new Map();

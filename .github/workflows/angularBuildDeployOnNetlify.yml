@@ -24,7 +24,7 @@ jobs:
       - name: "Install Netlify CLI"
         run : npm install netlify-cli -g
       - name: "Install NPM Dependencies"
-        run: npm ci
+        run: ls && npm i --legacy-peer-deps
       - name: "Create Build File"
         run: npm run build
       - name: "Run the Deploy Client CI Script"

@@ -9,6 +9,7 @@ ng build
 echo "Deploy Build with Netlify CLI..."
 npm install netlify-cli -g
 netlify deploy \
+            --prod \
             --dir dist \
             --site "$NETLIFY_SITE_ID"  \
             --auth "$NETLIFY_API_TOKEN"

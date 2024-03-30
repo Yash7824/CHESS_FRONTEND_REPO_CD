@@ -3,9 +3,9 @@ name: GitHub Actions For Deploying Angular App Build On Netlify
 
 on:
   push:
-    branches: [master]
+    branches: [Prod]
   pull_request:
-    branches: [master]
+    branches: [Prod]
 
 jobs:
   build:
@@ -27,9 +27,7 @@ jobs:
         run: npm ci
       - name: "Create Build File"
         working-directory: ./client
-        run: |
-          npm run build && \
-          cd ./dist/chess && ls -l
+        run: npm run build
       - name: "Deploy Build On Netlify"
         working-directory: ./client
         env: 

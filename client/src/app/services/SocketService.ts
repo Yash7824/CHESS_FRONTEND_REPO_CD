@@ -27,7 +27,7 @@ export class SocketService {
     this.socket.emit('join room', roomName, userName);
   }
 
-  createRoom(userName: string, roomName: string) {
+  createRoom(roomName: string, userName: string) {
     this.socket.emit('create room', roomName, userName);
   }
 
@@ -47,23 +47,14 @@ export class SocketService {
     })
   }
 
-  sendUpdatedChessBoardState(roomName:string, userName:string, chessBoardStateMatrix: Array<Array<string>>) {
-    this.socket.emit("updateChessboardState",roomName, userName, chessBoardStateMatrix);
+  sendUpdatedChessBoardState(roomName:string, chessBoardStateMatrix: Array<Array<string>>) {
+    console.log(roomName);
+    this.socket.emit("updateChessboardState",roomName, chessBoardStateMatrix);
   }
 
   disconnect() {
     this.socket.emit('disconnect');
   }
 
-  chessPieceEmit(chess_board: Array<Array<string>>){
-    this.socket.emit('ChessPieceMove', chess_board);
-  }
-
-  chessPieceListen(){
-    return new Observable((subscriber) => {
-      this.socket.on('Emitted Chess Piece', (data) => {
-        subscriber.next(data);
-      })
-    })
-  }
+  
 }

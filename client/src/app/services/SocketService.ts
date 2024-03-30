@@ -48,7 +48,6 @@ export class SocketService {
   }
 
   sendUpdatedChessBoardState(roomName:string, chessBoardStateMatrix: Array<Array<string>>) {
-    console.log(roomName);
     this.socket.emit("updateChessboardState",roomName, chessBoardStateMatrix);
   }
 

@@ -22,9 +22,6 @@ export class JoinRoomComponent {
   joinroom : RoomData = { userName: '', roomName: ''}
   
   joinRoom(userName: string, roomName: string) {
-    this.socket.activeRoomsListen();
-    console.log(this.socket.activeRoomArray);
-
     this.socket.joinRoom(userName, roomName);
     this.navigateTo("game", { playerName: userName, roomName: roomName });
     // if(this.socket.activeRoomArray.includes(roomName)){

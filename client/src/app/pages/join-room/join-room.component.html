@@ -1,7 +1,8 @@
 <div class="joinRoom--Container">
     <div class="joinRoomForm--Container">
-        <input type="text" #userNameInput  placeholder="Enter user name..." [(ngModel)]="joinroom.userName"/>
-        <input type="text" #roomNameInput placeholder="Enter room name..." [(ngModel)]="joinroom.roomName"/>
-        <button (click)="joinRoom(joinroom.userName,joinroom.roomName)">Join Room</button>
+        <h2>Join Room</h2>
+        <input type="text" #userNameInput  placeholder="Enter user name..." class="form-control mb-2" [(ngModel)]="joinroom.userName"/>
+        <input type="text" #roomNameInput placeholder="Enter room name..." class="form-control mb-2" [(ngModel)]="joinroom.roomName"/>
+        <button (click)="joinRoom(joinroom.userName,joinroom.roomName)" class="btn btn-danger">Join Room</button>
     </div>
 </div>

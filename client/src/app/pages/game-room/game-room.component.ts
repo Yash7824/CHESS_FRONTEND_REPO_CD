@@ -6,10 +6,9 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { from, isEmpty } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { Room } from 'src/app/models/Room';
 import { SocketService } from 'src/app/services/SocketService';
-
 
 @Component({
   selector: 'app-game-room',
@@ -60,8 +59,9 @@ export class GameRoomComponent {
   chess_Board = this.socket.chess_Board;
 
   setColumnTile: any;
-
+  
   ngOnInit() {
+
     this.hasWhiteKingMoved = false;
     this.hasBlackKingMoved = false;
     this.receiveJoinedPlayers();
@@ -186,8 +186,13 @@ export class GameRoomComponent {
     this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
   }
 
-  isPlayerTurn(player: string) {
-    return this.currentPlayer == player;
+  isPlayerTurn(player: string, row: number, col: number) {
+    if(this.IsWhitePiece(row, col) && player == 'white'){
+      return true;
+    } else if(this.IsBlackPiece(row, col) && player == 'black'){
+      return true;
+    }
+    return false;
   }
 
   movePiece(

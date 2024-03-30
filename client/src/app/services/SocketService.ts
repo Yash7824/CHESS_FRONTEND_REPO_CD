@@ -19,6 +19,8 @@ export class SocketService {
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
   ];
 
+  activeRoomArray: string[] = []
+
   constructor() {
     this.socket = io('http://localhost:3000');
   }
@@ -29,6 +31,7 @@ export class SocketService {
 
   createRoom(roomName: string, userName: string) {
     this.socket.emit('create room', roomName, userName);
+    this.socket.emit('Active Rooms');
   }
 
   receiveJoinedPlayers() {

@@ -31,7 +31,7 @@
               class="ImagePiece"
               #column
               *ngIf="getImageSource(chess_Board[i][j]) != ''"
-              [draggable]="isPlayerTurn(currentPlayer)"
+              [draggable]="isPlayerTurn(currentPlayer, i, j)"
               (dragstart)="onDragStart($event, i, j)"
               (touchstart)="onTouchStart($event, i, j)"
               (touchmove)="onTouchMove($event)"

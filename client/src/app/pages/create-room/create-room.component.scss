@@ -1,8 +1,29 @@
 .createRoom--Container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
 }
 .createRoomForm--Container {
     display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+    margin-left: 500px;
+    width: 40vw;
+    height: 40vh;
+    row-gap: 20px;
     justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 20%;
+    box-shadow: 0 0 10px 10px rgb(237, 137, 137); 
+}
+
+.createRoomForm--Container input{
+    margin-top: -10px;
+    width: 20vw;
+}
+
+.createRoomForm--Container h2{
+    color: rgb(59, 231, 59);
 }

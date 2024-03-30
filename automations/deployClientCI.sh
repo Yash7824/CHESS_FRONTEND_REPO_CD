@@ -6,11 +6,11 @@ echo "Install Angular CLI..."
 npm install -g  @angular/cli
 echo "Create Build File..."
 ng build 
-# echo "Install Netlify..."
-# npm install netlify-cli -g
-# netlify netlify deploy \
-#             --dir dist \
-#             --site ${{ NETLIFY_SITE_ID }} \
-#             --auth ${{ NETLIFY_API_TOKEN }}
+echo "Deploy Build with Netlify CLI..."
+npm install netlify-cli -g
+netlify netlify deploy \
+            --dir dist \
+            --site ${{ secrets.NETLIFY_SITE_ID }} \
+            --auth ${{ secrets.NETLIFY_API_TOKEN }}
 echo "Remove Build File After Deploy..."
 rm -r dist

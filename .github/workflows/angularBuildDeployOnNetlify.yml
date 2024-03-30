@@ -1,1 +1,30 @@
 # Github Actions Workflow For Deploying Angular Build App to Netlify
+name: GitHub Actions For Deploying Angular App Build On Netlify
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js and NPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: "10.x"
+      - name: "Go to Client Folder"
+        run: "cd ./client"
+      - name: Build project
+        run: ng build
+      - name: Deploy to Netlify
+        id: netlify_deploy
+        run: |
+          netlify deploy \
+            --dir dist \
+            --site ${{ secrets.NETLIFY_SITE_ID }} \
+            --auth ${{ secrets.NETLIFY_API_TOKEN }}

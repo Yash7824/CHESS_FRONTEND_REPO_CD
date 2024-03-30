@@ -1,5 +1,5 @@
 # Github Actions Workflow For Deploying Angular Build App to Netlify
-name: GitHub Actions For Deploying Angular App Build On Netlify
+name: Deploy Client App Build On Netlify
 
 on:
   push:

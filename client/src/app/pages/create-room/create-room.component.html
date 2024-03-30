@@ -2,7 +2,7 @@
     <div class="createRoomForm--Container">
         <input type="text"  placeholder="John Doe" [(ngModel)]="createroom.userName"/>
         <input type="text"  placeholder="enter room name..." [(ngModel)]="createroom.roomName"/>
-        <button (click)="createRoom(createroom.userName,createroom.roomName)">Create Room</button>
+        <button (click)="createRoom(createroom.roomName,createroom.userName)">Create Room</button>
     </div>
 </div>
 

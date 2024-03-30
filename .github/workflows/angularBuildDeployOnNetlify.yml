@@ -17,10 +17,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "10.x"
-      - name: "Install Angular CLI"
-        run: "npm install @angular/cli"
       - name: "Go to Client Folder"
         run: "cd ./client"
+      - name: "Install Node Dependencies"
+        run: "npm ci"
       - name: Build project
         run: ng build
       - name: Deploy to Netlify

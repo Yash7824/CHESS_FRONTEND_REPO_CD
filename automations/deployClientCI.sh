@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-cd ../client
+cd ./client
 echo "Install Node Dependencies..."
 npm i --legacy-peer-deps --save-dev
 echo "Create Build File..."

@@ -2,6 +2,8 @@
 cd ./client
 echo "Install Node Dependencies..."
 npm i --legacy-peer-deps --save-dev
+echo "Install Angular CLI..."
+npm install -g  @angular/cli
 echo "Create Build File..."
 ng build 
 # echo "Install Netlify..."

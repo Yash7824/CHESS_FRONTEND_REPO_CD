@@ -1,5 +1,6 @@
 import {
   Component,
+  DoCheck,
   ElementRef,
   QueryList,
   ViewChild,
@@ -71,17 +72,6 @@ export class GameRoomComponent {
     // console.log(this.gpElementRef?.nativeElement);
   }
 
-  ngDoCheck(){
-    this.socket.chessPieceListen().subscribe({
-      next: (res: any) => {
-        for(let i=0; i<res.length; i++){
-          for(let j=0; j<res[i].length; j++){
-            this.chess_Board[i][j] = res[i][j];
-          }
-        }
-      }
-    })
-  }
 
   setTileStyle(row: number, column: number) {
     if (
@@ -194,7 +184,6 @@ export class GameRoomComponent {
 
   toggleCurrentPlayer() {
     this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
-    this.socket.sendUpdatedChessBoardState(this.roomData?.room, this?.roomData?.player,this.chess_Board);
   }
 
   isPlayerTurn(player: string) {
@@ -283,7 +272,6 @@ export class GameRoomComponent {
           }
         }
       }
-      this.socket.sendUpdatedChessBoardState(this.roomData?.room, this?.roomData?.player,this.chess_Board);
     } else {
       this.IsWhiteKingChecked = '';
     }
@@ -328,8 +316,7 @@ export class GameRoomComponent {
       this.chess_Board = this.chess_board_OG;
     }
 
-    console.log(this.chess_Board);
-    this.socket.chessPieceEmit(this.chess_Board);
+    this.socket.sendUpdatedChessBoardState(this.roomData.room,this.chess_Board);
   }
 
   IsEmptyTile(row: number, col: number): boolean {
@@ -1452,12 +1439,12 @@ export class GameRoomComponent {
 
 
   getUpdatedChessBoardState() {
-    this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
-      if(message["chessBoardStateMatrix"].length > 0) {
-        console.log(message["chessBoardStateMatrix"].length);
-        this.chess_Board = message["chessBoardStateMatrix"];
-      }
-    })
-  }
+      this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
+        if(message["updatedChessBoardMatrix"].length > 0) {
+          console.log(message["updatedChessBoardMatrix"].length);
+          this.chess_Board = message["updatedChessBoardMatrix"];
+        }
+      })
+    }
 }
 

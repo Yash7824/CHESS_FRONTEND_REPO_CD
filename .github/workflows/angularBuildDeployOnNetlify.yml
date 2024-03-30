@@ -27,7 +27,9 @@ jobs:
         run: npm ci
       - name: "Create Build File"
         working-directory: ./client
-        run: npm run build
+        run: |
+          npm run build && \
+          ls -l
       - name: "Deploy Build On Netlify"
         working-directory: ./client
         env: 

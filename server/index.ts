@@ -8,7 +8,6 @@ import joinRoom from "./modules/joinRoom";
 import disconnect from "./modules/disconnect";
 import updateChessBoardState from "./modules/updateChessBoardState";
 import { Room } from "./interfaces/room";
-import chessPieceMovement from "./modules/chessPieceMovement";
 
 dotenv.config();
 
@@ -26,7 +25,7 @@ const io = new Server(server, {
 app.use(cors());
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Typescript + Express Server");
+  res.send("Typescript + Node.js + Express Server");
 });
 
 // Maintain a list of active rooms and users in each room
@@ -37,9 +36,8 @@ io.on("connection", (socket) => {
   console.log(`User:${socket.id} Connected`);
   socket.on("create room", (roomName: string, userName: string) => createRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
   socket.on("join room", (roomName: string, userName: string) => joinRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
-  socket.on("updateChessboardState", (roomName: string, userName: string, chessBoardStateMatrix: Array<Array<string>>) => updateChessBoardState(io, socket, roomName, userName,chessBoardStateMatrix, socketIDToUserNameMapper));
+  socket.on("updateChessboardState", (roomName: string, updatedChessBoardMatrix: Array<Array<string>>) => updateChessBoardState(io, socket, roomName, updatedChessBoardMatrix, socketIDToUserNameMapper));
   socket.on("disconnect", () => disconnect(io, socket, activeRooms, socketIDToUserNameMapper));
-  socket.on("ChessPieceMove", (chess_board: Array<Array<string>>) => chessPieceMovement(io, socket, chess_board, activeRooms, socketIDToUserNameMapper));
 });
 
 server.listen(port, () => {

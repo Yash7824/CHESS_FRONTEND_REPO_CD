@@ -248,34 +248,13 @@ export class GameRoomComponent {
     // Checking whether the White King is Under Check
     // here toRow and toCol are the co-ordinates of black piece after displacement.
     if (this.IsWhiteKingUnderCheck('K', toRow, toCol)) {
-      this.IsWhiteKingChecked = 'White Under Check';
-
-      // Find the location of White King
-      let kingRow, kingCol: any;
-      for (let i = 0; i < this.chess_Board.length; i++) {
-        for (let j = 0; j < this.chess_Board[i].length; j++) {
-          if (this.chess_Board[i][j] == 'K') {
-            (kingRow = i), (kingCol = j);
-            break;
-          }
-        }
-       
-      }
-
-      /* Remove the King from Check
-       1. If a White piece comes in between the King and the black (attacking) piece
-       2. If King Moves away from the attacking piece
-       3. If White captures the attacking piece
-       */
-      let attackingPiece = this.chess_Board[toRow][toCol];
-      switch (attackingPiece) {
-        case 'p': {
-          if (
-            (kingRow == toRow + 1 && kingCol == toCol - 1) ||
-            (kingRow == toRow + 1 && kingCol == toCol + 1)
-          ) {
-          }
-        }
+      if(!this.IsCheckMate('K', toRow, toCol)){
+        this.IsWhiteKingChecked = 'White Under Check';
+      }else {
+        this.IsWhiteKingChecked = 'White got check mated'
+        alert('Black Wins');
+        this.chess_Board = this.chess_board_OG;
+        this.currentPlayer = 'white';
       }
     } else {
       this.IsWhiteKingChecked = '';
@@ -283,42 +262,17 @@ export class GameRoomComponent {
 
     // Checking whether the Black King is Under Check
     if (this.IsBlackKingUnderCheck('k', toRow, toCol)) {
-      this.IsBlackKingChecked = 'Black Under Check';
-      // Remove the King from Check
+      if(!this.IsCheckMate('k', toRow, toCol)){
+        this.IsBlackKingChecked = 'Black Under Check';
+      }else{
+        this.IsBlackKingChecked = 'Black got check mated'
+        alert('White Wins');
+        this.chess_Board = this.chess_board_OG;
+        this.currentPlayer = 'white';
+      }
+      
     } else {
       this.IsBlackKingChecked = '';
-    }
-
-    // White Wins
-    let blackKingAbsent = true;
-    for (let i = 0; i < this.chess_Board.length; i++) {
-      for (let j = 0; j < this.chess_Board[i].length; j++) {
-        if (this.chess_Board[i][j] == 'k') {
-          blackKingAbsent = false;
-          break;
-        }
-      }
-    }
-
-    if (blackKingAbsent) {
-      alert('White Wins');
-      this.chess_Board = this.chess_board_OG;
-    }
-
-    // Black Wins
-    let whiteKingAbsent = true;
-    for (let i = 0; i < this.chess_Board.length; i++) {
-      for (let j = 0; j < this.chess_Board[i].length; j++) {
-        if (this.chess_Board[i][j] == 'K') {
-          whiteKingAbsent = false;
-          break;
-        }
-      }
-    }
-
-    if (whiteKingAbsent) {
-      alert('Black Won');
-      this.chess_Board = this.chess_board_OG;
     }
 
     this.socket.sendUpdatedChessBoardState(this.roomData.room,this.chess_Board);
@@ -332,7 +286,7 @@ export class GameRoomComponent {
   findPiece(piece: string) {
     for (let i = 0; i < this.chess_Board.length; i++) {
       for (let j = 0; j < this.chess_Board[i].length; j++) {
-        if (this.chess_Board[i][j] == 'K') return { row: i, col: j };
+        if (this.chess_Board[i][j] == piece) return { row: i, col: j };
       }
     }
     return null;
@@ -565,6 +519,141 @@ export class GameRoomComponent {
     return false;
   }
 
+  getMajorPieces(piece: string): number[][]{
+    const piece_Array = [];
+    for(let i=0; i<this.chess_Board.length; i++){
+      for(let j=0; j<this.chess_Board[i].length; j++){
+        if(this.chess_Board[i][j] === piece) piece_Array.push([i,j]);
+      }
+    }
+    return piece_Array;
+  }
+
+
+  IsTileSafeForKing(king: string, row: number, col: number): boolean{
+    let king_coordinates = this.findPiece(king);
+
+    if(king === 'K' && king_coordinates && !this.IsWhitePiece(row,col)){
+
+      if((this.chess_Board[row - 1][col - 1] === 'p' || 
+      this.chess_Board[row - 1][col + 1] === 'p') && 
+      row - 1 >= 0 && (col - 1 >= 0 && col + 1 <= 7)){
+        return false;
+      }
+
+      const blackKnightArray = this.getMajorPieces('n');
+      for(let pos of blackKnightArray){
+        if(!this.IsInvalidMove('n', pos[0], pos[1], row, col)){
+          return false;
+        }
+      }
+
+      const blackRookArray = this.getMajorPieces('r');
+      for(let pos of blackRookArray){
+        if(!this.IsInvalidMove('r', pos[0], pos[1], row, col)){
+          return false;
+        }
+      }
+
+      const blackBishopArray = this.getMajorPieces('b');
+      for(let pos of blackBishopArray){
+        if(!this.IsInvalidMove('b', pos[0], pos[1], row, col)){
+          return false;
+        }
+      }
+
+      const blackQueenArray = this.getMajorPieces('q');
+      for(let pos of blackQueenArray){
+        if(!this.IsInvalidMove('q', pos[0], pos[1], row, col)){
+          return false;
+        }
+      }
+
+    } else if(king === 'k' && king_coordinates && !this.IsBlackPiece(row,col)){
+      if((this.chess_Board[row + 1][col - 1] === 'P' || 
+      this.chess_Board[row + 1][col + 1] === 'P') && 
+      row + 1 <= 7 && (col - 1 >= 0 && col + 1 <= 7)){
+        return false;
+      }
+
+      const whiteKnightArray = this.getMajorPieces('N');
+      for(let pos of whiteKnightArray){
+        if(!this.IsInvalidMove('N', pos[0], pos[1], row, col)){
+          return false;
+        }
+      }
+
+      const whiteRookArray = this.getMajorPieces('R');
+      for(let pos of whiteRookArray){
+        if(!this.IsInvalidMove('R', pos[0], pos[1], row, col)){
+          return false;
+        }
+      }
+
+      const whiteBishopArray = this.getMajorPieces('B');
+      for(let pos of whiteBishopArray){
+        if(!this.IsInvalidMove('B', pos[0], pos[1], row, col)){
+          return false;
+        }
+      }
+
+      const whiteQueenArray = this.getMajorPieces('Q');
+      for(let pos of whiteQueenArray){
+        if(!this.IsInvalidMove('Q', pos[0], pos[1], row, col)){
+          return false;
+        }
+      }
+    }else if((king == 'k' && this.IsBlackPiece(row, col)) ||
+    (king == 'K' && this.IsWhitePiece(row, col))){
+      return false;
+    }
+    
+    return true;
+  }
+
+  //FIXME: after check
+  IsCheckMate(king: string, fromRow: number, fromCol: number){
+    const attackingPiece = this.chess_Board[fromRow][fromCol];
+    const king_coordinates = this.findPiece(king);
+    if(king_coordinates){
+      let king_row = king_coordinates.row, king_col = king_coordinates.col
+      if(king_row >= 1 && king_col >= 1 && this.IsTileSafeForKing(king, king_row - 1, king_col - 1)){
+        return false;
+      }
+
+      if(king_row >= 1 && this.IsTileSafeForKing(king, king_row - 1, king_col)){
+        return false;
+      }
+
+      if(king_row >= 1 && king_col <= 6 && this.IsTileSafeForKing(king, king_row - 1, king_col + 1)){
+        return false;
+      }
+
+      if(king_col >= 1 && this.IsTileSafeForKing(king, king_row, king_col - 1)){
+        return false;
+      }
+
+      if(king_col <= 6 && this.IsTileSafeForKing(king, king_row, king_col + 1)){
+        return false;
+      }
+
+      if(king_row <= 6 && king_col >= 1 && this.IsTileSafeForKing(king, king_row + 1, king_col - 1)){
+        return false;
+      }
+
+      if(king_row <= 6 && this.IsTileSafeForKing(king, king_row + 1, king_col)){
+        return false;
+      }
+
+      if(king_row <= 6 && king_col <= 6 && this.IsTileSafeForKing(king, king_row + 1, king_col + 1)){
+        return false;
+      }
+
+      return true;
+    }
+    return true;
+  }
+
   IsInvalidMove(
     piece: string,
     fromRow: number,
@@ -576,23 +665,11 @@ export class GameRoomComponent {
 
     // Finding the locations of White and Black Kings.
     let whiteKingRow, whiteKingCol, blackKingRow, blackKingCol: any;
-    for (let i = 0; i < this.chess_Board.length; i++) {
-      for (let j = 0; j < this.chess_Board[i].length; j++) {
-        if (this.chess_Board[i][j] == 'K') {
-          (whiteKingRow = i), (whiteKingCol = j);
-          break;
-        }
-      }
-    }
+    let whiteKingCoord = this.findPiece('K');
+    whiteKingRow = whiteKingCoord?.row, whiteKingCol = whiteKingCoord?.col;
 
-    for (let i = 0; i < this.chess_Board.length; i++) {
-      for (let j = 0; j < this.chess_Board[i].length; j++) {
-        if (this.chess_Board[i][j] == 'k') {
-          (blackKingRow = i), (blackKingCol = j);
-          break;
-        }
-      }
-    }
+    let blackKingCoord = this.findPiece('k');
+    blackKingRow = blackKingCoord?.row, blackKingCol = blackKingCoord?.col;
 
     switch (piece) {
       case 'P': {
@@ -636,7 +713,7 @@ export class GameRoomComponent {
             }
           }
         } else if (toRow != fromRow && toCol != fromCol) {
-          alert('Invalid rook move as tiles are not empty in between');
+          // alert('Invalid rook move as tiles are not empty in between');
           return true;
         }
 

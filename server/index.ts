@@ -1,5 +1,5 @@
 import express, { Express, Request, Response } from "express";
-import cors, { CorsOptions } from "cors";
+import cors from "cors";
 const { createServer } = require("http");
 import { Server, Socket } from "socket.io";
 import dotenv from "dotenv";
@@ -8,7 +8,6 @@ import joinRoom from "./modules/joinRoom";
 import disconnect from "./modules/disconnect";
 import updateChessBoardState from "./modules/updateChessBoardState";
 import { Room } from "./interfaces/room";
-import chessPieceMovement from "./modules/chessPieceMovement";
 import connectToMongo from "./config/db"
 
 dotenv.config();

@@ -45,8 +45,21 @@
     <div class="Turn--Container">
       <span style="color: white"> {{ currentPlayer | titlecase }}'s turn </span>
     </div>
-    
+   
+    <div *ngIf="hasPlayerJoined" class="joined_player__modal">
+      
+      <div class="joined_player__modal-content">
+        <span class="close" (click)="closeModal()">&times;</span>
+        <div class="joined_player__modal-header">
+          <h1>Message</h1>
+        </div>
+        <div class="divider"></div>
+       
+        <p>{{joinedPlayerMessage}}</p>
+      </div>
+    </div>
+
+
   </div>
-  
   
   

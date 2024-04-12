@@ -20,10 +20,12 @@ import { SocketService } from 'src/app/services/SocketService';
 export class GameRoomComponent {
   @ViewChildren('column') columns!: QueryList<ElementRef>;
   @ViewChild('whitePawn') whitePawnRow!: ElementRef;
+  hasPlayerJoined: Boolean = false;
   roomData: any = {}
   currentPlayer: string = 'white';
   IsWhiteKingChecked: string = '';
   IsBlackKingChecked: string = '';
+  joinedPlayerMessage: string = 'Player Joined';
   draggedPiece: any = {};
   hasWhiteKingMoved!: boolean
   hasBlackKingMoved!: boolean
@@ -1436,9 +1438,19 @@ export class GameRoomComponent {
     }
   }
   }
+
+  openModal() {
+    this.hasPlayerJoined = true;
+  }
+
+  closeModal() {
+    this.hasPlayerJoined = false;
+  }
+
   receiveJoinedPlayers() {
-    this.socket.receiveJoinedPlayers().subscribe((message) => {
-      alert(message);
+    this.socket.receiveJoinedPlayers().subscribe((message: any) => {
+      this.joinedPlayerMessage = message;
+      this.hasPlayerJoined = true;
     })
   }
 

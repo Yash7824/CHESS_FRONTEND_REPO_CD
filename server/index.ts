@@ -39,10 +39,9 @@ const activeRooms: Map<string, Room> = new Map();
 // Maps each socket id created for user to their username
 const socketIDToUserNameMapper: Map<string,string> = new Map();
 io.on("connection", (socket) => {
-  console.log(`User:${socket.id} Connected`);
   socket.on("create room", (roomName: string, userName: string) => createRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
   socket.on("join room", (roomName: string, userName: string) => joinRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
-  socket.on("updateChessboardState", (roomName: string, updatedChessBoardMatrix: Array<Array<string>>) => updateChessBoardState(io, socket, roomName, updatedChessBoardMatrix, socketIDToUserNameMapper));
+  socket.on("updateChessboardState", (roomName: string, updatedChessBoardMatrix: Array<Array<string>>, updatedChessBoardAttributes: any) => updateChessBoardState(io, socket, roomName, updatedChessBoardMatrix, updatedChessBoardAttributes, socketIDToUserNameMapper));
   socket.on("disconnect", () => disconnect(io, socket, activeRooms, socketIDToUserNameMapper));
 });
 

@@ -277,6 +277,7 @@ export class GameRoomComponent {
       this.IsBlackKingChecked = '';
     }
 
+
     let chessBoardAttributes = { 
       IsBlackKingChecked: this.IsBlackKingChecked, 
       isWhiteKingChecked: this.IsWhiteKingChecked, 
@@ -2130,14 +2131,6 @@ export class GameRoomComponent {
     }
   }
 
-  openModal() {
-    this.hasPlayerJoined = true;
-  }
-
-  closeModal() {
-    this.hasPlayerJoined = false;
-  }
-
   receiveJoinedPlayers() {
     this.socket.receiveJoinedPlayers().subscribe((message: any) => {
       this.joinedPlayerMessage = message;
@@ -2145,8 +2138,25 @@ export class GameRoomComponent {
     })
   }
 
+openModal() {
+    this.hasPlayerJoined = true;
+  }
+
+  closeModal() {
+    this.hasPlayerJoined = false;
+  }
+
 
   getUpdatedChessBoardState() {
+
+    this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
+      if (message["updatedChessBoardMatrix"].length > 0) {
+        console.log(message["updatedChessBoardMatrix"].length);
+        this.chess_Board = message["updatedChessBoardMatrix"];
+      }
+    })
+  }
+
       this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
         if(message["updatedChessBoardMatrix"].length > 0) {
           console.log(message["updatedChessBoardMatrix"].length);
@@ -2165,5 +2175,6 @@ export class GameRoomComponent {
 
       
     }
+
 }
 

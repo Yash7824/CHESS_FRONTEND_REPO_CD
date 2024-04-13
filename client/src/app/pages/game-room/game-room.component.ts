@@ -2154,13 +2154,6 @@ export class GameRoomComponent {
         console.log(message["updatedChessBoardMatrix"].length);
         this.chess_Board = message["updatedChessBoardMatrix"];
       }
-    })
-
-    this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
-      if (message["updatedChessBoardMatrix"].length > 0) {
-        console.log(message["updatedChessBoardMatrix"].length);
-        this.chess_Board = message["updatedChessBoardMatrix"];
-      }
 
       if (message["updatedChessBoardAttributes"] !== null) {
         this.IsBlackKingChecked = message["updatedChessBoardAttributes"]["IsBlackKingChecked"];

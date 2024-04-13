@@ -323,7 +323,14 @@ export class GameRoomComponent {
       this.chess_Board = this.chess_board_OG;
     }
 
-    this.socket.sendUpdatedChessBoardState(this.roomData.room,this.chess_Board);
+    let chessBoardAttributes = { 
+      IsBlackKingChecked: this.IsBlackKingChecked, 
+      isWhiteKingChecked: this.IsWhiteKingChecked, 
+      currentPlayer: this.currentPlayer,
+      hasBlackKingMoved: this.hasBlackKingMoved, 
+      hasWhiteKingMoved: this.hasWhiteKingMoved
+    };
+    this.socket.sendUpdatedChessBoardState(this.roomData.room,this.chess_Board, chessBoardAttributes);
   }
 
   IsEmptyTile(row: number, col: number): boolean {
@@ -1461,7 +1468,18 @@ export class GameRoomComponent {
           console.log(message["updatedChessBoardMatrix"].length);
           this.chess_Board = message["updatedChessBoardMatrix"];
         }
+
+        if(message["updatedChessBoardAttributes"] !== null) {
+          this.IsBlackKingChecked =  message["updatedChessBoardAttributes"]["IsBlackKingChecked"];
+          this.IsWhiteKingChecked = message["updatedChessBoardAttributes"]["IsWhiteKingChecked"];
+          this.currentPlayer = message["updatedChessBoardAttributes"]["currentPlayer"];
+          this.hasBlackKingMoved = message["updatedChessBoardAttributes"]["hasBlackKingMoved"];
+          this.hasWhiteKingMoved = message["updatedChessBoardAttributes"]["hasWhiteKingMoved"];
+        }
+
       })
+
+      
     }
 }
 

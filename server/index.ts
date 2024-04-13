@@ -8,7 +8,6 @@ import joinRoom from "./modules/joinRoom";
 import disconnect from "./modules/disconnect";
 import updateChessBoardState from "./modules/updateChessBoardState";
 import { Room } from "./interfaces/room";
-import chessPieceMovement from "./modules/chessPieceMovement";
 import connectToMongo from "./config/db"
 
 dotenv.config();

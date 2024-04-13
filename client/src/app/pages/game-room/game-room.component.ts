@@ -59,7 +59,7 @@ export class GameRoomComponent {
   chess_Board = this.socket.chess_Board;
 
   setColumnTile: any;
-  
+
   ngOnInit() {
 
     this.hasWhiteKingMoved = false;
@@ -67,7 +67,7 @@ export class GameRoomComponent {
     this.receiveJoinedPlayers();
     this.getUpdatedChessBoardState();
     this.route.queryParams.subscribe(params => {
-      this.roomData =  { player: params['playerName'], room: params['roomName']};
+      this.roomData = { player: params['playerName'], room: params['roomName'] };
     });
     // console.log(this.gpElementRef?.nativeElement);
   }
@@ -187,9 +187,9 @@ export class GameRoomComponent {
   }
 
   isPlayerTurn(player: string, row: number, col: number) {
-    if(this.IsWhitePiece(row, col) && player == 'white'){
+    if (this.IsWhitePiece(row, col) && player == 'white') {
       return true;
-    } else if(this.IsBlackPiece(row, col) && player == 'black'){
+    } else if (this.IsBlackPiece(row, col) && player == 'black') {
       return true;
     }
     return false;
@@ -202,7 +202,7 @@ export class GameRoomComponent {
     toCol: number
   ): void {
 
-    
+
     // console.log(this.socket.chess_Board);
     const piece = this.chess_Board[fromRow][fromCol];
     //Implement logic to move the piece in your chessboard array
@@ -248,9 +248,9 @@ export class GameRoomComponent {
     // Checking whether the White King is Under Check
     // here toRow and toCol are the co-ordinates of black piece after displacement.
     if (this.IsWhiteKingUnderCheck('K', toRow, toCol)) {
-      if(!this.IsCheckMate('K', toRow, toCol)){
+      if (!this.IsCheckMate('K', toRow, toCol)) {
         this.IsWhiteKingChecked = 'White Under Check';
-      }else {
+      } else {
         this.IsWhiteKingChecked = 'White got check mated'
         alert('Black Wins');
         this.chess_Board = this.chess_board_OG;
@@ -262,20 +262,20 @@ export class GameRoomComponent {
 
     // Checking whether the Black King is Under Check
     if (this.IsBlackKingUnderCheck('k', toRow, toCol)) {
-      if(!this.IsCheckMate('k', toRow, toCol)){
+      if (!this.IsCheckMate('k', toRow, toCol)) {
         this.IsBlackKingChecked = 'Black Under Check';
-      }else{
+      } else {
         this.IsBlackKingChecked = 'Black got check mated'
         alert('White Wins');
         this.chess_Board = this.chess_board_OG;
         this.currentPlayer = 'white';
       }
-      
+
     } else {
       this.IsBlackKingChecked = '';
     }
 
-    this.socket.sendUpdatedChessBoardState(this.roomData.room,this.chess_Board);
+    this.socket.sendUpdatedChessBoardState(this.roomData.room, this.chess_Board);
   }
 
   IsEmptyTile(row: number, col: number): boolean {
@@ -519,134 +519,736 @@ export class GameRoomComponent {
     return false;
   }
 
-  getMajorPieces(piece: string): number[][]{
+  getMajorPieces(piece: string): number[][] {
     const piece_Array = [];
-    for(let i=0; i<this.chess_Board.length; i++){
-      for(let j=0; j<this.chess_Board[i].length; j++){
-        if(this.chess_Board[i][j] === piece) piece_Array.push([i,j]);
+    for (let i = 0; i < this.chess_Board.length; i++) {
+      for (let j = 0; j < this.chess_Board[i].length; j++) {
+        if (this.chess_Board[i][j] === piece) piece_Array.push([i, j]);
       }
     }
     return piece_Array;
   }
 
 
-  IsTileSafeForKing(king: string, row: number, col: number): boolean{
+  IsTileSafeForKing(king: string, row: number, col: number): boolean {
     let king_coordinates = this.findPiece(king);
 
-    if(king === 'K' && king_coordinates && !this.IsWhitePiece(row,col)){
+    if (king === 'K' && king_coordinates && !this.IsWhitePiece(row, col)) {
 
-      if((this.chess_Board[row - 1][col - 1] === 'p' || 
-      this.chess_Board[row - 1][col + 1] === 'p') && 
-      row - 1 >= 0 && (col - 1 >= 0 && col + 1 <= 7)){
+      if ((this.chess_Board[row - 1][col - 1] === 'p' ||
+        this.chess_Board[row - 1][col + 1] === 'p') &&
+        row - 1 >= 0 && (col - 1 >= 0 && col + 1 <= 7)) {
         return false;
       }
 
       const blackKnightArray = this.getMajorPieces('n');
-      for(let pos of blackKnightArray){
-        if(!this.IsInvalidMove('n', pos[0], pos[1], row, col)){
+      for (let pos of blackKnightArray) {
+        if (!this.IsInvalidMove('n', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const blackRookArray = this.getMajorPieces('r');
-      for(let pos of blackRookArray){
-        if(!this.IsInvalidMove('r', pos[0], pos[1], row, col)){
+      for (let pos of blackRookArray) {
+        if (!this.IsInvalidMove('r', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const blackBishopArray = this.getMajorPieces('b');
-      for(let pos of blackBishopArray){
-        if(!this.IsInvalidMove('b', pos[0], pos[1], row, col)){
+      for (let pos of blackBishopArray) {
+        if (!this.IsInvalidMove('b', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const blackQueenArray = this.getMajorPieces('q');
-      for(let pos of blackQueenArray){
-        if(!this.IsInvalidMove('q', pos[0], pos[1], row, col)){
+      for (let pos of blackQueenArray) {
+        if (!this.IsInvalidMove('q', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
-    } else if(king === 'k' && king_coordinates && !this.IsBlackPiece(row,col)){
-      if((this.chess_Board[row + 1][col - 1] === 'P' || 
-      this.chess_Board[row + 1][col + 1] === 'P') && 
-      row + 1 <= 7 && (col - 1 >= 0 && col + 1 <= 7)){
+    } else if (king === 'k' && king_coordinates && !this.IsBlackPiece(row, col)) {
+      if ((this.chess_Board[row + 1][col - 1] === 'P' ||
+        this.chess_Board[row + 1][col + 1] === 'P') &&
+        row + 1 <= 7 && (col - 1 >= 0 && col + 1 <= 7)) {
         return false;
       }
 
       const whiteKnightArray = this.getMajorPieces('N');
-      for(let pos of whiteKnightArray){
-        if(!this.IsInvalidMove('N', pos[0], pos[1], row, col)){
+      for (let pos of whiteKnightArray) {
+        if (!this.IsInvalidMove('N', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const whiteRookArray = this.getMajorPieces('R');
-      for(let pos of whiteRookArray){
-        if(!this.IsInvalidMove('R', pos[0], pos[1], row, col)){
+      for (let pos of whiteRookArray) {
+        if (!this.IsInvalidMove('R', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const whiteBishopArray = this.getMajorPieces('B');
-      for(let pos of whiteBishopArray){
-        if(!this.IsInvalidMove('B', pos[0], pos[1], row, col)){
+      for (let pos of whiteBishopArray) {
+        if (!this.IsInvalidMove('B', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const whiteQueenArray = this.getMajorPieces('Q');
-      for(let pos of whiteQueenArray){
-        if(!this.IsInvalidMove('Q', pos[0], pos[1], row, col)){
+      for (let pos of whiteQueenArray) {
+        if (!this.IsInvalidMove('Q', pos[0], pos[1], row, col)) {
           return false;
         }
       }
-    }else if((king == 'k' && this.IsBlackPiece(row, col)) ||
-    (king == 'K' && this.IsWhitePiece(row, col))){
+    } else if ((king == 'k' && this.IsBlackPiece(row, col)) ||
+      (king == 'K' && this.IsWhitePiece(row, col))) {
       return false;
     }
-    
+
     return true;
   }
 
+  IsPieceProtected(piece: string, row: number, col: number) {
+
+    if (this.IsWhitePiece(row, col)) {
+      // Pawn Protection
+      if ((col - 1 >= 0 && row + 1 <= 7 && this.chess_Board[row + 1][col - 1] === 'P') ||
+        (col + 1 <= 7 && row + 1 <= 7 && this.chess_Board[row + 1][col + 1] === 'P')) {
+        return true;
+      }
+
+      // Knight Protection
+      if ((row + 1 <= 7 && col - 2 >= 0 && this.chess_Board[row + 1][col - 2] === 'N') ||
+        (row + 1 <= 7 && col + 2 <= 7 && this.chess_Board[row + 1][col + 2] === 'N') ||
+        (row + 2 <= 7 && col - 1 >= 0 && this.chess_Board[row + 2][col - 1] === 'N') ||
+        (row + 2 <= 7 && col + 1 <= 7 && this.chess_Board[row + 2][col + 1] === 'N') ||
+        (row - 1 >= 0 && col - 2 >= 0 && this.chess_Board[row - 1][col - 2] === 'N') ||
+        (row - 1 >= 0 && col + 2 <= 7 && this.chess_Board[row - 1][col + 2] === 'N') ||
+        (row - 2 >= 0 && col - 1 >= 0 && this.chess_Board[row - 2][col - 1] === 'N') ||
+        (row - 2 >= 0 && col + 1 <= 7 && this.chess_Board[row - 2][col + 1] === 'N')
+      ) {
+        return true;
+      }
+
+      // Rook Protection
+      for (let i = 1; i <= 7; i++) {
+        if (col - i >= 0 && this.IsEmptyTile(row, col - i)) continue;
+        if (col - i >= 0 && this.chess_Board[row][col - i] === 'R') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (col + i <= 7 && this.IsEmptyTile(row, col + i)) continue;
+        if (col + i <= 7 && this.chess_Board[row][col + i] === 'R') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && this.IsEmptyTile(row - i, col)) continue;
+        if (row - i >= 0 && this.chess_Board[row - i][col] === 'R') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i >= 0 && this.chess_Board[row + i][col] === 'R') {
+          return true;
+        } else break;
+      }
+
+      // Bishop Protection
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col - i >= 0 && this.IsEmptyTile(row - i, col - i)) continue;
+        if (row - i >= 0 && col - i >= 0 && this.chess_Board[row - i][col - i] === 'B') {
+          return true;
+        }
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col + i <= 7 && this.IsEmptyTile(row - i, col + i)) continue;
+        if (row - i >= 0 && col + i <= 7 && this.chess_Board[row - i][col + i] === 'B') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col - i >= 0 && this.IsEmptyTile(row + i, col - i)) continue;
+        if (row + i <= 7 && col - i >= 0 && this.chess_Board[row + i][col - i] === 'B') {
+          return true
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col + i <= 7 && this.IsEmptyTile(row + i, col + i)) continue;
+        if (row + i <= 7 && col + i <= 7 && this.chess_Board[row + i][col + i] === 'B') {
+          return true;
+        } else break;
+      }
+
+      // Queen Protection
+      for (let i = 1; i <= 7; i++) {
+        if (col - i >= 0 && this.IsEmptyTile(row, col - i)) continue;
+        if (col - i >= 0 && this.chess_Board[row][col - i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (col + i <= 7 && this.IsEmptyTile(row, col + i)) continue;
+        if (col + i <= 7 && this.chess_Board[row][col + i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && this.IsEmptyTile(row - i, col)) break;
+        if (row - i >= 0 && this.chess_Board[row - i][col] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i >= 0 && this.chess_Board[row + i][col] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col - i >= 0 && this.IsEmptyTile(row - i, col - i)) continue;
+        if (row - i >= 0 && col - i >= 0 && this.chess_Board[row - i][col - i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col + i <= 7 && this.IsEmptyTile(row - i, col + i)) continue;
+        if (row - i >= 0 && col + i <= 7 && this.chess_Board[row - i][col + i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col - i >= 0 && this.IsEmptyTile(row + i, col - i)) continue;
+        if (row + i <= 7 && col - i >= 0 && this.chess_Board[row + i][col - i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col + i <= 7 && this.IsEmptyTile(row + i, col + i)) continue;
+        if (row + i <= 7 && col + i <= 7 && this.chess_Board[row + i][col + i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      // King Protection
+      if ((row - 1 >= 0 && col - 1 >= 0 && this.chess_Board[row - 1][col - 1] === 'K') ||
+        (row - 1 >= 0 && this.chess_Board[row - 1][col] === 'K') ||
+        (row - 1 >= 0 && col + 1 <= 7 && this.chess_Board[row - 1][col + 1] === 'K') ||
+        (col - 1 >= 0 && this.chess_Board[row][col - 1] === 'K') ||
+        (col + 1 <= 7 && this.chess_Board[row][col + 1] === 'K') ||
+        (row + 1 <= 7 && col - 1 >= 0 && this.chess_Board[row + 1][col - 1] === 'K') ||
+        (row + 1 >= 7 && this.chess_Board[row + 1][col] === 'K') ||
+        (row + 1 <= 7 && col + 1 <= 7 && this.chess_Board[row + 1][col + 1] === 'K')
+      ) {
+        return true;
+      }
+
+    } else {
+      return false;
+    }
+
+    if (this.IsBlackPiece(row, col)) {
+
+      // Pawn Protection
+      if ((col - 1 >= 0 && row - 1 >= 0 && this.chess_Board[row - 1][col - 1] === 'p') ||
+        (col + 1 <= 7 && row - 1 >= 0 && this.chess_Board[row - 1][col + 1] === 'p')) {
+        return true;
+      }
+
+      // Knight Protection
+      if ((row + 1 <= 7 && col - 2 >= 0 && this.chess_Board[row + 1][col - 2] === 'n') ||
+        (row + 1 <= 7 && col + 2 <= 7 && this.chess_Board[row + 1][col + 2] === 'n') ||
+        (row + 2 <= 7 && col - 1 >= 0 && this.chess_Board[row + 2][col - 1] === 'n') ||
+        (row + 2 <= 7 && col + 1 <= 7 && this.chess_Board[row + 2][col + 1] === 'n') ||
+        (row - 1 >= 0 && col - 2 >= 0 && this.chess_Board[row - 1][col - 2] === 'n') ||
+        (row - 1 >= 0 && col + 2 <= 7 && this.chess_Board[row - 1][col + 2] === 'n') ||
+        (row - 2 >= 0 && col - 1 >= 0 && this.chess_Board[row - 2][col - 1] === 'n') ||
+        (row - 2 >= 0 && col + 1 <= 7 && this.chess_Board[row - 2][col + 1] === 'n')
+      ) {
+        return true;
+      }
+
+      // Rook Protection
+      for (let i = 1; i <= 7; i++) {
+        if (col - i >= 0 && this.IsEmptyTile(row, col - i)) continue;
+        if (col - i >= 0 && this.chess_Board[row][col - i] === 'r') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (col + i <= 7 && this.IsEmptyTile(row, col + i)) continue;
+        if (col + i <= 7 && this.chess_Board[row][col + i] === 'r') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && this.IsEmptyTile(row - i, col)) continue;
+        if (row - i >= 0 && this.chess_Board[row - i][col] === 'r') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i >= 0 && this.chess_Board[row + i][col] === 'r') {
+          return true;
+        } else break;
+      }
+
+      // Bishop Protection
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col - i >= 0 && this.IsEmptyTile(row - i, col - i)) continue;
+        if (row - i >= 0 && col - i >= 0 && this.chess_Board[row - i][col - i] === 'b') {
+          return true;
+        }
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col + i <= 7 && this.IsEmptyTile(row - i, col + i)) continue;
+        if (row - i >= 0 && col + i <= 7 && this.chess_Board[row - i][col + i] === 'b') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col - i >= 0 && this.IsEmptyTile(row + i, col - i)) continue;
+        if (row + i <= 7 && col - i >= 0 && this.chess_Board[row + i][col - i] === 'b') {
+          return true
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col + i <= 7 && this.IsEmptyTile(row + i, col + i)) continue;
+        if (row + i <= 7 && col + i <= 7 && this.chess_Board[row + i][col + i] === 'b') {
+          return true;
+        } else break;
+      }
+
+      // Queen Protection
+      for (let i = 1; i <= 7; i++) {
+        if (col - i >= 0 && this.IsEmptyTile(row, col - i)) continue;
+        if (col - i >= 0 && this.chess_Board[row][col - i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (col + i <= 7 && this.IsEmptyTile(row, col + i)) continue;
+        if (col + i <= 7 && this.chess_Board[row][col + i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && this.IsEmptyTile(row - i, col)) break;
+        if (row - i >= 0 && this.chess_Board[row - i][col] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i >= 0 && this.chess_Board[row + i][col] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col - i >= 0 && this.IsEmptyTile(row - i, col - i)) continue;
+        if (row - i >= 0 && col - i >= 0 && this.chess_Board[row - i][col - i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col + i <= 7 && this.IsEmptyTile(row - i, col + i)) continue;
+        if (row - i >= 0 && col + i <= 7 && this.chess_Board[row - i][col + i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col - i >= 0 && this.IsEmptyTile(row + i, col - i)) continue;
+        if (row + i <= 7 && col - i >= 0 && this.chess_Board[row + i][col - i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col + i <= 7 && this.IsEmptyTile(row + i, col + i)) continue;
+        if (row + i <= 7 && col + i <= 7 && this.chess_Board[row + i][col + i] === 'q') {
+          return true;
+        } else break;
+      }
+
+
+      // King Protection
+      if ((row - 1 >= 0 && col - 1 >= 0 && this.chess_Board[row - 1][col - 1] === 'k') ||
+        (row - 1 >= 0 && this.chess_Board[row - 1][col] === 'k') ||
+        (row - 1 >= 0 && col + 1 <= 7 && this.chess_Board[row - 1][col + 1] === 'k') ||
+        (col - 1 >= 0 && this.chess_Board[row][col - 1] === 'k') ||
+        (col + 1 <= 7 && this.chess_Board[row][col + 1] === 'k') ||
+        (row + 1 <= 7 && col - 1 >= 0 && this.chess_Board[row + 1][col - 1] === 'k') ||
+        (row + 1 >= 7 && this.chess_Board[row + 1][col] === 'k') ||
+        (row + 1 <= 7 && col + 1 <= 7 && this.chess_Board[row + 1][col + 1] === 'k')
+      ) {
+        return true;
+      }
+
+    } else {
+      return false;
+    }
+
+    return false;
+
+  }
+
+  canCaptureAttackingPiece(attackingPiece: string, row: number, col: number) {
+    if (this.IsWhitePiece(row, col)) {
+      // Pawn can Capture
+      if ((col - 1 >= 0 && row - 1 >= 0 && this.chess_Board[row + 1][col - 1] === 'p') ||
+        (col + 1 <= 7 && row - 1 >= 0 && this.chess_Board[row + 1][col + 1] === 'p')) {
+        return true;
+      }
+
+      // Knight can Capture
+      if ((row + 1 <= 7 && col - 2 >= 0 && this.chess_Board[row + 1][col - 2] === 'n') ||
+        (row + 1 <= 7 && col + 2 <= 7 && this.chess_Board[row + 1][col + 2] === 'n') ||
+        (row + 2 <= 7 && col - 1 >= 0 && this.chess_Board[row + 2][col - 1] === 'n') ||
+        (row + 2 <= 7 && col + 1 <= 7 && this.chess_Board[row + 2][col + 1] === 'n') ||
+        (row - 1 >= 0 && col - 2 >= 0 && this.chess_Board[row - 1][col - 2] === 'n') ||
+        (row - 1 >= 0 && col + 2 <= 7 && this.chess_Board[row - 1][col + 2] === 'n') ||
+        (row - 2 >= 0 && col - 1 >= 0 && this.chess_Board[row - 2][col - 1] === 'n') ||
+        (row - 2 >= 0 && col + 1 <= 7 && this.chess_Board[row - 2][col + 1] === 'n')
+      ) {
+        return true;
+      }
+
+      // Rook can capture
+      for (let i = 1; i <= 7; i++) {
+        if (col - i >= 0 && this.IsEmptyTile(row, col - i)) continue;
+        if (col - i >= 0 && this.chess_Board[row][col - i] === 'r') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (col + i <= 7 && this.IsEmptyTile(row, col + i)) continue;
+        if (col + i <= 7 && this.chess_Board[row][col + i] === 'r') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && this.IsEmptyTile(row - i, col)) continue;
+        if (row - i >= 0 && this.chess_Board[row - i][col] === 'r') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i >= 0 && this.chess_Board[row + i][col] === 'r') {
+          return true;
+        } else break;
+      }
+
+      // Bishop can capture
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col - i >= 0 && this.IsEmptyTile(row - i, col - i)) continue;
+        if (row - i >= 0 && col - i >= 0 && this.chess_Board[row - i][col - i] === 'b') {
+          return true;
+        }
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col + i <= 7 && this.IsEmptyTile(row - i, col + i)) continue;
+        if (row - i >= 0 && col + i <= 7 && this.chess_Board[row - i][col + i] === 'b') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col - i >= 0 && this.IsEmptyTile(row + i, col - i)) continue;
+        if (row + i <= 7 && col - i >= 0 && this.chess_Board[row + i][col - i] === 'b') {
+          return true
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col + i <= 7 && this.IsEmptyTile(row + i, col + i)) continue;
+        if (row + i <= 7 && col + i <= 7 && this.chess_Board[row + i][col + i] === 'b') {
+          return true;
+        } else break;
+      }
+
+      // Queen can capture
+      for (let i = 1; i <= 7; i++) {
+        if (col - i >= 0 && this.IsEmptyTile(row, col - i)) continue;
+        if (col - i >= 0 && this.chess_Board[row][col - i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (col + i <= 7 && this.IsEmptyTile(row, col + i)) continue;
+        if (col + i <= 7 && this.chess_Board[row][col + i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && this.IsEmptyTile(row - i, col)) break;
+        if (row - i >= 0 && this.chess_Board[row - i][col] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i >= 0 && this.chess_Board[row + i][col] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col - i >= 0 && this.IsEmptyTile(row - i, col - i)) continue;
+        if (row - i >= 0 && col - i >= 0 && this.chess_Board[row - i][col - i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col + i <= 7 && this.IsEmptyTile(row - i, col + i)) continue;
+        if (row - i >= 0 && col + i <= 7 && this.chess_Board[row - i][col + i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col - i >= 0 && this.IsEmptyTile(row + i, col - i)) continue;
+        if (row + i <= 7 && col - i >= 0 && this.chess_Board[row + i][col - i] === 'q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col + i <= 7 && this.IsEmptyTile(row + i, col + i)) continue;
+        if (row + i <= 7 && col + i <= 7 && this.chess_Board[row + i][col + i] === 'q') {
+          return true;
+        } else break;
+      }
+
+    } else {
+      return false;
+    }
+
+    if (this.IsBlackPiece(row, col)) {
+      // Pawn can capture
+      if ((col - 1 >= 0 && row + 1 <= 7 && this.chess_Board[row + 1][col - 1] === 'P') ||
+        (col + 1 <= 7 && row + 1 <= 7 && this.chess_Board[row + 1][col + 1] === 'P')) {
+        return true;
+      }
+
+      // Knight can Capture
+      if ((row + 1 <= 7 && col - 2 >= 0 && this.chess_Board[row + 1][col - 2] === 'N') ||
+        (row + 1 <= 7 && col + 2 <= 7 && this.chess_Board[row + 1][col + 2] === 'N') ||
+        (row + 2 <= 7 && col - 1 >= 0 && this.chess_Board[row + 2][col - 1] === 'N') ||
+        (row + 2 <= 7 && col + 1 <= 7 && this.chess_Board[row + 2][col + 1] === 'N') ||
+        (row - 1 >= 0 && col - 2 >= 0 && this.chess_Board[row - 1][col - 2] === 'N') ||
+        (row - 1 >= 0 && col + 2 <= 7 && this.chess_Board[row - 1][col + 2] === 'N') ||
+        (row - 2 >= 0 && col - 1 >= 0 && this.chess_Board[row - 2][col - 1] === 'N') ||
+        (row - 2 >= 0 && col + 1 <= 7 && this.chess_Board[row - 2][col + 1] === 'N')
+      ) {
+        return true;
+      }
+
+      // Rook can Capture
+      for (let i = 1; i <= 7; i++) {
+        if (col - i >= 0 && this.IsEmptyTile(row, col - i)) continue;
+        if (col - i >= 0 && this.chess_Board[row][col - i] === 'R') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (col + i <= 7 && this.IsEmptyTile(row, col + i)) continue;
+        if (col + i <= 7 && this.chess_Board[row][col + i] === 'R') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && this.IsEmptyTile(row - i, col)) continue;
+        if (row - i >= 0 && this.chess_Board[row - i][col] === 'R') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i >= 0 && this.chess_Board[row + i][col] === 'R') {
+          return true;
+        } else break;
+      }
+
+      // Bishop can Capture
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col - i >= 0 && this.IsEmptyTile(row - i, col - i)) continue;
+        if (row - i >= 0 && col - i >= 0 && this.chess_Board[row - i][col - i] === 'B') {
+          return true;
+        }
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col + i <= 7 && this.IsEmptyTile(row - i, col + i)) continue;
+        if (row - i >= 0 && col + i <= 7 && this.chess_Board[row - i][col + i] === 'B') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col - i >= 0 && this.IsEmptyTile(row + i, col - i)) continue;
+        if (row + i <= 7 && col - i >= 0 && this.chess_Board[row + i][col - i] === 'B') {
+          return true
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col + i <= 7 && this.IsEmptyTile(row + i, col + i)) continue;
+        if (row + i <= 7 && col + i <= 7 && this.chess_Board[row + i][col + i] === 'B') {
+          return true;
+        } else break;
+      }
+
+      // Queen can Capture
+      for (let i = 1; i <= 7; i++) {
+        if (col - i >= 0 && this.IsEmptyTile(row, col - i)) continue;
+        if (col - i >= 0 && this.chess_Board[row][col - i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (col + i <= 7 && this.IsEmptyTile(row, col + i)) continue;
+        if (col + i <= 7 && this.chess_Board[row][col + i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && this.IsEmptyTile(row - i, col)) break;
+        if (row - i >= 0 && this.chess_Board[row - i][col] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i >= 0 && this.chess_Board[row + i][col] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col - i >= 0 && this.IsEmptyTile(row - i, col - i)) continue;
+        if (row - i >= 0 && col - i >= 0 && this.chess_Board[row - i][col - i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row - i >= 0 && col + i <= 7 && this.IsEmptyTile(row - i, col + i)) continue;
+        if (row - i >= 0 && col + i <= 7 && this.chess_Board[row - i][col + i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col - i >= 0 && this.IsEmptyTile(row + i, col - i)) continue;
+        if (row + i <= 7 && col - i >= 0 && this.chess_Board[row + i][col - i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+      for (let i = 1; i <= 7; i++) {
+        if (row + i <= 7 && col + i <= 7 && this.IsEmptyTile(row + i, col + i)) continue;
+        if (row + i <= 7 && col + i <= 7 && this.chess_Board[row + i][col + i] === 'Q') {
+          return true;
+        } else break;
+      }
+
+    } else {
+      return false;
+    }
+
+    return false;
+  }
+
   //FIXME: after check
-  IsCheckMate(king: string, fromRow: number, fromCol: number){
+  IsCheckMate(king: string, fromRow: number, fromCol: number) {
     const attackingPiece = this.chess_Board[fromRow][fromCol];
     const king_coordinates = this.findPiece(king);
-    if(king_coordinates){
+    if (king_coordinates) {
       let king_row = king_coordinates.row, king_col = king_coordinates.col
-      if(king_row >= 1 && king_col >= 1 && this.IsTileSafeForKing(king, king_row - 1, king_col - 1)){
+      if (king_row >= 1 && king_col >= 1 && this.IsTileSafeForKing(king, king_row - 1, king_col - 1)) {
         return false;
       }
 
-      if(king_row >= 1 && this.IsTileSafeForKing(king, king_row - 1, king_col)){
+      if (king_row >= 1 && this.IsTileSafeForKing(king, king_row - 1, king_col)) {
         return false;
       }
 
-      if(king_row >= 1 && king_col <= 6 && this.IsTileSafeForKing(king, king_row - 1, king_col + 1)){
+      if (king_row >= 1 && king_col <= 6 && this.IsTileSafeForKing(king, king_row - 1, king_col + 1)) {
         return false;
       }
 
-      if(king_col >= 1 && this.IsTileSafeForKing(king, king_row, king_col - 1)){
+      if (king_col >= 1 && this.IsTileSafeForKing(king, king_row, king_col - 1)) {
         return false;
       }
 
-      if(king_col <= 6 && this.IsTileSafeForKing(king, king_row, king_col + 1)){
+      if (king_col <= 6 && this.IsTileSafeForKing(king, king_row, king_col + 1)) {
         return false;
       }
 
-      if(king_row <= 6 && king_col >= 1 && this.IsTileSafeForKing(king, king_row + 1, king_col - 1)){
+      if (king_row <= 6 && king_col >= 1 && this.IsTileSafeForKing(king, king_row + 1, king_col - 1)) {
         return false;
       }
 
-      if(king_row <= 6 && this.IsTileSafeForKing(king, king_row + 1, king_col)){
+      if (king_row <= 6 && this.IsTileSafeForKing(king, king_row + 1, king_col)) {
         return false;
       }
 
-      if(king_row <= 6 && king_col <= 6 && this.IsTileSafeForKing(king, king_row + 1, king_col + 1)){
+      if (king_row <= 6 && king_col <= 6 && this.IsTileSafeForKing(king, king_row + 1, king_col + 1)) {
         return false;
+      }
+
+      if (!this.IsPieceProtected(attackingPiece, fromRow, fromCol)) {
+        return false;
+      } else {
+        if (this.canCaptureAttackingPiece(attackingPiece, fromRow, fromCol)) {
+          return false;
+        }
       }
 
       return true;
@@ -891,6 +1493,10 @@ export class GameRoomComponent {
       case 'K':
       case 'k': {
         let correctMovement: boolean = false;
+        let attackingPiece = this.chess_Board[toRow][toCol];
+        if(this.IsPieceProtected(attackingPiece, toRow, toCol)){
+          return true;
+        }
 
         if (
           (toRow == fromRow - 1 && toCol == fromCol - 1) ||
@@ -905,6 +1511,7 @@ export class GameRoomComponent {
           correctMovement = true;
           break;
         }
+
 
         if (correctMovement) return false;
         else return true;
@@ -1478,40 +2085,40 @@ export class GameRoomComponent {
     }
 
     // Castling
-  if (
-    this.chess_Board[0][4] == 'k' &&
-    this.chess_Board[0][0] == 'r' &&
-    this.IsEmptyTile(0, 1) &&
-    this.IsEmptyTile(0, 2) &&
-    this.IsEmptyTile(0, 3) &&
-    !this.hasBlackKingMoved
-  ) {
-    if (toRow == fromRow && toCol == fromCol - 2) {
-      this.chess_Board[toRow][toCol] = 'k';
-      this.chess_Board[toRow][toCol + 1] = 'r';
-      this.chess_Board[fromRow][fromCol] = '';
-      this.chess_Board[0][0] = '';
-      this.hasBlackKingMoved = true;
-      this.toggleCurrentPlayer();
-      return;
+    if (
+      this.chess_Board[0][4] == 'k' &&
+      this.chess_Board[0][0] == 'r' &&
+      this.IsEmptyTile(0, 1) &&
+      this.IsEmptyTile(0, 2) &&
+      this.IsEmptyTile(0, 3) &&
+      !this.hasBlackKingMoved
+    ) {
+      if (toRow == fromRow && toCol == fromCol - 2) {
+        this.chess_Board[toRow][toCol] = 'k';
+        this.chess_Board[toRow][toCol + 1] = 'r';
+        this.chess_Board[fromRow][fromCol] = '';
+        this.chess_Board[0][0] = '';
+        this.hasBlackKingMoved = true;
+        this.toggleCurrentPlayer();
+        return;
+      }
+    } else if (
+      this.chess_Board[0][4] == 'k' &&
+      this.chess_Board[0][7] == 'r' &&
+      this.IsEmptyTile(0, 5) &&
+      this.IsEmptyTile(0, 6) &&
+      !this.hasBlackKingMoved
+    ) {
+      if (toRow == fromRow && toCol == fromCol + 2) {
+        this.chess_Board[toRow][toCol] = 'k';
+        this.chess_Board[toRow][toCol - 1] = 'r';
+        this.chess_Board[fromRow][fromCol] = '';
+        this.chess_Board[0][7] = '';
+        this.hasBlackKingMoved = true;
+        this.toggleCurrentPlayer();
+        return;
+      }
     }
-  } else if (
-    this.chess_Board[0][4] == 'k' &&
-    this.chess_Board[0][7] == 'r' &&
-    this.IsEmptyTile(0, 5) &&
-    this.IsEmptyTile(0, 6) &&
-    !this.hasBlackKingMoved
-  ) {
-    if (toRow == fromRow && toCol == fromCol + 2) {
-      this.chess_Board[toRow][toCol] = 'k';
-      this.chess_Board[toRow][toCol - 1] = 'r';
-      this.chess_Board[fromRow][fromCol] = '';
-      this.chess_Board[0][7] = '';
-      this.hasBlackKingMoved = true;
-      this.toggleCurrentPlayer();
-      return;
-    }
-  }
   }
   receiveJoinedPlayers() {
     this.socket.receiveJoinedPlayers().subscribe((message) => {
@@ -1521,12 +2128,12 @@ export class GameRoomComponent {
 
 
   getUpdatedChessBoardState() {
-      this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
-        if(message["updatedChessBoardMatrix"].length > 0) {
-          console.log(message["updatedChessBoardMatrix"].length);
-          this.chess_Board = message["updatedChessBoardMatrix"];
-        }
-      })
-    }
+    this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
+      if (message["updatedChessBoardMatrix"].length > 0) {
+        console.log(message["updatedChessBoardMatrix"].length);
+        this.chess_Board = message["updatedChessBoardMatrix"];
+      }
+    })
+  }
 }
 

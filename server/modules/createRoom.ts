@@ -5,11 +5,8 @@ const createRoom = (io: Server, socket: Socket, roomName:string, userName:string
     socket.join(roomName);
     activeRooms.set(roomName,{ name: roomName, users: new Set([userName])});
     socketIDToUserNameMapper.set(socket.id, userName);
-    console.log(`User ${userName} created and joined room: ${roomName}`);
     socket.emit("roomCreated", roomName);
-
     const roomArray: string[] = Array.from(activeRooms.keys());
-    console.log(roomArray);
     io.emit("activeRooms", roomArray);
 }
 

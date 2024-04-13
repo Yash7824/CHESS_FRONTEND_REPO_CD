@@ -20,10 +20,12 @@ import { SocketService } from 'src/app/services/SocketService';
 export class GameRoomComponent {
   @ViewChildren('column') columns!: QueryList<ElementRef>;
   @ViewChild('whitePawn') whitePawnRow!: ElementRef;
+  hasPlayerJoined: Boolean = false;
   roomData: any = {}
   currentPlayer: string = 'white';
   IsWhiteKingChecked: string = '';
   IsBlackKingChecked: string = '';
+  joinedPlayerMessage: string = 'Player Joined';
   draggedPiece: any = {};
   hasWhiteKingMoved!: boolean
   hasBlackKingMoved!: boolean
@@ -275,7 +277,15 @@ export class GameRoomComponent {
       this.IsBlackKingChecked = '';
     }
 
-    this.socket.sendUpdatedChessBoardState(this.roomData.room, this.chess_Board);
+
+    let chessBoardAttributes = { 
+      IsBlackKingChecked: this.IsBlackKingChecked, 
+      isWhiteKingChecked: this.IsWhiteKingChecked, 
+      currentPlayer: this.currentPlayer,
+      hasBlackKingMoved: this.hasBlackKingMoved, 
+      hasWhiteKingMoved: this.hasWhiteKingMoved
+    };
+    this.socket.sendUpdatedChessBoardState(this.roomData.room,this.chess_Board, chessBoardAttributes);
   }
 
   IsEmptyTile(row: number, col: number): boolean {
@@ -2120,14 +2130,25 @@ export class GameRoomComponent {
       }
     }
   }
+
   receiveJoinedPlayers() {
-    this.socket.receiveJoinedPlayers().subscribe((message) => {
-      alert(message);
+    this.socket.receiveJoinedPlayers().subscribe((message: any) => {
+      this.joinedPlayerMessage = message;
+      this.hasPlayerJoined = true;
     })
+  }
+
+openModal() {
+    this.hasPlayerJoined = true;
+  }
+
+  closeModal() {
+    this.hasPlayerJoined = false;
   }
 
 
   getUpdatedChessBoardState() {
+
     this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
       if (message["updatedChessBoardMatrix"].length > 0) {
         console.log(message["updatedChessBoardMatrix"].length);
@@ -2135,5 +2156,25 @@ export class GameRoomComponent {
       }
     })
   }
+
+      this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
+        if(message["updatedChessBoardMatrix"].length > 0) {
+          console.log(message["updatedChessBoardMatrix"].length);
+          this.chess_Board = message["updatedChessBoardMatrix"];
+        }
+
+        if(message["updatedChessBoardAttributes"] !== null) {
+          this.IsBlackKingChecked =  message["updatedChessBoardAttributes"]["IsBlackKingChecked"];
+          this.IsWhiteKingChecked = message["updatedChessBoardAttributes"]["IsWhiteKingChecked"];
+          this.currentPlayer = message["updatedChessBoardAttributes"]["currentPlayer"];
+          this.hasBlackKingMoved = message["updatedChessBoardAttributes"]["hasBlackKingMoved"];
+          this.hasWhiteKingMoved = message["updatedChessBoardAttributes"]["hasWhiteKingMoved"];
+        }
+
+      })
+
+      
+    }
+
 }
 

@@ -1,8 +1,8 @@
 <div class="createRoom--Container">
     <div class="createRoomForm--Container">
-        <input type="text"  placeholder="John Doe" [(ngModel)]="createroom.userName"/>
-        <input type="text"  placeholder="enter room name..." [(ngModel)]="createroom.roomName"/>
-        <button (click)="createRoom(createroom.roomName,createroom.userName)">Create Room</button>
+        <input type="text"  placeholder="John Doe" [(ngModel)]="createroom.userName" class="form-control mb-2" />
+        <input type="text"  placeholder="enter room name..." [(ngModel)]="createroom.roomName" class="form-control mb-2" />
+        <button (click)="createRoom(createroom.roomName,createroom.userName)" class="btn btn-danger">Create Room</button>
     </div>
 </div>
 

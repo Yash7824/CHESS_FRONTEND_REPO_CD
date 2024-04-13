@@ -50,8 +50,8 @@ export class SocketService {
     })
   }
 
-  sendUpdatedChessBoardState(roomName:string, chessBoardStateMatrix: Array<Array<string>>) {
-    this.socket.emit("updateChessboardState",roomName, chessBoardStateMatrix);
+  sendUpdatedChessBoardState(roomName:string, chessBoardStateMatrix: Array<Array<string>>, chessBoardAttributes: any) {
+    this.socket.emit("updateChessboardState",roomName, chessBoardStateMatrix, chessBoardAttributes);
   }
 
   disconnect() {

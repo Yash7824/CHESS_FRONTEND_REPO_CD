@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { connect } from 'socket.io-client';
 import { Room } from 'src/app/models/Room';
 import { RoomData } from 'src/app/models/RoomData';
-import { SocketService } from 'src/app/services/SocketService';
+import { SocketService } from 'src/app/services/socket.service';
 
 
 @Component({

@@ -500,6 +500,11 @@ export class GenericRuleService {
         ) {
           return true;
         }
+
+        if(toRow == fromRow - 2 && toCol != fromCol ){
+          return true;
+        }
+
         if (toCol == fromCol && toRow > fromRow) {
           return true;
         }
@@ -748,6 +753,10 @@ export class GenericRuleService {
           toRow == fromRow + 1 &&
           (toCol == fromCol - 1 || toCol == fromCol + 1)
         ) {
+          return true;
+        }
+
+        if(toRow == fromRow + 2 && toCol != fromCol ){
           return true;
         }
 

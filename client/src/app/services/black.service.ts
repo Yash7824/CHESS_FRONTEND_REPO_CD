@@ -33,7 +33,6 @@ export class BlackService {
     // If the tile is empty
     if (this.genRule.IsEmptyTile(toRow, toCol)) {
       if (this.genRule.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
-        alert('Invalid Move');
         this.genRule.resetToPreviousPosition(fromRow, fromCol, toRow, toCol);
       }
 
@@ -118,7 +117,6 @@ export class BlackService {
     if (this.genRule.IsEmptyTile(toRow, toCol)) {
       // Invalid Move
       if (this.genRule.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)) {
-        alert('Invalid Move');
         this.genRule.resetToPreviousPosition(fromRow, fromCol, toRow, toCol);
         return;
       }

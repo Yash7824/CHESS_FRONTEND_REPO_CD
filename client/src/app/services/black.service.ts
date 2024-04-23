@@ -252,7 +252,8 @@ export class BlackService {
           (toRow == fromRow + 1 && toCol == fromCol - 1) ||
           (toRow == fromRow + 1 && toCol == fromCol) ||
           (toRow == fromRow + 1 && toCol == fromCol + 1)) &&
-        !this.genRule.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
+        !this.genRule.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol) && 
+        this.genRule.IsTileSafeForKing('k', toRow, toCol)
       ) {
         this.genRule.chess_Board[toRow][toCol] = piece;
         this.genRule.chess_Board[fromRow][fromCol] = '';

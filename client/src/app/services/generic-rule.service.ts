@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WhiteService } from './white.service';
 import { BlackService } from './black.service';
+import { CheckService } from './check.service';
 
 @Injectable({
   providedIn: 'root'
@@ -377,6 +378,103 @@ export class GenericRuleService {
 
   }
 
+  getAllPiecesLocation(chess_Board: string[][]){
+    let locations: any = {}
+    
+    for(let i=0; i<chess_Board.length; i++){
+      for(let j=0; j<chess_Board[i].length; j++){
+        let piece = chess_Board[i][j];
+        if(locations[piece]){
+          locations[piece].push([i,j]);
+        }else{
+          locations[piece] = [[i,j]];
+        }
+      }
+    }
+    return locations;
+  }
+
+  IsTileSafeForKing(king: string, row: number, col: number): boolean {
+    let king_coordinates = this.findPiece(king);
+
+    if (king === 'K' && king_coordinates && !this.IsWhitePiece(row, col)) {
+
+      if ((this.chess_Board[row - 1][col - 1] === 'p' ||
+        this.chess_Board[row - 1][col + 1] === 'p') &&
+        row - 1 >= 0 && (col - 1 >= 0 && col + 1 <= 7)) {
+        return false;
+      }
+
+      const blackKnightArray = this.getMajorPieces('n');
+      for (let pos of blackKnightArray) {
+        if (!this.IsInvalidMove('n', pos[0], pos[1], row, col)) {
+          return false;
+        }
+      }
+
+      const blackRookArray = this.getMajorPieces('r');
+      for (let pos of blackRookArray) {
+        if (!this.IsInvalidMove('r', pos[0], pos[1], row, col)) {
+          return false;
+        }
+      }
+
+      const blackBishopArray = this.getMajorPieces('b');
+      for (let pos of blackBishopArray) {
+        if (!this.IsInvalidMove('b', pos[0], pos[1], row, col)) {
+          return false;
+        }
+      }
+
+      const blackQueenArray = this.getMajorPieces('q');
+      for (let pos of blackQueenArray) {
+        if (!this.IsInvalidMove('q', pos[0], pos[1], row, col)) {
+          return false;
+        }
+      }
+
+    } else if (king === 'k' && king_coordinates && !this.IsBlackPiece(row, col)) {
+      if ((this.chess_Board[row + 1][col - 1] === 'P' ||
+        this.chess_Board[row + 1][col + 1] === 'P') &&
+        row + 1 <= 7 && (col - 1 >= 0 && col + 1 <= 7)) {
+        return false;
+      }
+
+      const whiteKnightArray = this.getMajorPieces('N');
+      for (let pos of whiteKnightArray) {
+        if (!this.IsInvalidMove('N', pos[0], pos[1], row, col)) {
+          return false;
+        }
+      }
+
+      const whiteRookArray = this.getMajorPieces('R');
+      for (let pos of whiteRookArray) {
+        if (!this.IsInvalidMove('R', pos[0], pos[1], row, col)) {
+          return false;
+        }
+      }
+
+      const whiteBishopArray = this.getMajorPieces('B');
+      for (let pos of whiteBishopArray) {
+        if (!this.IsInvalidMove('B', pos[0], pos[1], row, col)) {
+          return false;
+        }
+      }
+
+      const whiteQueenArray = this.getMajorPieces('Q');
+      for (let pos of whiteQueenArray) {
+        if (!this.IsInvalidMove('Q', pos[0], pos[1], row, col)) {
+          return false;
+        }
+      }
+    } else if ((king == 'k' && this.IsBlackPiece(row, col)) ||
+      (king == 'K' && this.IsWhitePiece(row, col))) {
+      return false;
+    }
+
+    return true;
+  }
+
   IsInvalidMove(
     piece: string,
     fromRow: number,
@@ -409,6 +507,11 @@ export class GenericRuleService {
         if (!this.IsEmptyTile(toRow, toCol)) {
           return true;
         }
+
+        // if(toCol == fromCol && 
+        //   (toRow == fromRow - 1 || toRow == fromRow - 2)){
+
+        // }
 
         break;
       }

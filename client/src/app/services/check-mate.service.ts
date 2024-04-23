@@ -8,87 +8,7 @@ export class CheckMateService {
 
   constructor(private genRule: GenericRuleService) { }
 
-  IsTileSafeForKing(king: string, row: number, col: number): boolean {
-    let king_coordinates = this.genRule.findPiece(king);
-
-    if (king === 'K' && king_coordinates && !this.genRule.IsWhitePiece(row, col)) {
-
-      if ((this.genRule.chess_Board[row - 1][col - 1] === 'p' ||
-        this.genRule.chess_Board[row - 1][col + 1] === 'p') &&
-        row - 1 >= 0 && (col - 1 >= 0 && col + 1 <= 7)) {
-        return false;
-      }
-
-      const blackKnightArray = this.genRule.getMajorPieces('n');
-      for (let pos of blackKnightArray) {
-        if (!this.genRule.IsInvalidMove('n', pos[0], pos[1], row, col)) {
-          return false;
-        }
-      }
-
-      const blackRookArray = this.genRule.getMajorPieces('r');
-      for (let pos of blackRookArray) {
-        if (!this.genRule.IsInvalidMove('r', pos[0], pos[1], row, col)) {
-          return false;
-        }
-      }
-
-      const blackBishopArray = this.genRule.getMajorPieces('b');
-      for (let pos of blackBishopArray) {
-        if (!this.genRule.IsInvalidMove('b', pos[0], pos[1], row, col)) {
-          return false;
-        }
-      }
-
-      const blackQueenArray = this.genRule.getMajorPieces('q');
-      for (let pos of blackQueenArray) {
-        if (!this.genRule.IsInvalidMove('q', pos[0], pos[1], row, col)) {
-          return false;
-        }
-      }
-
-    } else if (king === 'k' && king_coordinates && !this.genRule.IsBlackPiece(row, col)) {
-      if ((this.genRule.chess_Board[row + 1][col - 1] === 'P' ||
-        this.genRule.chess_Board[row + 1][col + 1] === 'P') &&
-        row + 1 <= 7 && (col - 1 >= 0 && col + 1 <= 7)) {
-        return false;
-      }
-
-      const whiteKnightArray = this.genRule.getMajorPieces('N');
-      for (let pos of whiteKnightArray) {
-        if (!this.genRule.IsInvalidMove('N', pos[0], pos[1], row, col)) {
-          return false;
-        }
-      }
-
-      const whiteRookArray = this.genRule.getMajorPieces('R');
-      for (let pos of whiteRookArray) {
-        if (!this.genRule.IsInvalidMove('R', pos[0], pos[1], row, col)) {
-          return false;
-        }
-      }
-
-      const whiteBishopArray = this.genRule.getMajorPieces('B');
-      for (let pos of whiteBishopArray) {
-        if (!this.genRule.IsInvalidMove('B', pos[0], pos[1], row, col)) {
-          return false;
-        }
-      }
-
-      const whiteQueenArray = this.genRule.getMajorPieces('Q');
-      for (let pos of whiteQueenArray) {
-        if (!this.genRule.IsInvalidMove('Q', pos[0], pos[1], row, col)) {
-          return false;
-        }
-      }
-    } else if ((king == 'k' && this.genRule.IsBlackPiece(row, col)) ||
-      (king == 'K' && this.genRule.IsWhitePiece(row, col))) {
-      return false;
-    }
-
-    return true;
-  }
-
+  
   canCaptureAttackingPiece(attackingPiece: string, row: number, col: number) {
     if (this.genRule.IsWhitePiece(row, col)) {
       // Pawn can Capture
@@ -373,39 +293,40 @@ export class CheckMateService {
 
   //FIXME: after check
   IsCheckMate(king: string, fromRow: number, fromCol: number) {
+    debugger;
     const attackingPiece = this.genRule.chess_Board[fromRow][fromCol];
     const king_coordinates = this.genRule.findPiece(king);
     if (king_coordinates) {
       let king_row = king_coordinates.row, king_col = king_coordinates.col
-      if (king_row >= 1 && king_col >= 1 && this.IsTileSafeForKing(king, king_row - 1, king_col - 1)) {
+      if (king_row >= 1 && king_col >= 1 && this.genRule.IsTileSafeForKing(king, king_row - 1, king_col - 1)) {
         return false;
       }
 
-      if (king_row >= 1 && this.IsTileSafeForKing(king, king_row - 1, king_col)) {
+      if (king_row >= 1 && this.genRule.IsTileSafeForKing(king, king_row - 1, king_col)) {
         return false;
       }
 
-      if (king_row >= 1 && king_col <= 6 && this.IsTileSafeForKing(king, king_row - 1, king_col + 1)) {
+      if (king_row >= 1 && king_col <= 6 && this.genRule.IsTileSafeForKing(king, king_row - 1, king_col + 1)) {
         return false;
       }
 
-      if (king_col >= 1 && this.IsTileSafeForKing(king, king_row, king_col - 1)) {
+      if (king_col >= 1 && this.genRule.IsTileSafeForKing(king, king_row, king_col - 1)) {
         return false;
       }
 
-      if (king_col <= 6 && this.IsTileSafeForKing(king, king_row, king_col + 1)) {
+      if (king_col <= 6 && this.genRule.IsTileSafeForKing(king, king_row, king_col + 1)) {
         return false;
       }
 
-      if (king_row <= 6 && king_col >= 1 && this.IsTileSafeForKing(king, king_row + 1, king_col - 1)) {
+      if (king_row <= 6 && king_col >= 1 && this.genRule.IsTileSafeForKing(king, king_row + 1, king_col - 1)) {
         return false;
       }
 
-      if (king_row <= 6 && this.IsTileSafeForKing(king, king_row + 1, king_col)) {
+      if (king_row <= 6 && this.genRule.IsTileSafeForKing(king, king_row + 1, king_col)) {
         return false;
       }
 
-      if (king_row <= 6 && king_col <= 6 && this.IsTileSafeForKing(king, king_row + 1, king_col + 1)) {
+      if (king_row <= 6 && king_col <= 6 && this.genRule.IsTileSafeForKing(king, king_row + 1, king_col + 1)) {
         return false;
       }
 

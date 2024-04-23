@@ -62,8 +62,8 @@ export class GameRoomComponent {
     this.route.queryParams.subscribe(params => {
       this.roomData = { player: params['playerName'], room: params['roomName'] };
     });
+    
   }
-
 
   setTileStyle(row: number, column: number) {
     if (this.genRule.IsBlackKingChecked == 'Black Under Check' && this.chess_Board[row][column] == 'k') {

@@ -501,6 +501,7 @@ export class GenericRuleService {
           return true;
         }
 
+
         if(toRow == fromRow - 2 && toCol != fromCol ){
           return true;
         }

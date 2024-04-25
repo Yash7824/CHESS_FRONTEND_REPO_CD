@@ -15,7 +15,6 @@ export class WhiteService {
     toRow: number,
     toCol: number
   ) {
-    //
     const piece = this.genRule.chess_Board[fromRow][fromCol];
 
     // Attacking Black Pieces

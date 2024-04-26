@@ -80,16 +80,11 @@
           </div>
           
 
-          <div *ngIf="hasPlayerJoined" class="joined_player__modal">
+          <div *ngIf="hasPlayerJoined" class="block fixed z-1000 left-0 ml-[70vh] top-0 mt-[40vh] w-[40vh] h-screen">
       
-            <div class="joined_player__modal-content">
-              <span class="close" (click)="closeModal()">&times;</span>
-              <div class="joined_player__modal-header">
-                <h1>Message</h1>
-              </div>
-              <div class="divider"></div>
-             
-              <p>{{joinedPlayerMessage}}</p>
+            <div class="bg-slate-300 py-[2vh] flex flex-row justify-center align-middle drop-shadow-2xl">
+              <span class="cursor-pointer self-center text-gray-500 text-2xl font-bold" (click)="closeModal()">&times;</span>
+              <p class="self-center mt-1 ml-2 text-xl font-semibold">{{joinedPlayerMessage}}</p>
             </div>
           </div>
       

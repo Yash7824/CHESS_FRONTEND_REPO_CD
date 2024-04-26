@@ -15,6 +15,7 @@ export class CreateRoomComponent {
 
   createroom: RoomData = { userName: '', roomName: ''}
   createRoom(roomName: string, userName: string) {
+    console.log("create");
     this.socket.createRoom(roomName, userName);
     this.navigateTo('game', { playerName: userName, roomName: roomName });
   }

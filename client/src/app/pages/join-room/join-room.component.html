@@ -1,8 +1,17 @@
 <div class="joinRoom--Container">
-    <div class="joinRoomForm--Container">
-        <h2>Join Room</h2>
-        <input type="text" #userNameInput  placeholder="Enter user name..." class="form-control mb-2" [(ngModel)]="joinroom.userName"/>
-        <input type="text" #roomNameInput placeholder="Enter room name..." class="form-control mb-2" [(ngModel)]="joinroom.roomName"/>
-        <button (click)="joinRoom(joinroom.userName,joinroom.roomName)" class="btn btn-danger">Join Room</button>
+    <div id="joinRoomForm--Container" class="flex flex-column bg-cyan-950 justify-self-center self-center w-1/2 mt-[10vh] gap-4 border-1 border-slate-400 px-5 py-[5vh] drop-shadow-2xl">
+        <h1  id="create-room--title" class="xl:text-4xl sm:text-sm self-center text-slate-100 font-extrabold">Join Room</h1>
+        <input type="text" #userNameInput  placeholder="Enter user name..."class="bg-transparent text-gray-400 xl:text-xl sm:text-md outline-0 border-b-2 border-slate-200" [(ngModel)]="joinroom.userName"/>
+        <input type="text" #roomNameInput placeholder="Enter room name..." class="bg-transparent text-gray-400 xl:text-xl sm:text-md outline-0 border-b-2 border-slate-200" [(ngModel)]="joinroom.roomName"/>
+        <button (click)="joinRoom(joinroom.userName,joinroom.roomName)" class="focus:outline-none flex flex-row align-middle justify-center text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+            Join Room
+            <svg class="w-[20px] h-[20px] ml-1 mt-[1px] fill-[#ffffff]" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+
+                <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                <path d="M352 96l64 0c17.7 0 32 14.3 32 32l0 256c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0c53 0 96-43 96-96l0-256c0-53-43-96-96-96l-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm-9.4 182.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L242.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z"></path>
+              
+              </svg>
+        </button>
+        
     </div>
 </div>

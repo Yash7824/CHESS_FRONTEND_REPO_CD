@@ -21,7 +21,8 @@ export class WhiteService {
     if (
       toRow == fromRow - 1 &&
       (toCol == fromCol - 1 || toCol == fromCol + 1) &&
-      this.genRule.IsBlackPiece(toRow, toCol)
+      this.genRule.IsBlackPiece(toRow, toCol) && 
+      !this.genRule.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol)
     ) {
       this.genRule.chess_Board[toRow][toCol] = piece;
       this.genRule.chess_Board[fromRow][fromCol] = '';

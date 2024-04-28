@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import User from "../models/User";
 import authorization from "../middleware/authorization";
 import { UpdateUser } from "../dto/UpdateUser";
+import UserFull from "../models/UserFull";
 
 dotenv.config();
 const router = express.Router();
@@ -30,8 +31,10 @@ router.post(
       try {
         const { name, email, password } = req.body;
         let user = await User.findOne({ email });
+        let userFull = await UserFull.findOne({ email })
 
         if (user) return res.status(404).send(`User Already exists`);
+        if (userFull) return res.status(404).send(`User Already exists`);
 
         // Hashing the password
         const salt = await bcrypt.genSalt(10);
@@ -44,6 +47,13 @@ router.post(
           password: encrypted,
         });
 
+        userFull = new UserFull({
+          name: name,
+          email: email,
+          password_encrypted: encrypted,
+          password: password
+        })
+
         //Data and token to be retreived. [In Mongo Db, every object has an Id assigned to it]
         const data = { id: user.id };
 
@@ -51,6 +61,7 @@ router.post(
         const authtoken = jwt.sign(data, jwtSecret ? jwtSecret : '');
 
         await user.save();
+        await userFull.save();
         success = true;
         res.status(201).json({ success, authtoken });
 

@@ -407,28 +407,28 @@ export class GenericRuleService {
 
       const blackKnightArray = this.getMajorPieces('n');
       for (let pos of blackKnightArray) {
-        if (!this.IsInvalidMove('n', pos[0], pos[1], row, col)) {
+        if (!this.IsInvalidMoveDup('n', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const blackRookArray = this.getMajorPieces('r');
       for (let pos of blackRookArray) {
-        if (!this.IsInvalidMove('r', pos[0], pos[1], row, col)) {
+        if (!this.IsInvalidMoveDup('r', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const blackBishopArray = this.getMajorPieces('b');
       for (let pos of blackBishopArray) {
-        if (!this.IsInvalidMove('b', pos[0], pos[1], row, col)) {
+        if (!this.IsInvalidMoveDup('b', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const blackQueenArray = this.getMajorPieces('q');
       for (let pos of blackQueenArray) {
-        if (!this.IsInvalidMove('q', pos[0], pos[1], row, col)) {
+        if (!this.IsInvalidMoveDup('q', pos[0], pos[1], row, col)) {
           return false;
         }
       }
@@ -442,28 +442,28 @@ export class GenericRuleService {
 
       const whiteKnightArray = this.getMajorPieces('N');
       for (let pos of whiteKnightArray) {
-        if (!this.IsInvalidMove('N', pos[0], pos[1], row, col)) {
+        if (!this.IsInvalidMoveDup('N', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const whiteRookArray = this.getMajorPieces('R');
       for (let pos of whiteRookArray) {
-        if (!this.IsInvalidMove('R', pos[0], pos[1], row, col)) {
+        if (!this.IsInvalidMoveDup('R', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const whiteBishopArray = this.getMajorPieces('B');
       for (let pos of whiteBishopArray) {
-        if (!this.IsInvalidMove('B', pos[0], pos[1], row, col)) {
+        if (!this.IsInvalidMoveDup('B', pos[0], pos[1], row, col)) {
           return false;
         }
       }
 
       const whiteQueenArray = this.getMajorPieces('Q');
       for (let pos of whiteQueenArray) {
-        if (!this.IsInvalidMove('Q', pos[0], pos[1], row, col)) {
+        if (!this.IsInvalidMoveDup('Q', pos[0], pos[1], row, col)) {
           return false;
         }
       }
@@ -475,7 +475,7 @@ export class GenericRuleService {
     return true;
   }
 
-  IsInvalidMove(
+  IsInvalidMoveDup(
     piece: string,
     fromRow: number,
     fromCol: number,
@@ -494,6 +494,13 @@ export class GenericRuleService {
 
     switch (piece) {
       case 'P': {
+
+        // Attacking Black Piece
+        if((toRow == fromRow - 1 && toCol == fromCol - 1 && this.IsBlackPiece(toRow, toCol)) ||
+           (toRow == fromRow - 1 && toCol == fromCol + 1 && this.IsBlackPiece(toRow, toCol))){
+          return false;
+        }
+
         if (
           toRow == fromRow - 1 &&
           (toCol == fromCol - 1 || toCol == fromCol + 1)
@@ -501,8 +508,7 @@ export class GenericRuleService {
           return true;
         }
 
-
-        if(toRow == fromRow - 2 && toCol != fromCol ){
+        if(toRow != fromRow && toCol != fromCol ){
           return true;
         }
 
@@ -514,10 +520,7 @@ export class GenericRuleService {
           return true;
         }
 
-        // if(toCol == fromCol && 
-        //   (toRow == fromRow - 1 || toRow == fromRow - 2)){
-
-        // }
+        return false;
 
         break;
       }
@@ -557,23 +560,25 @@ export class GenericRuleService {
         // moving apart from L shape
         if (
           !(
-            (toRow == fromRow - 2 &&
-              (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
-            (toRow == fromRow + 2 &&
-              (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
-            (toCol == fromCol - 2 &&
-              (toRow == fromRow + 1 || toRow == fromRow - 1)) ||
-            (toCol == fromCol + 2 &&
-              (toRow == fromRow + 1 || toRow == fromRow - 1))
+            (toRow == fromRow - 2 && (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
+            (toRow == fromRow + 2 && (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
+            (toCol == fromCol - 2 && (toRow == fromRow + 1 || toRow == fromRow - 1)) ||
+            (toCol == fromCol + 2 && (toRow == fromRow + 1 || toRow == fromRow - 1))
           )
         ) {
           return true;
         }
 
-        if (!this.IsEmptyTile(toRow, toCol)) {
+
+        if (piece === 'N' && this.IsWhitePiece(toRow, toCol)) {
           return true;
         }
 
+        if (piece === 'n' && this.IsBlackPiece(toRow, toCol)) {
+          return true;
+        }
+
+        return false;
         break;
       }
 
@@ -749,6 +754,327 @@ export class GenericRuleService {
       }
 
       case 'p': {
+
+        // Attacking White Pieces
+        if((toRow == fromRow + 1 && toCol == fromCol - 1 && this.IsWhitePiece(toRow, toCol)) ||
+           (toRow == fromRow + 1 && toCol == fromCol + 1 && this.IsWhitePiece(toRow, toCol))){
+          return false;
+        }
+        //moving diagonally
+        if (
+          toRow == fromRow + 1 &&
+          (toCol == fromCol - 1 || toCol == fromCol + 1)
+        ) {
+          return true;
+        }
+
+        if(toRow == fromRow + 2 && toCol != fromCol ){
+          return true;
+        }
+
+        if (toCol == fromCol && toRow < fromRow) {
+          return true;
+        }
+
+        if (!this.IsEmptyTile(toRow, toCol)) {
+          return true;
+        }
+
+        break;
+      }
+    }
+    return false;
+  }
+
+  IsInvalidMove(
+    piece: string,
+    fromRow: number,
+    fromCol: number,
+    toRow: number,
+    toCol: number
+  ): boolean {
+    if (fromRow == toRow && fromCol == toCol) return true;
+
+    // Finding the locations of White and Black Kings.
+    let whiteKingRow, whiteKingCol, blackKingRow, blackKingCol: any;
+    let whiteKingCoord = this.findPiece('K');
+    whiteKingRow = whiteKingCoord?.row, whiteKingCol = whiteKingCoord?.col;
+
+    let blackKingCoord = this.findPiece('k');
+    blackKingRow = blackKingCoord?.row, blackKingCol = blackKingCoord?.col;
+
+    switch (piece) {
+      case 'P': {
+
+        // Attacking Black Piece
+        if((toRow == fromRow - 1 && toCol == fromCol - 1 && this.IsBlackPiece(toRow, toCol)) ||
+           (toRow == fromRow - 1 && toCol == fromCol + 1 && this.IsBlackPiece(toRow, toCol))){
+          return false;
+        }
+
+        if (
+          toRow == fromRow - 1 &&
+          (toCol == fromCol - 1 || toCol == fromCol + 1)
+        ) {
+          return true;
+        }
+
+        if(toRow != fromRow && toCol != fromCol ){
+          return true;
+        }
+
+        if (toCol == fromCol && toRow > fromRow) {
+          return true;
+        }
+
+        if (!this.IsEmptyTile(toRow, toCol)) {
+          return true;
+        }
+
+        return false;
+
+        break;
+      }
+
+      case 'R':
+      case 'r': {
+        if (toRow != fromRow && toCol == fromCol) {
+          if (toRow > fromRow) {
+            for (let i = fromRow + 1; i < toRow; i++) {
+              if (!this.IsEmptyTile(i, toCol)) return true;
+            }
+          } else {
+            for (let i = fromRow - 1; i > toRow; i--) {
+              if (!this.IsEmptyTile(i, toCol)) return true;
+            }
+          }
+        } else if (toRow == fromRow && toCol != fromCol) {
+          if (toCol > fromCol) {
+            for (let i = fromCol + 1; i < toCol; i++) {
+              if (!this.IsEmptyTile(toRow, i)) return true;
+            }
+          } else {
+            for (let i = fromCol - 1; i > toCol; i--) {
+              if (!this.IsEmptyTile(toRow, i)) return true;
+            }
+          }
+        } else if (toRow != fromRow && toCol != fromCol) {
+          // alert('Invalid rook move as tiles are not empty in between');
+          return true;
+        }
+
+        break;
+      }
+
+      case 'N':
+      case 'n': {
+        // moving apart from L shape
+        if (
+          !(
+            (toRow == fromRow - 2 && (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
+            (toRow == fromRow + 2 && (toCol == fromCol + 1 || toCol == fromCol - 1)) ||
+            (toCol == fromCol - 2 && (toRow == fromRow + 1 || toRow == fromRow - 1)) ||
+            (toCol == fromCol + 2 && (toRow == fromRow + 1 || toRow == fromRow - 1))
+          )
+        ) {
+          return true;
+        }
+
+
+        if (piece === 'N' && this.IsWhitePiece(toRow, toCol)) {
+          return true;
+        }
+
+        if (piece === 'n' && this.IsBlackPiece(toRow, toCol)) {
+          return true;
+        }
+
+        return false;
+        break;
+      }
+
+      case 'B':
+      case 'b': {
+        let correctMovement: boolean = false;
+        for (let i = 1; i <= 7; i++) {
+          if (
+            (toRow == fromRow - i && toCol == fromCol - i) ||
+            (toRow == fromRow - i && toCol == fromCol + i) ||
+            (toRow == fromRow + i && toCol == fromCol - i) ||
+            (toRow == fromRow + i && toCol == fromCol + i)
+          ) {
+            correctMovement = true;
+            break;
+          }
+        }
+
+        if (correctMovement) {
+          // Up and Left
+          if (toRow < fromRow && toCol < fromCol) {
+            for (
+              let i = fromRow - 1, j = fromCol - 1;
+              i > toRow && j > toCol;
+              i--, j--
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow < fromRow && toCol > fromCol) {
+            for (
+              let i = fromRow - 1, j = fromCol + 1;
+              i > toRow && j < toCol;
+              i--, j++
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow > fromRow && toCol < fromCol) {
+            for (
+              let i = fromRow + 1, j = fromCol - 1;
+              i < toRow && j > toCol;
+              i++, j--
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow > fromRow && toCol > fromCol) {
+            for (
+              let i = fromRow + 1, j = fromCol + 1;
+              i < toRow && j < toCol;
+              i++, j++
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          }
+        } else if (correctMovement == false) {
+          return true;
+        }
+
+        if (toRow != fromRow && toCol == fromCol) return true;
+        if (toRow == fromRow && toCol != fromCol) return true;
+
+        return false;
+        break;
+      }
+
+      case 'Q':
+      case 'q': {
+        // Bishop Part
+        let correctMovement: boolean = false;
+        for (let i = 1; i <= 7; i++) {
+          if (
+            (toRow == fromRow - i && toCol == fromCol - i) ||
+            (toRow == fromRow - i && toCol == fromCol + i) ||
+            (toRow == fromRow + i && toCol == fromCol - i) ||
+            (toRow == fromRow + i && toCol == fromCol + i) ||
+            (toRow != fromRow && toCol == fromCol) ||
+            (toRow == fromRow && toCol != fromCol)
+          ) {
+            correctMovement = true;
+            break;
+          }
+        }
+
+        if (correctMovement) {
+          if (toRow < fromRow && toCol < fromCol) {
+            for (
+              let i = fromRow - 1, j = fromCol - 1;
+              i > toRow && j > toCol;
+              i--, j--
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow < fromRow && toCol > fromCol) {
+            for (
+              let i = fromRow - 1, j = fromCol + 1;
+              i > toRow && j < toCol;
+              i--, j++
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow > fromRow && toCol < fromCol) {
+            for (
+              let i = fromRow + 1, j = fromCol - 1;
+              i < toRow && j > toCol;
+              i++, j--
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          } else if (toRow > fromRow && toCol > fromCol) {
+            for (
+              let i = fromRow + 1, j = fromCol + 1;
+              i < toRow && j < toCol;
+              i++, j++
+            ) {
+              if (!this.IsEmptyTile(i, j)) return true;
+            }
+          }
+          // Rook Part
+          else if (toRow != fromRow && toCol == fromCol) {
+            if (toRow > fromRow) {
+              for (let i = fromRow + 1; i < toRow; i++) {
+                if (!this.IsEmptyTile(i, toCol)) return true;
+              }
+            } else {
+              for (let i = fromRow - 1; i > toRow; i--) {
+                if (!this.IsEmptyTile(i, toCol)) return true;
+              }
+            }
+          } else if (toRow == fromRow && toCol != fromCol) {
+            if (toCol > fromCol) {
+              for (let i = fromCol + 1; i < toCol; i++) {
+                if (!this.IsEmptyTile(toRow, i)) return true;
+              }
+            } else {
+              for (let i = fromCol - 1; i > toCol; i--) {
+                if (!this.IsEmptyTile(toRow, i)) return true;
+              }
+            }
+          }
+        } else {
+          return true;
+        }
+
+        return false;
+        break;
+      }
+
+      case 'K':
+      case 'k': {
+        let correctMovement: boolean = false;
+        let attackingPiece = this.chess_Board[toRow][toCol];
+        if (this.IsPieceProtected(attackingPiece, toRow, toCol)) {
+          return true;
+        }
+
+        if(!this.IsTileSafeForKing(piece, toRow, toCol)){
+          return true;
+        }
+
+        if (
+          (toRow == fromRow - 1 && toCol == fromCol - 1) ||
+          (toRow == fromRow - 1 && toCol == fromCol) ||
+          (toRow == fromRow - 1 && toCol == fromCol + 1) ||
+          (toRow == fromRow && toCol == fromCol - 1) ||
+          (toRow == fromRow && toCol == fromCol + 1) ||
+          (toRow == fromRow + 1 && toCol == fromCol - 1) ||
+          (toRow == fromRow + 1 && toCol == fromCol) ||
+          (toRow == fromRow + 1 && toCol == fromCol + 1)
+        ) {
+          correctMovement = true;
+          break;
+        }
+
+
+        if (correctMovement) return false;
+        else return true;
+        break;
+      }
+
+      case 'p': {
+
+        // Attacking White Pieces
+        if((toRow == fromRow + 1 && toCol == fromCol - 1 && this.IsWhitePiece(toRow, toCol)) ||
+           (toRow == fromRow + 1 && toCol == fromCol + 1 && this.IsWhitePiece(toRow, toCol))){
+          return false;
+        }
         //moving diagonally
         if (
           toRow == fromRow + 1 &&

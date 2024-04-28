@@ -162,6 +162,22 @@ export class ChessGameComponent {
   ): void {
 
     const piece = this.chess_Board[fromRow][fromCol];
+    var pieceMove = this.chess_Board[fromRow][fromCol];
+    if(pieceMove === 'P' || pieceMove === 'p') pieceMove = '';
+
+    if((fromRow !== toRow || fromCol !== toCol) &&
+  (!this.genRule.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol))){
+      switch(toCol){
+        case 0: this.coordinates.push([pieceMove + 'a' + (8-toRow)]); break;
+        case 1: this.coordinates.push([pieceMove + 'b' + (8-toRow)]); break;
+        case 2: this.coordinates.push([pieceMove + 'c' + (8-toRow)]); break;
+        case 3: this.coordinates.push([pieceMove + 'd' + (8-toRow)]); break;
+        case 4: this.coordinates.push([pieceMove + 'e' + (8-toRow)]); break;
+        case 5: this.coordinates.push([pieceMove + 'f' + (8-toRow)]); break;
+        case 6: this.coordinates.push([pieceMove + 'g' + (8-toRow)]); break;
+        case 7: this.coordinates.push([pieceMove + 'h' + (8-toRow)]); break;
+      }
+    }
     //Implement logic to move the piece in your chessboard array
     switch (piece) {
       case 'P': this.whiteServ.whitePawnMovement(fromRow, fromCol, toRow, toCol); break;
@@ -177,8 +193,6 @@ export class ChessGameComponent {
       case 'q': this.blackServ.blackQueenMovement(fromRow, fromCol, toRow, toCol); break;
       case 'k': this.blackServ.blackKingMovement(fromRow, fromCol, toRow, toCol); break;
     }
-
-    this.coordinates.push([piece, fromRow, fromCol]);
 
     // Checking whether the White King is Under Check
     // here toRow and toCol are the co-ordinates of black piece after displacement.

@@ -1,95 +1,97 @@
 <div id="main--container" class="flex h-screen flex-col xl:flex-row lg:flex-col md:flex-col sm:flex-col justify-center align-middle">
 
-    <div class="">
-        <div class="flex flex-row w-full h-12">
-            <svg class="flex-shrink-0 w-8 h-8 m-2 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
-                <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
-             </svg>
-             <p class="text-white m-2">Player 1</p>
-             <div class="ml-auto px-4 py-2 bg-slate-700 rounded w-25 my-1">
-                <p class="text-white">10:00</p>
-             </div>
-        </div>
-        <div id="chess--board" class="flex">
-            <div class="text-center">
+  <div class="">
+      <div class="flex flex-row w-full h-12">
+          <svg class="flex-shrink-0 w-8 h-8 m-2 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+              <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
+           </svg>
+           <p class="text-white m-2">Player 1</p>
+           <div class="ml-auto px-4 py-2 bg-slate-700 rounded w-25 my-1">
+              <p class="text-white">10:00</p>
+           </div>
+      </div>
+      <div id="chess--board" class="flex">
+
+          <div class="text-center">
+            <div
+              class="flex justify-center m-0"
+              *ngFor="let row of chess_Board; let i = index"
+              id="r{{ i }}"
+            >
               <div
-                class="flex justify-center m-0"
-                *ngFor="let row of chess_Board; let i = index"
-                id="r{{ i }}"
+                class="flex w-24 h-24 justify-center"
+                id="r{{ i }}c{{ j }}"
+                [ngStyle]="setTileStyle(i, j)"
+                *ngFor="let column of row; let j = index"
+                (dragover)="allowDrop($event)"
+                (drop)="onDrop($event, i, j)"
+                (touchend)="onTouchEnd($event, i, j)"
               >
-                <div
-                  class="flex w-24 h-24 justify-center"
-                  id="r{{ i }}c{{ j }}"
-                  [ngStyle]="setTileStyle(i, j)"
-                  *ngFor="let column of row; let j = index"
-                  (dragover)="allowDrop($event)"
-                  (drop)="onDrop($event, i, j)"
-                  (touchend)="onTouchEnd($event, i, j)"
-                >
-                  <img
-                    [src]="getImageSource(chess_Board[i][j])"
-                    alt=""
-                    id="R{{i}}C{{j}}"
-                    class="w-16 h-20 mt-2"
-                    #column
-                    *ngIf="getImageSource(chess_Board[i][j]) != ''"
-                    [draggable]="IsPlayerTurn(genRule.currentPlayer, i, j)"
-                    (dragstart)="onDragStart($event, i, j)"
-                    (touchstart)="onTouchStart($event, i, j)"
-                    (touchmove)="onTouchMove($event)"
-                    
-                  />
-                </div>
+                <img
+                  [src]="getImageSource(chess_Board[i][j])"
+                  alt=""
+                  id="R{{i}}C{{j}}"
+                  class="w-16 h-20 mt-2"
+                  #column
+                  *ngIf="getImageSource(chess_Board[i][j]) != ''"
+                  [draggable]="IsPlayerTurn(genRule.currentPlayer, i, j)"
+                  (dragstart)="onDragStart($event, i, j)"
+                  (touchstart)="onTouchStart($event, i, j)"
+                  (touchmove)="onTouchMove($event)"
+                  
+                />
               </div>
             </div>
           </div>
+        </div>
+       
+      
         <div class="flex flex-row w-full h-12">
-            <svg class="flex-shrink-0 w-8 h-8 m-2 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
-                <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
-             </svg>
-             <p class="text-white m-2">Player 2</p>
-             <div class="ml-auto px-4 py-2 bg-slate-700 rounded w-25 my-1">
-                <p class="text-white ml-auto">10:00</p>
-             </div>
-        </div>
-    </div>
-
-    <div id="player--movements-table" class="w-1/2 self-center xl:self-start lg:self-start md:self-center sm:self-center xl:w-96 lg:w-96 md:w-3/4 sm:w-3/4 m-8">
-        <div class="flex-1 border-2 border-black">
-            <span class="text-white text-center align-center justify-center flex"> {{ genRule.currentPlayer | titlecase }}'s turn </span>
-        </div>
-
-        <div *ngIf="genRule.IsWhiteKingChecked" class="flex-1 border-2 border-black">
-            <span class="text-red-600 text-center align-center justify-center flex"> {{ genRule.IsWhiteKingChecked }} </span>
-          </div>
-
-        <div class="flex-1 border-2 border-black">
-            <span class="text-gray-400 text-center align-center justify-center flex">Movements</span>
-        </div>
-          
-          <div *ngIf="genRule.IsBlackKingChecked" class="flex-1 border-2 border-black">
-            <span class="text-red-600 text-center align-center justify-center flex"> {{ genRule.IsBlackKingChecked }} </span>
-          </div>
-
-          <div class="flex flex-wrap">
-            <div *ngFor="let coord of coordinates" class="w-1/2 border-2 border-black">
-              <div>
-                <p class="text-white">{{coord}}</p>
-              </div>
-            </div>
-          </div>
-          
-
-          <div *ngIf="hasPlayerJoined" class="block fixed z-1000 left-0 ml-[70vh] top-0 mt-[40vh] w-[40vh] h-screen">
-      
-            <div class="bg-slate-300 py-[2vh] flex flex-row justify-center align-middle drop-shadow-2xl">
-              <span class="cursor-pointer self-center text-gray-500 text-2xl font-bold" (click)="closeModal()">&times;</span>
-              <p class="self-center mt-1 ml-2 text-xl font-semibold">{{joinedPlayerMessage}}</p>
-            </div>
-          </div>
-      
-    </div>
- 
+          <svg class="flex-shrink-0 w-8 h-8 m-2 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+              <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
+           </svg>
+           <p class="text-white m-2">Player 2</p>
+           <div class="ml-auto px-4 py-2 bg-slate-700 rounded w-25 my-1">
+              <p class="text-white ml-auto">10:00</p>
+           </div>
+      </div>
   </div>
-  
-  
+
+  <div id="player--movements-table" class="w-1/2 self-center xl:self-start lg:self-start md:self-center sm:self-center xl:w-96 lg:w-96 md:w-3/4 sm:w-3/4 m-8">
+      <div class="flex-1 border-2 border-black">
+          <span class="text-white text-center align-center justify-center flex"> {{ genRule.currentPlayer | titlecase }}'s turn </span>
+      </div>
+
+      <div *ngIf="genRule.IsWhiteKingChecked" class="flex-1 border-2 border-black">
+          <span class="text-red-600 text-center align-center justify-center flex"> {{ genRule.IsWhiteKingChecked }} </span>
+        </div>
+
+      <div class="flex-1 border-2 border-black">
+          <span class="text-gray-400 text-center align-center justify-center flex">Movements</span>
+      </div>
+        
+        <div *ngIf="genRule.IsBlackKingChecked" class="flex-1 border-2 border-black">
+          <span class="text-red-600 text-center align-center justify-center flex"> {{ genRule.IsBlackKingChecked }} </span>
+        </div>
+
+        <div class="flex flex-wrap">
+          <div *ngFor="let coord of coordinates" class="w-1/2 border-2 border-black">
+            <div>
+              <p class="text-white">{{coord}}</p>
+            </div>
+          </div>
+        </div>
+        
+
+        <div *ngIf="hasPlayerJoined" class="block fixed z-1000 left-0 ml-[70vh] top-0 mt-[40vh] w-[40vh] h-screen">
+    
+          <div class="bg-slate-300 py-[2vh] flex flex-row justify-center align-middle drop-shadow-2xl">
+            <span class="cursor-pointer self-center text-gray-500 text-2xl font-bold" (click)="closeModal()">&times;</span>
+            <p class="self-center mt-1 ml-2 text-xl font-semibold">{{joinedPlayerMessage}}</p>
+          </div>
+        </div>
+    
+  </div>
+
+</div>
+

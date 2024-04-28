@@ -9,6 +9,7 @@ import { CreateRoomComponent } from './pages/create-room/create-room.component';
 import { GameRoomComponent } from './pages/game-room/game-room.component';
 import { FormsModule } from '@angular/forms';
 import { ChessGameComponent } from './pages/chess-game/chess-game.component';
+import { SideBarComponent } from './components/side-bar/side-bar.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { ChessGameComponent } from './pages/chess-game/chess-game.component';
     JoinRoomComponent,
     CreateRoomComponent,
     GameRoomComponent,
-    ChessGameComponent
+    ChessGameComponent,
+    SideBarComponent
   ],
   imports: [
     BrowserModule,

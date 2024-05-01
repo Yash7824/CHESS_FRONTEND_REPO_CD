@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SignUp } from '../models/signUp';
+import { SignUp } from '../models/SignUp.js';
 import { Observable } from 'rxjs';
 import { SignUpResponse } from '../models/SignUpResponse';
 import { environment } from 'src/environments/environment';
@@ -27,14 +27,20 @@ export class ApiService {
 });
 
   public signUp(signUp: SignUp): Observable<SignUpResponse>{
-    return this.http.post<SignUpResponse>(`${environment.base_url}/signUp_Url`, signUp);
+    return this.http.post<SignUpResponse>(`${environment.base_url}/${this.signUp_Url}`, signUp);
   }
 
-  public login(login: Login): Observable<string>{
-    return this.http.post<string>(`${environment.base_url}/login_Url`, login);
+  public login(login: Login): Observable<any>{
+    return this.http.post<any>(`${environment.base_url}/${this.login_Url}`, login);
   }
 
   public getUser(): Observable<User>{
-    return this.http.get<User>(`${environment.base_url}/getUser_Url`, { headers: this.httpHeaders })
+    let authorizationToken = JSON.parse(sessionStorage.getItem('authToken') || '');
+    let httpHeaders: HttpHeaders = new HttpHeaders();
+    httpHeaders = httpHeaders.append('auth-token', authorizationToken.authToken);
+    httpHeaders = httpHeaders.append('Content-Type', 'application/json');
+    httpHeaders = httpHeaders.append('Accept', 'application/json');
+    httpHeaders = httpHeaders.append('Access-Control-Allow-Headers', 'Content-Type');
+    return this.http.get<User>(`${environment.base_url}/${this.getUser_Url}`, { headers: httpHeaders })
   }
 }

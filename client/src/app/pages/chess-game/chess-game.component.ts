@@ -55,13 +55,29 @@ export class ChessGameComponent {
       this.roomData = { player: params['playerName'], room: params['roomName'] };
     });
     this.getPlayers();
+    this.getPlayer1();
+    this.getPlayer2();
   }
 
   getPlayers(){
     this.socket.getPlayers().subscribe({
       next: (response: any) => {
         this.genRule.players = response;
-        console.log('yyy', this.genRule.players);
+      }
+    })
+  }
+
+  getPlayer1(){
+    this.socket.getPlayer1().subscribe({
+      next: (response: any) => {
+        this.genRule.player1 = response;
+      }
+    })
+  }
+  getPlayer2(){
+    this.socket.getPlayer2().subscribe({
+      next: (response: any) => {
+        this.genRule.player2 = response;
       }
     })
   }

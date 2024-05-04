@@ -10,7 +10,8 @@ const joinRoom = (io: Server, socket: Socket, roomName:string, userName:string, 
         socket.to(roomName).emit("userJoined", `${userName} has joined your room 😊`);
         const users = Array.from(activeRooms.get(roomName)!.users);
         console.log(users);
-        io.to(roomName).emit('players', users);
+        io.to(roomName).emit('player1', users[0]);
+        io.to(roomName).emit('player2', userName);
       } else {
         socket.emit("roomError", "Room does not exist or is full!");
     }

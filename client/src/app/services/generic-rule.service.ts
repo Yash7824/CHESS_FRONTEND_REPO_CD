@@ -38,7 +38,9 @@ export class GenericRuleService {
   IsWhiteKingChecked: string = '';
   IsBlackKingChecked: string = '';
   players: any;
-
+  player1: any;
+  player2: any;
+  
   toggleCurrentPlayer() {
     this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
   }

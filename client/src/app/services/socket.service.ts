@@ -22,6 +22,22 @@ export class SocketService {
     })
   }
 
+  getPlayer1(){
+    return new Observable((observer) => {
+      this.socket.on('player1', (message) => {
+        observer.next(message)
+      })
+    })
+  }
+
+  getPlayer2(){
+    return new Observable((observer) => {
+      this.socket.on('player2', (message) => {
+        observer.next(message)
+      })
+    })
+  }
+
   joinRoom(userName: string, roomName: string) {
     this.socket.emit('join room', roomName, userName);
   }

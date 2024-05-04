@@ -1,4 +1,4 @@
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+<!-- <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
       <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
       <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
@@ -45,4 +45,50 @@
         </div>
       </form>
     </div>
+  </div> -->
+
+  <div class="flex justify-center mt-[100px]">
+    <mat-card class="container mt-4 p-4 w-[1000px] max-w-sm">
+      <mat-card-content class="text-center">
+        <h1 class="text-2xl font-bold mb-4">Sign Up</h1>
+      </mat-card-content>
+      <form class="space-y-4">
+        <div>
+          <mat-form-field class="w-full">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Enter your Name" [formControl]="nameFormControl">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="w-full">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" [formControl]="emailFormControl" [errorStateMatcher]="matcher" placeholder="Ex. pat@example.com">
+            <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">Please enter a valid email address</mat-error>
+            <mat-error *ngIf="emailFormControl.hasError('required')">Email is <strong>required</strong></mat-error>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="w-full">
+            <mat-label>Enter your password</mat-label>
+            <input matInput [type]="hide1 ? 'password' : 'text'" [formControl]="passwordFormControl">
+            <button mat-icon-button matSuffix (click)="hide1 = !hide1" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide1">
+              <mat-icon>{{hide1 ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="w-full">
+            <mat-label>Repeat your password</mat-label>
+            <input matInput [type]="hide2 ? 'password' : 'text'" [formControl]="repeatPasswordFormControl">
+            <button mat-icon-button matSuffix (click)="hide2 = !hide2" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide2">
+              <mat-icon>{{hide2 ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-flat-button color="primary" class="w-full bg-blue-500 text-white rounded-md py-2" (click)="signUp()">Sign Up</button>
+        </div>
+      </form>
+    </mat-card>
   </div>
+  

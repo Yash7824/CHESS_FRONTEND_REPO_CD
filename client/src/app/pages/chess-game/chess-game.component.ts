@@ -16,14 +16,15 @@ import { WhiteService } from 'src/app/services/white.service';
 export class ChessGameComponent {
   @ViewChildren('column') columns!: QueryList<ElementRef>;
   @ViewChild('whitePawn') whitePawnRow!: ElementRef;
+
   hasPlayerJoined: Boolean = false;
   roomData: any = {}
   joinedPlayerMessage: string = 'Player Joined';
   draggedPiece: any = {};
   inputText!: string;
   chessPieces: any = {};
-
   coordinates: any = [];
+
   constructor(private socket: SocketService, 
     private route: ActivatedRoute, 
     public genRule: GenericRuleService,
@@ -57,28 +58,31 @@ export class ChessGameComponent {
     this.getPlayers();
     this.getPlayer1();
     this.getPlayer2();
+    this.receiveMovementsTable();
   }
 
   getPlayers(){
     this.socket.getPlayers().subscribe({
-      next: (response: any) => {
-        this.genRule.players = response;
-      }
+      next: (response: any) => { this.genRule.players = response; }
     })
   }
 
   getPlayer1(){
     this.socket.getPlayer1().subscribe({
-      next: (response: any) => {
-        this.genRule.player1 = response;
-      }
+      next: (response: any) => { this.genRule.player1 = response; }
     })
   }
+
   getPlayer2(){
     this.socket.getPlayer2().subscribe({
-      next: (response: any) => {
-        this.genRule.player2 = response;
-      }
+      next: (response: any) => { this.genRule.player2 = response; }
+    })
+  }
+
+  receiveMovementsTable(){
+    this.socket.receiveUpdatedMovementsTable().subscribe({
+      next: (response) => { this.genRule.updatedMovementsTable = response;}
+      
     })
   }
 
@@ -202,6 +206,8 @@ export class ChessGameComponent {
         case 7: this.coordinates.push([pieceMove + 'h' + (8-toRow)]); break;
       }
     }
+
+    this.socket.sendUpdatedMovementsTable(this.roomData.room, this.coordinates);
     //Implement logic to move the piece in your chessboard array
     switch (piece) {
       case 'P': this.whiteServ.whitePawnMovement(fromRow, fromCol, toRow, toCol); break;

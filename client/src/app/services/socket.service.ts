@@ -67,6 +67,18 @@ export class SocketService {
     this.socket.emit("updateChessboardState",roomName, chessBoardStateMatrix, chessBoardAttributes);
   }
 
+  sendUpdatedMovementsTable(roomName: string, updatedMovementList: any){
+    this.socket.emit('movementTable', roomName, updatedMovementList);
+  }
+
+  receiveUpdatedMovementsTable(){
+    return new Observable((observer) => {
+      this.socket.on('updatedMovement', (message) => {
+        observer.next(message);
+      })
+    })
+  }
+
   disconnect() {
     this.socket.emit('disconnect');
   }

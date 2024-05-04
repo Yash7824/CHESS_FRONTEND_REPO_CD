@@ -40,6 +40,7 @@ export class GenericRuleService {
   players: any;
   player1: any;
   player2: any;
+  updatedMovementsTable: any;
   
   toggleCurrentPlayer() {
     this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';

@@ -7,6 +7,7 @@ import createRoom from "./modules/createRoom";
 import joinRoom from "./modules/joinRoom";
 import disconnect from "./modules/disconnect";
 import updateChessBoardState from "./modules/updateChessBoardState";
+import updateMovementList from "./modules/updateMovementList";
 import { Room } from "./interfaces/room";
 import connectToMongo from "./config/db"
 
@@ -43,6 +44,7 @@ io.on("connection", (socket) => {
   socket.on("join room", (roomName: string, userName: string) => joinRoom(io, socket, roomName, userName, activeRooms, socketIDToUserNameMapper));
   socket.on("updateChessboardState", (roomName: string, updatedChessBoardMatrix: Array<Array<string>>, updatedChessBoardAttributes: any) => updateChessBoardState(io, socket, roomName, updatedChessBoardMatrix, updatedChessBoardAttributes, socketIDToUserNameMapper));
   socket.on("disconnect", () => disconnect(io, socket, activeRooms, socketIDToUserNameMapper));
+  socket.on("movementTable", (roomName: string, updatedMovementList: any) => updateMovementList(io, socket, updatedMovementList, roomName, activeRooms, socketIDToUserNameMapper))
 });
 
 server.listen(port, () => {

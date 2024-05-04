@@ -137,6 +137,10 @@ router.put('/updateUser',
   authorization,
   async (req: any, res: Response) => {
     try {
+      let success = false;
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) return res.status(400).json({ success, errors: errors.array() });
+      
       const userId = req.user.id;
       let user = await User.findById(userId);
       if (!user) return res.status(404).send('User Not Found');

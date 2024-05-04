@@ -1,33 +1,61 @@
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
-      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
-    </div>
-  
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
+<div class="flex justify-center mt-[150px]">
+  <mat-card class="container mt-4 p-4 w-[1000px] max-w-sm">
+    <mat-card-content class="text-center">
+      <h1 class="text-2xl font-bold mb-4">Login</h1>
+    </mat-card-content>
+    <form class="space-y-4">
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [formControl]="emailFormControl" [errorStateMatcher]="matcher" placeholder="Ex. pat@example.com">
+          <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">Please enter a valid email address</mat-error>
+          <mat-error *ngIf="emailFormControl.hasError('required')">Email is <strong>required</strong></mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="w-full">
+          <mat-label>Enter your password</mat-label>
+          <input matInput [type]="hide ? 'password' : 'text'" [formControl]="passwordFormControl">
+          <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-flat-button color="primary" class="w-full bg-blue-500 text-white rounded-md py-2">Login</button>
+      </div>
+      <div>
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Sign in to your account
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+          Or
+          <a routerLink="/signUp" class="font-medium text-indigo-600 hover:text-indigo-500">create an account</a>
+        </p>
+      </div>
+      <div class="mt-1 grid grid-cols-2 gap-3">
         <div>
-          <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
-          <div class="mt-2">
-            <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" [(ngModel)]="loginForm.email">
-          </div>
+          <button type="button" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md bg-green-200 text-sm text-gray-900 hover:bg-gray-50">
+            <span class="sr-only">Sign in with Google</span>
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#4285F4" d="M20.839 10.122h-.819v-.036h-7.321v2.885h4.041a4.852 4.852 0 01-2.073 3.18v2.648h3.343c1.958-1.804 3.082-4.454 3.082-7.677 0-.501-.048-.994-.136-1.467z" />
+              <path fill="#34A853" d="M13.426 21c2.795 0 5.125-.916 6.839-2.492l-3.343-2.647c-.929.625-2.128.994-3.496.994-2.683 0-4.95-1.805-5.772-4.235H3.667v2.648a10.006 10.006 0 006.759 2.491z" />
+              <path fill="#FBBC05" d="M7.654 12.657c-.204-.625-.319-1.294-.319-1.98s.116-1.355.319-1.98V6.054H3.891a10.017 10.017 0 000 11.892l3.763-2.289z" />
+              <path fill="#EA4335" d="M13.426 7.473c1.189 0 2.258.412 3.1 1.223l2.323-2.323C18.551 3.616 16.221 2 13.426 2 8.667 2 4.918 5.456 3.891 9.766l3.763 2.289c.822-2.43 3.089-4.235 5.772-4.235z" />
+            </svg>
+          </button>
         </div>
-  
         <div>
-          <div class="flex items-center justify-between">
-            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
-            <div class="text-sm">
-              <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
-            </div>
-          </div>
-          <div class="mt-2">
-            <input id="password" name="password" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" [(ngModel)]="loginForm.password">
-          </div>
+          <button type="button" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md bg-green-200 text-sm text-gray-900 hover:bg-gray-50">
+            <span class="sr-only">Sign in with Facebook</span>
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#1877F2" d="M18.977 2H5.023A3.025 3.025 0 0 0 2 5.023v13.954A3.025 3.025 0 0 0 5.023 22h6.122v-7.745h-1.983v-3.034h1.983V9.282c0-1.975 1.207-3.044 2.957-3.044.835 0 1.555.062 1.766.09v2.053h-1.211c-.948 0-1.13.451-1.13 1.112v1.456h2.259l-.295 3.034h-1.964V22h3.859A3.025 3.025 0 0 0 22 18.977V5.023A3.025 3.025 0 0 0 18.977 2"></path>
+            </svg>
+            
+            
+          </button>
         </div>
-  
-        <div>
-          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" (click)="loginButton()">Sign in</button>
-        </div>
-      </form>
-    </div>
-  </div>
+      </div>
+    </form>
+  </mat-card>
+</div>

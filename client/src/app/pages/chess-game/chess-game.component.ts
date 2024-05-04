@@ -20,8 +20,7 @@ export class ChessGameComponent {
   roomData: any = {}
   joinedPlayerMessage: string = 'Player Joined';
   draggedPiece: any = {};
-  inputText!: string
-
+  inputText!: string;
   chessPieces: any = {};
 
   coordinates: any = [];
@@ -55,7 +54,16 @@ export class ChessGameComponent {
     this.route.queryParams.subscribe(params => {
       this.roomData = { player: params['playerName'], room: params['roomName'] };
     });
-    
+    this.getPlayers();
+  }
+
+  getPlayers(){
+    this.socket.getPlayers().subscribe({
+      next: (response: any) => {
+        this.genRule.players = response;
+        console.log('yyy', this.genRule.players);
+      }
+    })
   }
 
   setTileStyle(row: number, column: number) {

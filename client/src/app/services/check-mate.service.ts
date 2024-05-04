@@ -293,7 +293,6 @@ export class CheckMateService {
 
   //FIXME: after check
   IsCheckMate(king: string, fromRow: number, fromCol: number) {
-    debugger;
     const attackingPiece = this.genRule.chess_Board[fromRow][fromCol];
     const king_coordinates = this.genRule.findPiece(king);
     if (king_coordinates) {

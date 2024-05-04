@@ -11,14 +11,14 @@ export class HomeComponent {
   constructor(private router: Router,
     private apiServ: ApiService
   ) {}
-  
+
   ngOnInit(): void {
     this.apiServ.getUser().subscribe({
       next: (response) => {
         console.log(response);
       },
-      error: err => console.error('Observable emitted an error: ' + err),
-      complete: () => console.log('Observable emitted the complete notification')
+      error: err => console.error('Observable emitted an error: ' + err)
+      // complete: () => console.log('Observable emitted the complete notification')
     })
   }
 

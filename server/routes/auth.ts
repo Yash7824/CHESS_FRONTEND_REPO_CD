@@ -118,7 +118,6 @@ router.get('/getUser', authorization, async (req: any, res: Response) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId).select('-password');
-    console.log(userId);
     if (!user) return res.status(404).send('User Not found');
     return res.status(200).json(user);
 

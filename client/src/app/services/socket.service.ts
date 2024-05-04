@@ -14,6 +14,14 @@ export class SocketService {
     this.socket = io('http://localhost:3000');
   }
 
+  getPlayers(){
+    return new Observable((observer) => {
+      this.socket.on('players', (message) => {
+        observer.next(message);
+      })
+    })
+  }
+
   joinRoom(userName: string, roomName: string) {
     this.socket.emit('join room', roomName, userName);
   }

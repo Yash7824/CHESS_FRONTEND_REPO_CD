@@ -13,7 +13,7 @@ import { SideBarComponent } from './components/side-bar/side-bar.component';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ApiService } from './services/api.service';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +30,8 @@ import { ApiService } from './services/api.service';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule,
   ],
   providers: [ApiService],
   bootstrap: [AppComponent]

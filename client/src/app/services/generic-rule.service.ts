@@ -37,6 +37,7 @@ export class GenericRuleService {
   hasBlackKingMoved: boolean = false;
   IsWhiteKingChecked: string = '';
   IsBlackKingChecked: string = '';
+  players: any;
 
   toggleCurrentPlayer() {
     this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
@@ -400,7 +401,6 @@ export class GenericRuleService {
   }
 
   IsKingUnderCheckAfterPieceMovement(fromRow: number, fromCol: number, chessBoard: string[][]){
-    debugger;
     let chessBoardTemp = chessBoard;
     let piecesLoc = this.getAllPiecesLocation(chessBoardTemp);
     let piece = chessBoardTemp[fromRow][fromCol];

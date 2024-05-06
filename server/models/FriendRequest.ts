@@ -2,12 +2,16 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const FriendRequestSchema = new Schema({
-    userId: {
+    currentUserId: {
         type: String,
+        required: true
     },
     friendId: {
         type: String,
         required: true
+    },
+    user: {
+        type: String
     },
     friend: {
         type: String

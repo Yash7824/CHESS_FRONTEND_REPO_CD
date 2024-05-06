@@ -59,7 +59,7 @@
 
   <div id="player--movements-table" class="w-1/2 self-center xl:self-start lg:self-start md:self-center sm:self-center xl:w-96 lg:w-96 md:w-3/4 sm:w-3/4 m-8">
     <div class="flex-1 border-2 border-black">
-        <span class="text-white text-center align-center justify-center flex">{{ genRule.currentPlayer | titlecase }}'s turn</span>
+        <span class="text-black text-center align-center justify-center flex">{{ genRule.currentPlayer | titlecase }}'s turn</span>
     </div>
   
     <div *ngIf="genRule.IsWhiteKingChecked" class="flex-1 border-2 border-black">
@@ -67,7 +67,7 @@
     </div>
   
     <div class="flex-1 border-2 border-black">
-        <span class="text-gray-400 text-center align-center justify-center flex">Movements</span>
+        <span class="text-black text-center align-center justify-center flex">Movements</span>
     </div>
         
     <div *ngIf="genRule.IsBlackKingChecked" class="flex-1 border-2 border-black">

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { WhiteService } from './white.service';
 import { BlackService } from './black.service';
 import { CheckService } from './check.service';
+import { from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -403,7 +404,7 @@ export class GenericRuleService {
     return false;
   }
 
-  IsKingUnderCheckAfterPieceMovement(fromRow: number, fromCol: number, chessBoard: string[][]){
+  IsKingUnderCheckAfterPieceMovement(king: string, fromRow: number, fromCol: number, chessBoard: string[][]){
     let chessBoardTemp = chessBoard;
     let piecesLoc = this.getAllPiecesLocation(chessBoardTemp);
     let piece = chessBoardTemp[fromRow][fromCol];
@@ -418,317 +419,319 @@ export class GenericRuleService {
     let blackQueens = piecesLoc['q'];
     let blackKing = piecesLoc['k'];
 
-    if(blackRooks !== undefined){
-      for(let blackRook of blackRooks){
-        if(whiteKing[0][0] == blackRook[0]){ // rows same
-          if(whiteKing[0][1] > blackRook[1]){
-            for(let i = blackRook[1] + 1; i <= whiteKing[0][1]; i++){
-              if(this.IsEmptyTile1(blackRook[0], i, chessBoardTemp)) continue;
-              if(chessBoardTemp[blackRook[0]][i] == 'K') {chessBoardTemp[fromRow][fromCol] = piece; return true; }
-              if(!this.IsEmptyTile1(blackRook[0], i, chessBoardTemp))  break; 
+    if(king === 'K'){
+      if(blackRooks !== undefined){
+        for(let blackRook of blackRooks){
+          if(whiteKing[0][0] == blackRook[0]){ // rows same
+            if(whiteKing[0][1] > blackRook[1]){
+              for(let i = blackRook[1] + 1; i <= whiteKing[0][1]; i++){
+                if(this.IsEmptyTile1(blackRook[0], i, chessBoardTemp)) continue;
+                if(chessBoardTemp[blackRook[0]][i] == 'K') {chessBoardTemp[fromRow][fromCol] = piece; return true; }
+                if(!this.IsEmptyTile1(blackRook[0], i, chessBoardTemp))  break; 
+              }
+            } else if(whiteKing[0][1] < blackRook[1]){
+              for(let i = whiteKing[0][1]+1; i <= blackRook[1]; i++){
+                if(this.IsEmptyTile1(blackRook[0], i, chessBoardTemp)) continue;
+                if(chessBoard[blackRook[0]][i] == 'r') {chessBoardTemp[fromRow][fromCol] = piece; return true;}
+                if(!this.IsEmptyTile1(blackRook[0], i, chessBoardTemp))  break; 
+              }
             }
-          } else if(whiteKing[0][1] < blackRook[1]){
-            for(let i = whiteKing[0][1]+1; i <= blackRook[1]; i++){
-              if(this.IsEmptyTile1(blackRook[0], i, chessBoardTemp)) continue;
-              if(chessBoard[blackRook[0]][i] == 'r') {chessBoardTemp[fromRow][fromCol] = piece; return true;}
-              if(!this.IsEmptyTile1(blackRook[0], i, chessBoardTemp))  break; 
-            }
-          }
-        } else if(whiteKing[0][1] == blackRook[1]){ // columns same
-          if(whiteKing[0][0] > blackRook[0]){
-            for(let i = blackRook[0] + 1; i <= whiteKing[0][0]; i++){
-              if(this.IsEmptyTile1(i, blackRook[1], chessBoardTemp)) continue;
-              if(chessBoardTemp[i][blackRook[1]] == 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-              if(!this.IsEmptyTile1(i, blackRook[1], chessBoardTemp))  break;
-            }
-          }else if(whiteKing[0][0] < blackRook[0]){
-            for(let i = whiteKing[0][0] + 1; i <= blackRook[0]; i++){
-              if(this.IsEmptyTile1(i, blackRook[1], chessBoardTemp)) continue;
-              if(chessBoardTemp[i][blackRook[1]] == 'R') {chessBoardTemp[fromRow][fromCol] = piece; return true;}
-              if(!this.IsEmptyTile1(i, blackRook[1], chessBoardTemp)) break; 
+          } else if(whiteKing[0][1] == blackRook[1]){ // columns same
+            if(whiteKing[0][0] > blackRook[0]){
+              for(let i = blackRook[0] + 1; i <= whiteKing[0][0]; i++){
+                if(this.IsEmptyTile1(i, blackRook[1], chessBoardTemp)) continue;
+                if(chessBoardTemp[i][blackRook[1]] == 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+                if(!this.IsEmptyTile1(i, blackRook[1], chessBoardTemp))  break;
+              }
+            }else if(whiteKing[0][0] < blackRook[0]){
+              for(let i = whiteKing[0][0] + 1; i <= blackRook[0]; i++){
+                if(this.IsEmptyTile1(i, blackRook[1], chessBoardTemp)) continue;
+                if(chessBoardTemp[i][blackRook[1]] == 'R') {chessBoardTemp[fromRow][fromCol] = piece; return true;}
+                if(!this.IsEmptyTile1(i, blackRook[1], chessBoardTemp)) break; 
+              }
             }
           }
         }
       }
-    }
+
+      if(blackBishops !== undefined){
+        for(let blackBishop of blackBishops){
+          let bishopRow = blackBishop[0], bishopCol = blackBishop[1];
+          for(let i=1; i<=7; i++){
+            // up-left
+            if(bishopRow-i >= 0 && bishopCol-i >= 0){
+              if(this.IsEmptyTile1(bishopRow-i, bishopCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[bishopRow-i][bishopCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(bishopRow-i, bishopCol-i, chessBoardTemp)) break;
+            } 
+          }
     
-    if(blackBishops !== undefined){
-      for(let blackBishop of blackBishops){
-        let bishopRow = blackBishop[0], bishopCol = blackBishop[1];
-        for(let i=1; i<=7; i++){
-          // up-left
-          if(bishopRow-i >= 0 && bishopCol-i >= 0){
-            if(this.IsEmptyTile1(bishopRow-i, bishopCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[bishopRow-i][bishopCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(bishopRow-i, bishopCol-i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // up-right
-          if(bishopRow-i >= 0 && bishopCol+i <= 7){
-            if(this.IsEmptyTile1(bishopRow-i, bishopCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[bishopRow-i][bishopCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(bishopRow-i, bishopCol+i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // down-left
-          if(bishopRow+i <= 7 && bishopCol-i >= 0){
-            if(this.IsEmptyTile1(bishopRow+i, bishopCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[bishopRow+i][bishopCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(bishopRow+i, bishopCol-i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // down-right
-          if(bishopRow+i <= 7 && bishopCol+i <= 7){
-            if(this.IsEmptyTile1(bishopRow+i, bishopCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[bishopRow+i][bishopCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(bishopRow+i, bishopCol+i, chessBoardTemp)) break;
-          } 
+          for(let i=1; i<=7; i++){
+            // up-right
+            if(bishopRow-i >= 0 && bishopCol+i <= 7){
+              if(this.IsEmptyTile1(bishopRow-i, bishopCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[bishopRow-i][bishopCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(bishopRow-i, bishopCol+i, chessBoardTemp)) break;
+            } 
+          }
+    
+          for(let i=1; i<=7; i++){
+            // down-left
+            if(bishopRow+i <= 7 && bishopCol-i >= 0){
+              if(this.IsEmptyTile1(bishopRow+i, bishopCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[bishopRow+i][bishopCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(bishopRow+i, bishopCol-i, chessBoardTemp)) break;
+            } 
+          }
+    
+          for(let i=1; i<=7; i++){
+            // down-right
+            if(bishopRow+i <= 7 && bishopCol+i <= 7){
+              if(this.IsEmptyTile1(bishopRow+i, bishopCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[bishopRow+i][bishopCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(bishopRow+i, bishopCol+i, chessBoardTemp)) break;
+            } 
+          }
         }
       }
-    }
+      
+  
+      if(blackQueens !== undefined){
+        for(let blackQueen of blackQueens){
+          let queenRow = blackQueen[0], queenCol = blackQueen[1];
+          for(let i=1; i<=7; i++){
+            // up-left
+            if(queenRow-i >= 0 && queenCol-i >= 0){
+              if(this.IsEmptyTile1(queenRow-i, queenCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow-i][queenCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow-i, queenCol-i, chessBoardTemp)) break;
+            } 
+          }
     
-
-    if(blackQueens !== undefined){
-      for(let blackQueen of blackQueens){
-        let queenRow = blackQueen[0], queenCol = blackQueen[1];
-        for(let i=1; i<=7; i++){
-          // up-left
-          if(queenRow-i >= 0 && queenCol-i >= 0){
-            if(this.IsEmptyTile1(queenRow-i, queenCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow-i][queenCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow-i, queenCol-i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // up-right
-          if(queenRow-i >= 0 && queenCol+i <= 7){
-            if(this.IsEmptyTile1(queenRow-i, queenCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow-i][queenCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow-i, queenCol+i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // down-left
-          if(queenRow+i <= 7 && queenCol-i >= 0){
-            if(this.IsEmptyTile1(queenRow+i, queenCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow+i][queenCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow+i, queenCol-i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // down-right
-          if(queenRow+i <= 7 && queenCol+i <= 7){
-            if(this.IsEmptyTile1(queenRow+i, queenCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow+i][queenCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow+i, queenCol+i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // row same
-          if(queenCol-i >= 0){
-            if(this.IsEmptyTile1(queenRow, queenCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow][queenCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow, queenCol-i, chessBoardTemp)) break;
+          for(let i=1; i<=7; i++){
+            // up-right
+            if(queenRow-i >= 0 && queenCol+i <= 7){
+              if(this.IsEmptyTile1(queenRow-i, queenCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow-i][queenCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow-i, queenCol+i, chessBoardTemp)) break;
+            } 
           }
-        }
-   
-        for(let i=1; i<=7; i++){
-          if(queenCol+i <= 7){
-            if(this.IsEmptyTile1(queenRow, queenCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow][queenCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow, queenCol+i, chessBoardTemp)) break;
-          }
-        }
-          
-        for(let i=1; i<=7; i++){
-          // column same
-          if(queenRow-i >= 0){
-            if(this.IsEmptyTile1(queenRow-i, queenCol, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow-i][queenCol] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow-i, queenCol, chessBoardTemp)) break;
-          }
-        }
-  
-        for(let i=1; i<=7; i++){
-          if(queenRow+i <= 7){
-            if(this.IsEmptyTile1(queenRow+i, queenCol, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow+i][queenCol] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow+i, queenCol, chessBoardTemp)) break;
-          }
-        }
-  
-      }
-    }
     
-
-    if(whiteRooks !== undefined){
-      for(let whiteRook of whiteRooks){
-        let row = whiteRook[0], col = whiteRook[1];
-        for(let i=1; i<=7; i++){
-          // row same
-          if(col-i >= 0){
-            if(this.IsEmptyTile1(row, col-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[row][col-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(row, col-i, chessBoardTemp)) break;
+          for(let i=1; i<=7; i++){
+            // down-left
+            if(queenRow+i <= 7 && queenCol-i >= 0){
+              if(this.IsEmptyTile1(queenRow+i, queenCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow+i][queenCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow+i, queenCol-i, chessBoardTemp)) break;
+            } 
           }
-        }
-  
-        for(let i=1; i<=7; i++){
-  
-          if(col+i <= 7){
-            if(this.IsEmptyTile1(row, col+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[row][col+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(row, col+i, chessBoardTemp)) break;
+    
+          for(let i=1; i<=7; i++){
+            // down-right
+            if(queenRow+i <= 7 && queenCol+i <= 7){
+              if(this.IsEmptyTile1(queenRow+i, queenCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow+i][queenCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow+i, queenCol+i, chessBoardTemp)) break;
+            } 
           }
-          
-        }
-  
-        for(let i=1; i<=7; i++){
-          // column same
-          if(row-i >= 0){
-            if(this.IsEmptyTile1(row-i, col, chessBoardTemp)) continue;
-            if(chessBoardTemp[row-i][col] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(row-i, col, chessBoardTemp)) break;
+    
+          for(let i=1; i<=7; i++){
+            // row same
+            if(queenCol-i >= 0){
+              if(this.IsEmptyTile1(queenRow, queenCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow][queenCol-i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow, queenCol-i, chessBoardTemp)) break;
+            }
           }
-        }
-  
-        for(let i=1; i<=7; i++){
-          if(row+i <= 7){
-            if(this.IsEmptyTile1(row+i, col, chessBoardTemp)) continue;
-            if(chessBoardTemp[row+i][col] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(row+i, col, chessBoardTemp)) break;
+     
+          for(let i=1; i<=7; i++){
+            if(queenCol+i <= 7){
+              if(this.IsEmptyTile1(queenRow, queenCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow][queenCol+i] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow, queenCol+i, chessBoardTemp)) break;
+            }
           }
-          
+            
+          for(let i=1; i<=7; i++){
+            // column same
+            if(queenRow-i >= 0){
+              if(this.IsEmptyTile1(queenRow-i, queenCol, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow-i][queenCol] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow-i, queenCol, chessBoardTemp)) break;
+            }
+          }
+    
+          for(let i=1; i<=7; i++){
+            if(queenRow+i <= 7){
+              if(this.IsEmptyTile1(queenRow+i, queenCol, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow+i][queenCol] === 'K') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow+i, queenCol, chessBoardTemp)) break;
+            }
+          }
+    
         }
       }
-    }
-    
 
-    if(whiteBishops !== undefined){
-      for(let whiteBishop of whiteBishops){
-        let bishopRow = whiteBishop[0], bishopCol = whiteBishop[1];
-        for(let i=1; i<=7; i++){
-          // up-left
-          if(bishopRow-i >= 0 && bishopCol-i >= 0){
-            if(this.IsEmptyTile1(bishopRow-i, bishopCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[bishopRow-i][bishopCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(bishopRow-i, bishopCol-i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // up-right
-          if(bishopRow-i >= 0 && bishopCol+i <= 7){
-            if(this.IsEmptyTile1(bishopRow-i, bishopCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[bishopRow-i][bishopCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(bishopRow-i, bishopCol+i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // down-left
-          if(bishopRow+i <= 7 && bishopCol-i >= 0){
-            if(this.IsEmptyTile1(bishopRow+i, bishopCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[bishopRow+i][bishopCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(bishopRow+i, bishopCol-i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // down-right
-          if(bishopRow+i <= 7 && bishopCol+i <= 7){
-            if(this.IsEmptyTile1(bishopRow+i, bishopCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[bishopRow+i][bishopCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(bishopRow+i, bishopCol+i, chessBoardTemp)) break;
-          } 
+    }else if(king === 'k'){
+      if(whiteRooks !== undefined){
+        for(let whiteRook of whiteRooks){
+          let row = whiteRook[0], col = whiteRook[1];
+          for(let i=1; i<=7; i++){
+            // row same
+            if(col-i >= 0){
+              if(this.IsEmptyTile1(row, col-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[row][col-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(row, col-i, chessBoardTemp)) break;
+            }
+          }
+    
+          for(let i=1; i<=7; i++){
+    
+            if(col+i <= 7){
+              if(this.IsEmptyTile1(row, col+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[row][col+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(row, col+i, chessBoardTemp)) break;
+            }
+            
+          }
+    
+          for(let i=1; i<=7; i++){
+            // column same
+            if(row-i >= 0){
+              if(this.IsEmptyTile1(row-i, col, chessBoardTemp)) continue;
+              if(chessBoardTemp[row-i][col] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(row-i, col, chessBoardTemp)) break;
+            }
+          }
+    
+          for(let i=1; i<=7; i++){
+            if(row+i <= 7){
+              if(this.IsEmptyTile1(row+i, col, chessBoardTemp)) continue;
+              if(chessBoardTemp[row+i][col] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(row+i, col, chessBoardTemp)) break;
+            }
+            
+          }
         }
       }
-    }
+      
+  
+      if(whiteBishops !== undefined){
+        for(let whiteBishop of whiteBishops){
+          let bishopRow = whiteBishop[0], bishopCol = whiteBishop[1];
+          for(let i=1; i<=7; i++){
+            // up-left
+            if(bishopRow-i >= 0 && bishopCol-i >= 0){
+              if(this.IsEmptyTile1(bishopRow-i, bishopCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[bishopRow-i][bishopCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(bishopRow-i, bishopCol-i, chessBoardTemp)) break;
+            } 
+          }
     
-
-    if(whiteQueens !== undefined){
-      for(let whiteQueen of whiteQueens){
-        let queenRow = whiteQueen[0], queenCol = whiteQueen[1];
-        for(let i=1; i<=7; i++){
-          // up-left
-          if(queenRow-i >= 0 && queenCol-i >= 0){
-            if(this.IsEmptyTile1(queenRow-i, queenCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow-i][queenCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow-i, queenCol-i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // up-right
-          if(queenRow-i >= 0 && queenCol+i <= 7){
-            if(this.IsEmptyTile1(queenRow-i, queenCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow-i][queenCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow-i, queenCol+i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // down-left
-          if(queenRow+i <= 7 && queenCol-i >= 0){
-            if(this.IsEmptyTile1(queenRow+i, queenCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow+i][queenCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow+i, queenCol-i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // down-right
-          if(queenRow+i <= 7 && queenCol+i <= 7){
-            if(this.IsEmptyTile1(queenRow+i, queenCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow+i][queenCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow+i, queenCol+i, chessBoardTemp)) break;
-          } 
-        }
-  
-        for(let i=1; i<=7; i++){
-          // row same
-          if(queenCol-i >= 0){
-            if(this.IsEmptyTile1(queenRow, queenCol-i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow][queenCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow, queenCol-i, chessBoardTemp)) break;
+          for(let i=1; i<=7; i++){
+            // up-right
+            if(bishopRow-i >= 0 && bishopCol+i <= 7){
+              if(this.IsEmptyTile1(bishopRow-i, bishopCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[bishopRow-i][bishopCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(bishopRow-i, bishopCol+i, chessBoardTemp)) break;
+            } 
+          }
+    
+          for(let i=1; i<=7; i++){
+            // down-left
+            if(bishopRow+i <= 7 && bishopCol-i >= 0){
+              if(this.IsEmptyTile1(bishopRow+i, bishopCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[bishopRow+i][bishopCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(bishopRow+i, bishopCol-i, chessBoardTemp)) break;
+            } 
+          }
+    
+          for(let i=1; i<=7; i++){
+            // down-right
+            if(bishopRow+i <= 7 && bishopCol+i <= 7){
+              if(this.IsEmptyTile1(bishopRow+i, bishopCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[bishopRow+i][bishopCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(bishopRow+i, bishopCol+i, chessBoardTemp)) break;
+            } 
           }
         }
+      }
+      
   
-        for(let i=1; i<=7; i++){
-          if(queenCol+i <= 7){
-            if(this.IsEmptyTile1(queenRow, queenCol+i, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow][queenCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow, queenCol+i, chessBoardTemp)) break;
+      if(whiteQueens !== undefined){
+        for(let whiteQueen of whiteQueens){
+          let queenRow = whiteQueen[0], queenCol = whiteQueen[1];
+          for(let i=1; i<=7; i++){
+            // up-left
+            if(queenRow-i >= 0 && queenCol-i >= 0){
+              if(this.IsEmptyTile1(queenRow-i, queenCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow-i][queenCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow-i, queenCol-i, chessBoardTemp)) break;
+            } 
           }
-          
-        }
-  
-        for(let i=1; i<=7; i++){
-          // column same
-          if(queenRow-i >= 0){
-            if(this.IsEmptyTile1(queenRow-i, queenCol, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow-i][queenCol] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow-i, queenCol, chessBoardTemp)) break;
+    
+          for(let i=1; i<=7; i++){
+            // up-right
+            if(queenRow-i >= 0 && queenCol+i <= 7){
+              if(this.IsEmptyTile1(queenRow-i, queenCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow-i][queenCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow-i, queenCol+i, chessBoardTemp)) break;
+            } 
           }
-        }
-  
-        for(let i=1; i<=7; i++){
-          if(queenRow+i <= 7){
-            if(this.IsEmptyTile1(queenRow+i, queenCol, chessBoardTemp)) continue;
-            if(chessBoardTemp[queenRow+i][queenCol] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
-            if(!this.IsEmptyTile1(queenRow+i, queenCol, chessBoardTemp)) break;
+    
+          for(let i=1; i<=7; i++){
+            // down-left
+            if(queenRow+i <= 7 && queenCol-i >= 0){
+              if(this.IsEmptyTile1(queenRow+i, queenCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow+i][queenCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow+i, queenCol-i, chessBoardTemp)) break;
+            } 
           }
-          
+    
+          for(let i=1; i<=7; i++){
+            // down-right
+            if(queenRow+i <= 7 && queenCol+i <= 7){
+              if(this.IsEmptyTile1(queenRow+i, queenCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow+i][queenCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow+i, queenCol+i, chessBoardTemp)) break;
+            } 
+          }
+    
+          for(let i=1; i<=7; i++){
+            // row same
+            if(queenCol-i >= 0){
+              if(this.IsEmptyTile1(queenRow, queenCol-i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow][queenCol-i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow, queenCol-i, chessBoardTemp)) break;
+            }
+          }
+    
+          for(let i=1; i<=7; i++){
+            if(queenCol+i <= 7){
+              if(this.IsEmptyTile1(queenRow, queenCol+i, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow][queenCol+i] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow, queenCol+i, chessBoardTemp)) break;
+            }
+            
+          }
+    
+          for(let i=1; i<=7; i++){
+            // column same
+            if(queenRow-i >= 0){
+              if(this.IsEmptyTile1(queenRow-i, queenCol, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow-i][queenCol] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow-i, queenCol, chessBoardTemp)) break;
+            }
+          }
+    
+          for(let i=1; i<=7; i++){
+            if(queenRow+i <= 7){
+              if(this.IsEmptyTile1(queenRow+i, queenCol, chessBoardTemp)) continue;
+              if(chessBoardTemp[queenRow+i][queenCol] === 'k') {chessBoardTemp[fromRow][fromCol] = piece;return true;}
+              if(!this.IsEmptyTile1(queenRow+i, queenCol, chessBoardTemp)) break;
+            }
+            
+          }
         }
       }
     }
@@ -739,13 +742,16 @@ export class GenericRuleService {
   }
 
   IsTileSafeForKing(king: string, row: number, col: number): boolean {
+    debugger;
     let king_coordinates = this.findPiece(king);
 
     if (king === 'K' && king_coordinates && !this.IsWhitePiece(row, col)) {
 
-      if ((this.chess_Board[row - 1][col - 1] === 'p' ||
-        this.chess_Board[row - 1][col + 1] === 'p') &&
-        row - 1 >= 0 && (col - 1 >= 0 && col + 1 <= 7)) {
+      if (this.chess_Board[row - 1][col - 1] === 'p' && row-1 >= 0 && col-1 >= 0){
+        return false;
+      }
+
+      if(this.chess_Board[row-1][col+1] === 'p' && row-1 >= 0 && col+1 <= 7){
         return false;
       }
 
@@ -778,9 +784,11 @@ export class GenericRuleService {
       }
 
     } else if (king === 'k' && king_coordinates && !this.IsBlackPiece(row, col)) {
-      if ((this.chess_Board[row + 1][col - 1] === 'P' ||
-        this.chess_Board[row + 1][col + 1] === 'P') &&
-        row + 1 <= 7 && (col - 1 >= 0 && col + 1 <= 7)) {
+      if (this.chess_Board[row + 1][col - 1] === 'P' && row + 1 <= 7 && col - 1 >= 0 ) {
+        return false;
+      }
+
+      if(this.chess_Board[row + 1][col + 1] === 'P' && row+1 <= 7 && col+1 <= 7){
         return false;
       }
 
@@ -1137,11 +1145,23 @@ export class GenericRuleService {
     toRow: number,
     toCol: number
   ): boolean {
+    debugger;
     if (fromRow == toRow && fromCol == toCol) return true;
 
-    if(this.IsKingUnderCheckAfterPieceMovement(fromRow, fromCol, this.chess_Board)){
-      return true;
+    if(this.IsWhitePiece(fromRow, fromCol)){
+      if(this.IsKingUnderCheckAfterPieceMovement('k', fromRow, fromCol, this.chess_Board)){
+        return false;
+      }else if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, this.chess_Board)){
+        return true;
+      }
+    }else if(this.IsBlackPiece(fromRow, fromCol)){
+      if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, this.chess_Board)){
+        return false;
+      }else if(this.IsKingUnderCheckAfterPieceMovement('k', fromRow, fromCol, this.chess_Board)){
+        return true;
+      }
     }
+    
     // Finding the locations of White and Black Kings.
     let whiteKingRow, whiteKingCol, blackKingRow, blackKingCol: any;
     let whiteKingCoord = this.findPiece('K');

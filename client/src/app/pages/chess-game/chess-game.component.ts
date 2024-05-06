@@ -7,6 +7,7 @@ import { CheckService } from 'src/app/services/check.service';
 import { GenericRuleService } from 'src/app/services/generic-rule.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { WhiteService } from 'src/app/services/white.service';
+import {whitePawnMovement} from 'is-chess';
 
 @Component({
   selector: 'app-chess-game',
@@ -210,6 +211,7 @@ export class ChessGameComponent {
     this.socket.sendUpdatedMovementsTable(this.roomData.room, this.coordinates);
     //Implement logic to move the piece in your chessboard array
     switch (piece) {
+      // case 'P': this.whiteServ.whitePawnMovement(fromRow, fromCol, toRow, toCol); break;
       case 'P': this.whiteServ.whitePawnMovement(fromRow, fromCol, toRow, toCol); break;
       case 'R': this.whiteServ.whiteRookMovement(fromRow, fromCol, toRow, toCol); break;
       case 'N': this.whiteServ.whiteKnightMovement(fromRow, fromCol, toRow, toCol); break;

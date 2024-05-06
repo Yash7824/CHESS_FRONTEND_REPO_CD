@@ -1150,17 +1150,19 @@ export class GenericRuleService {
     debugger;
     if (fromRow == toRow && fromCol == toCol) return true;
 
-    if(this.IsWhitePiece(fromRow, fromCol)){
+    if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, toRow, toCol, this.chess_Board)){
+      if(this.IsWhitePiece(fromRow, fromCol)){
+        
+      }
+    }
+
+    if(this.IsWhitePiece(fromRow, fromCol) && this.chess_Board[fromRow][fromCol] !== 'K'){
       if(this.IsKingUnderCheckAfterPieceMovement('k', fromRow, fromCol, toRow, toCol, this.chess_Board)){
         return false;
-      }else if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, toRow, toCol, this.chess_Board)){
-        return true;
       }
-    }else if(this.IsBlackPiece(fromRow, fromCol)){
+    }else if(this.IsBlackPiece(fromRow, fromCol) && this.chess_Board[fromRow][fromCol] !== 'k'){
       if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, toRow, toCol, this.chess_Board)){
         return false;
-      }else if(this.IsKingUnderCheckAfterPieceMovement('k', fromRow, fromCol, toRow, toCol, this.chess_Board)){
-        return true;
       }
     }
     

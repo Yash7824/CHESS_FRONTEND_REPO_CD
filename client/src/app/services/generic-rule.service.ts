@@ -404,11 +404,13 @@ export class GenericRuleService {
     return false;
   }
 
-  IsKingUnderCheckAfterPieceMovement(king: string, fromRow: number, fromCol: number, chessBoard: string[][]){
-    let chessBoardTemp = chessBoard;
+  IsKingUnderCheckAfterPieceMovement(king: string, fromRow: number, fromCol: number, toRow: number, toCol: number, chessBoard: string[][]){
+    let chessBoardTemp = chessBoard.map(row => [...row]);
     let piecesLoc = this.getAllPiecesLocation(chessBoardTemp);
     let piece = chessBoardTemp[fromRow][fromCol];
     chessBoardTemp[fromRow][fromCol] = '';
+    chessBoardTemp[toRow][toCol] = piece;
+
     
     let whiteRooks = piecesLoc['R'];
     let whiteBishops = piecesLoc['B'];
@@ -1149,15 +1151,15 @@ export class GenericRuleService {
     if (fromRow == toRow && fromCol == toCol) return true;
 
     if(this.IsWhitePiece(fromRow, fromCol)){
-      if(this.IsKingUnderCheckAfterPieceMovement('k', fromRow, fromCol, this.chess_Board)){
+      if(this.IsKingUnderCheckAfterPieceMovement('k', fromRow, fromCol, toRow, toCol, this.chess_Board)){
         return false;
-      }else if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, this.chess_Board)){
+      }else if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, toRow, toCol, this.chess_Board)){
         return true;
       }
     }else if(this.IsBlackPiece(fromRow, fromCol)){
-      if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, this.chess_Board)){
+      if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, toRow, toCol, this.chess_Board)){
         return false;
-      }else if(this.IsKingUnderCheckAfterPieceMovement('k', fromRow, fromCol, this.chess_Board)){
+      }else if(this.IsKingUnderCheckAfterPieceMovement('k', fromRow, fromCol, toRow, toCol, this.chess_Board)){
         return true;
       }
     }

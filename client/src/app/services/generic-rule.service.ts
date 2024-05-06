@@ -116,8 +116,8 @@ export class GenericRuleService {
       }
 
       for (let i = 1; i <= 7; i++) {
-        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
-        if (row + i >= 0 && this.chess_Board[row + i][col] === 'R') {
+        if (row + i <= 7 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i <= 7 && this.chess_Board[row + i][col] === 'R') {
           return true;
         } else break;
       }
@@ -174,8 +174,8 @@ export class GenericRuleService {
       }
 
       for (let i = 1; i <= 7; i++) {
-        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
-        if (row + i >= 0 && this.chess_Board[row + i][col] === 'Q') {
+        if (row + i <= 7 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i <= 7 && this.chess_Board[row + i][col] === 'Q') {
           return true;
         } else break;
       }
@@ -269,8 +269,8 @@ export class GenericRuleService {
       }
 
       for (let i = 1; i <= 7; i++) {
-        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
-        if (row + i >= 0 && this.chess_Board[row + i][col] === 'r') {
+        if (row + i <= 7 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i <= 7 && this.chess_Board[row + i][col] === 'r') {
           return true;
         } else break;
       }
@@ -327,8 +327,8 @@ export class GenericRuleService {
       }
 
       for (let i = 1; i <= 7; i++) {
-        if (row + i >= 0 && this.IsEmptyTile(row + i, col)) continue;
-        if (row + i >= 0 && this.chess_Board[row + i][col] === 'q') {
+        if (row + i <= 7 && this.IsEmptyTile(row + i, col)) continue;
+        if (row + i <= 7 && this.chess_Board[row + i][col] === 'q') {
           return true;
         } else break;
       }

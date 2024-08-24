@@ -20,6 +20,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
+import { SocialComponent } from './pages/social/social.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +31,8 @@ import {MatButtonModule} from '@angular/material/button';
     ChessGameComponent,
     SideBarComponent,
     SignUpComponent,
-    LoginComponent
+    LoginComponent,
+    SocialComponent
   ],
   imports: [
     BrowserModule,

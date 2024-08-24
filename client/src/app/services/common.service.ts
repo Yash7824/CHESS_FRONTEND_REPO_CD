@@ -6,5 +6,6 @@ import { Injectable } from '@angular/core';
 export class CommonService {
 
   homeLoaded: boolean = false;
+  socialLoaded: boolean = false;
   constructor() { }
 }

@@ -43,4 +43,14 @@ export class ApiService {
     httpHeaders = httpHeaders.append('Access-Control-Allow-Headers', 'Content-Type');
     return this.http.get<User>(`${environment.base_url}/${this.getUser_Url}`, { headers: httpHeaders })
   }
+
+  public get(endpoint: any): Promise<any>{
+    let authorizationToken = JSON.parse(sessionStorage.getItem('authToken') || '');
+    let httpHeaders: HttpHeaders = new HttpHeaders();
+    httpHeaders = httpHeaders.append('auth-token', authorizationToken.authToken);
+    httpHeaders = httpHeaders.append('Content-Type', 'application/json');
+    httpHeaders = httpHeaders.append('Accept', 'application/json');
+    httpHeaders = httpHeaders.append('Access-Control-Allow-Headers', 'Content-Type');
+    return this.http.get<any>(`${environment.base_url}/${endpoint}`, { headers: httpHeaders }).toPromise();
+  }
 }

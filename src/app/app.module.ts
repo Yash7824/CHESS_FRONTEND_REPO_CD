@@ -21,6 +21,8 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import { SocialComponent } from './pages/social/social.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { InboxComponent } from './components/inbox/inbox.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,7 +34,8 @@ import { SocialComponent } from './pages/social/social.component';
     SideBarComponent,
     SignUpComponent,
     LoginComponent,
-    SocialComponent
+    SocialComponent,
+    InboxComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +48,8 @@ import { SocialComponent } from './pages/social/social.component';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule
   ],
   providers: [ApiService],
   bootstrap: [AppComponent]

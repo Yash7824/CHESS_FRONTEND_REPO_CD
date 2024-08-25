@@ -23,6 +23,12 @@ export class SocialComponent implements OnInit{
     }
   }
 
+  getAllUsers() : Promise<any>{
+    return this.apiServ.get("admin/getAllUsers").then((res: any) => {
+      this.allUsers = res;
+    }, (error: any) => console.error(error))
+  }
+
   searchFriends(ev: any){
     let name = ev.target.value;
     if(!name){
@@ -40,10 +46,16 @@ export class SocialComponent implements OnInit{
     }
   }
 
+  sendRequest(friend: User){
+    const body = { friendId: friend.user_id }
+    this.apiServ.posts('social/sendFriendRequest', body).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => console.error(error)
+    });
+  }
+
   
-  getAllUsers() : Promise<any>{
-    return this.apiServ.get("admin/getAllUsers").then((res: any) => {
-      this.allUsers = res;
-    }, (error: any) => console.error(error)
-    )}
+  
 }

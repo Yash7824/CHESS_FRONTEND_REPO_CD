@@ -11,14 +11,14 @@ export class HomeComponent {
 
   constructor(private router: Router,
     private apiServ: ApiService,
-    private cs: CommonService
+    private cs: CommonService,
   ) {}
 
   ngOnInit(): void {
     if(!this.cs.homeLoaded){
-      this.apiServ.getUser().subscribe({
+      this.apiServ.gets('auth/getUser').subscribe({
         next: (response) => {
-          console.log(response);
+          this.cs.getUser = response;
           this.cs.homeLoaded = true;
         },
         error: err => console.error('Observable emitted an error: ' + err)
@@ -31,4 +31,5 @@ export class HomeComponent {
   navigateTo(route: string) {
     this.router.navigate([`/${route}`]);
   }
+
 }

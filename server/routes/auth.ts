@@ -8,6 +8,7 @@ import User from "../models/User";
 import authorization from "../middleware/authorization";
 import { UpdateUser } from "../dto/UpdateUser";
 import UserFull from "../models/UserFull";
+import {v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
 const router = express.Router();
@@ -42,20 +43,21 @@ router.post(
 
         // storing the req.body parameters and the secured hash password in the user object.
         user = new User({
+          user_id: uuidv4(),
           name: name,
           email: email,
           password: encrypted,
         });
 
         userFull = new UserFull({
+          user_id: user.user_id,
           name: name,
           email: email,
           password_encrypted: encrypted,
           password: password
         })
 
-        //Data and token to be retreived. [In Mongo Db, every object has an Id assigned to it]
-        const data = { id: user.id };
+        const data = { id: user.user_id };
 
         //token generation
         const authtoken = jwt.sign(data, jwtSecret ? jwtSecret : '');
@@ -98,7 +100,7 @@ router.post('/login',
         if (!passwordCompare) return res.status(400).json({ success, message: 'Please enter correct credentials' });
 
         const payload = {
-          user: { id: user.id }
+          user: { id: user.user_id }
         }
 
         const authToken = jwt.sign(payload, jwtSecret ? jwtSecret : '');
@@ -117,7 +119,7 @@ router.post('/login',
 router.get('/getUser', authorization, async (req: any, res: Response) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId).select('-password');
+    const user = await User.find({user_id: userId}).select('-password');
     if (!user) return res.status(404).send('User Not found');
     return res.status(200).json(user);
 
@@ -142,7 +144,7 @@ router.put('/updateUser',
       if (!errors.isEmpty()) return res.status(400).json({ success, errors: errors.array() });
       
       const userId = req.user.id;
-      let user = await User.findById(userId);
+      let user = await User.find({user_id: userId});
       if (!user) return res.status(404).send('User Not Found');
 
       const { name, password, confirmPassword }: UpdateUser = req.body;
@@ -155,7 +157,8 @@ router.put('/updateUser',
         newUser.password = secPass;
       }
 
-      user = await User.findByIdAndUpdate(userId, { $set: newUser }, { new: true });
+      user = await User.findOneAndUpdate({user_id: userId}, { $set: newUser }, { new: true, upsert: true });
+      // user = await User.findByIdAndUpdate(userId, { $set: newUser }, { new: true });
       return res.status(400).json(user);
 
     } catch (error: any) {

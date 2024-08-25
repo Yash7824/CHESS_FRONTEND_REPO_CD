@@ -1,18 +1,30 @@
-<app-side-bar></app-side-bar>
+<div class="flex h-screen">
+  <app-side-bar class="w-28 bg-gray-800 text-white p-4 h-full"></app-side-bar>
 
-<section>
-  <div class="w-100 my-4 flex justify-center items-center">
-    <input
-      type="text"
-      placeholder="Search friends..."
-      class="my-2 w-[500px] pl-4 pr-4 py-2 px-4 text-center text-sm text-slate-900 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-      (input)="searchFriends($event)"
-    />
-  </div>
-
-  <div>
-    <div *ngFor="let friend of friendsList">
-        <span>{{friend.name}}</span>
+  <section class="flex-1 p-4">
+    <div class="my-4 flex justify-center items-center">
+      <input type="text" placeholder="Search friends..."
+        class="w-full max-w-3xl p-2 text-center text-sm text-slate-900 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+        (input)="searchFriends($event)" />
     </div>
-  </div>
-</section>
+
+    <main>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let friend of cs.friendsList"
+          class="flex flex-col border border-solid p-4 rounded-md bg-white shadow-md">
+          <span class="text-lg font-semibold">{{ friend.user_id }}</span>
+          <span class="text-md">{{ friend.name }}</span>
+          <span class="text-sm text-gray-600">{{ friend.email }}</span>
+          <div class="mt-4 flex gap-2">
+            <button
+              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Send
+              Friend Request</button>
+            <button
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">View
+              Profile</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+</div>

@@ -23,6 +23,7 @@ import {MatButtonModule} from '@angular/material/button';
 import { SocialComponent } from './pages/social/social.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { InboxComponent } from './components/inbox/inbox.component';
+import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,7 +50,8 @@ import { InboxComponent } from './components/inbox/inbox.component';
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    ToastrModule.forRoot(),
   ],
   providers: [ApiService],
   bootstrap: [AppComponent]

@@ -1,5 +1,14 @@
 <h2 mat-dialog-title>Modal Title</h2>
 <mat-dialog-content>
+  <div *ngFor="let friendReq of cs.getFriendRequestList" class="flex flex-column">
+    <h2>{{friendReq.sender | titlecase}}</h2>
+    <span>Sent on: {{friendReq.date | date}}</span>
+    <span>Status: {{friendReq.status}}</span>
+    <div class="flex flex-row my-2">
+      <button class="btn btn-success mx-2" (click)="respondFriendReq('accept', friendReq.sender_id)">Accept</button>
+      <button class="btn btn-danger" (click)="respondFriendReq('decline', friendReq.sender_id)">Decline</button>
+    </div>
+  </div>
   </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Close</button>

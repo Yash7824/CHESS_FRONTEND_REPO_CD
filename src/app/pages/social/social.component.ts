@@ -11,14 +11,13 @@ import { CommonService } from 'src/app/services/common.service';
 })
 export class SocialComponent implements OnInit{
 
-  friendsList: User[] = [];
   allUsers: any;
-  constructor(public apiServ: ApiService, private cs: CommonService){}
+  constructor(public apiServ: ApiService, public cs: CommonService){}
 
   ngOnInit(){
     if(!this.cs.socialLoaded){
       this.getAllUsers().then((val: any) => {
-        this.friendsList = this.allUsers;
+        this.cs.friendsList = this.allUsers;
         this.cs.socialLoaded = true;
       })
     }
@@ -27,15 +26,15 @@ export class SocialComponent implements OnInit{
   searchFriends(ev: any){
     let name = ev.target.value;
     if(!name){
-      this.friendsList = this.allUsers;
+      this.cs.friendsList = this.allUsers;
     }
 
-    this.friendsList = [];
+    this.cs.friendsList = [];
     for(let user of this.allUsers){
       let case_sensitive_user_name = user.name.toLowerCase();
       if(case_sensitive_user_name.includes(name.toLowerCase())){
-        if(!this.friendsList.some(friend => friend.name == user.name)){
-          this.friendsList.push(user);
+        if(!this.cs.friendsList.some(friend => friend.name == user.name)){
+          this.cs.friendsList.push(user);
         }
       }
     }

@@ -30,5 +30,7 @@ export class SideBarComponent {
     localStorage.clear();
     this.router.navigateByUrl('');
     this.cs.isLoggedIn = false;
+    this.cs.homeLoaded = false;
+    this.cs.socialLoaded = false;
   }
 }

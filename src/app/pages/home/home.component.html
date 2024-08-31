@@ -1,63 +1,63 @@
 <app-side-bar></app-side-bar>
 
-<div class="mt-2 ml-80">
+<div class="mt-2 lg:ml-80">
   <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 
     <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
       <a routerLink="/home" class="group">
-        <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 p-4 ">
-          <div class="h-1/4 border-black border-1 p-2 my-2 flex w-[240px] items-center justify-center rounded-lg hover:bg-sky-700 bg-sky-950">
+        <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 p-4">
+          <div class="h-1/4 border-black border-1 p-2 my-2 flex items-center justify-center rounded-lg hover:bg-sky-700 bg-sky-950 w-full sm:w-[240px]">
             <h2 class="text-center text-white font-semibold">Play 10 min</h2>
           </div>
-          <div class="h-1/4 border-black border-1 p-2 my-2 flex w-[240px] items-center justify-center rounded-lg bg-sky-950 hover:bg-sky-700">
+          <div class="h-1/4 border-black border-1 p-2 my-2 flex items-center justify-center rounded-lg bg-sky-950 hover:bg-sky-700 w-full sm:w-[240px]">
             <h2 class="text-center text-white font-semibold">New Game</h2>
           </div>
-          <div class="h-1/4 border-black border-1 p-2 my-2 flex w-[240px] items-center justify-center rounded-lg bg-sky-950 hover:bg-sky-700">
+          <div class="h-1/4 border-black border-1 p-2 my-2 flex items-center justify-center rounded-lg bg-sky-950 hover:bg-sky-700 w-full sm:w-[240px]">
             <h2 class="text-center text-white font-semibold">Play vs Computer</h2>
           </div>
-          <div class="h-1/4 border-black border-1 p-2 my-2 flex w-[240px] items-center justify-center rounded-lg bg-sky-950 hover:bg-sky-700">
+          <div class="h-1/4 border-black border-1 p-2 my-2 flex items-center justify-center rounded-lg bg-sky-950 hover:bg-sky-700 w-full sm:w-[240px]">
             <h2 class="text-center text-white font-semibold">Play a Friend</h2>
           </div>
-          
         </div>
       </a>
+
       <a routerLink="/home" class="group">
         <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
           <div>
-            <img src="../../../assets/images/chess_bg_1.jpg" alt="">
+            <img src="../../../assets/images/chess_bg_1.jpg" alt="" class="w-full h-full object-cover">
           </div>
           <div class="p-2 flex items-center justify-center hover:bg-sky-700">
             <span class="mt-1 font-sans font-semibold">Solve Puzzle</span>
           </div>
-          
         </div>
       </a>
+
       <a routerLink="/home" class="group">
         <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
           <div>
-            <img src="../../../assets/images/chess_bg_2.jpeg" alt="">
+            <img src="../../../assets/images/chess_bg_2.jpeg" alt="" class="w-full h-full object-cover">
           </div>
           <div class="p-2 flex items-center justify-center hover:bg-sky-700">
             <span class="mt-1 font-sans font-semibold">Play Bot</span>
           </div>
-          
         </div>
       </a>
+
       <div class="group">
-        <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 flex flex-col  justify-center items-center p-3">
-          <div id="title" class="flex flex-row mr-[30px]">
+        <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 flex flex-col justify-center items-center p-3">
+          <div id="title" class="flex flex-row lg:mr-[30px]">
             <img class="w-24 h-24" src="../../../assets/images/chess_logo.png" alt="chess-logo" />
-            <h1 class="font-bold text-stone-200 mt-[24px] text-2xl text-black">Let Us <br> Chess</h1>
+            <h1 class="font-bold text-stone-200 lg:mt-[24px] text-2xl text-black">Let Us <br> Chess</h1>
           </div>
-          <div>
-            <button type="button" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-md px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-[200px]" (click)="navigateTo('create')">Create Game </button>
+          <div class="w-full sm:w-auto">
+            <button type="button" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-md px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-full sm:w-[200px]" (click)="navigateTo('create')">Create Game</button>
           </div>
-          <div>
-            <button type="button" class="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-md px-5 py-2.5 text-center me-2  mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 mt-[1vh] w-[200px]" (click)="navigateTo('join')">Join Game </button>
+          <div class="w-full sm:w-auto">
+            <button type="button" class="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-md px-5 py-2.5 text-center me-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 mt-[1vh] w-full sm:w-[200px]" (click)="navigateTo('join')">Join Game</button>
           </div>
         </div>
       </div>
+      
     </div>
   </div>
 </div>
-

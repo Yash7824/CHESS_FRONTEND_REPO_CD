@@ -11,36 +11,36 @@ import { CommonService } from 'src/app/services/common.service';
 })
 export class SocialComponent implements OnInit{
 
-  allUsers: any;
+  allFriends: any;
   constructor(public apiServ: ApiService, public cs: CommonService){}
 
   ngOnInit(){
     if(!this.cs.socialLoaded){
-      this.getAllUsers().then((val: any) => {
-        this.cs.friendsList = this.allUsers;
+      this.getAllFriends().then((val: any) => {
+        this.cs.friendsList = this.allFriends.friends;
         this.cs.socialLoaded = true;
       })
     }
   }
 
-  getAllUsers() : Promise<any>{
-    return this.apiServ.get("admin/getAllUsers").then((res: any) => {
-      this.allUsers = res;
+  getAllFriends() : Promise<any>{
+    return this.apiServ.get("social/getAllFriends").then((res: any) => {
+      this.allFriends = res;
     }, (error: any) => console.error(error))
   }
 
   searchFriends(ev: any){
     let name = ev.target.value;
     if(!name){
-      this.cs.friendsList = this.allUsers;
+      this.cs.friendsList = this.allFriends;
     }
 
     this.cs.friendsList = [];
-    for(let user of this.allUsers){
-      let case_sensitive_user_name = user.name.toLowerCase();
+    for(let friend of this.allFriends){
+      let case_sensitive_user_name = friend.name.toLowerCase();
       if(case_sensitive_user_name.includes(name.toLowerCase())){
-        if(!this.cs.friendsList.some(friend => friend.name == user.name)){
-          this.cs.friendsList.push(user);
+        if(!this.cs.friendsList.some(friend => friend.name == friend.name)){
+          this.cs.friendsList.push(friend);
         }
       }
     }

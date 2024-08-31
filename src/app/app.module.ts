@@ -24,6 +24,7 @@ import { SocialComponent } from './pages/social/social.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { InboxComponent } from './components/inbox/inbox.component';
 import { ToastrModule } from 'ngx-toastr';
+import { ChessVsComputerComponent } from './pages/chess-vs-computer/chess-vs-computer.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,7 +37,8 @@ import { ToastrModule } from 'ngx-toastr';
     SignUpComponent,
     LoginComponent,
     SocialComponent,
-    InboxComponent
+    InboxComponent,
+    ChessVsComputerComponent
   ],
   imports: [
     BrowserModule,

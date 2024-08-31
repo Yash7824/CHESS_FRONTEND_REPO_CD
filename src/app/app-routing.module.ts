@@ -7,6 +7,7 @@ import { GameRoomComponent } from './pages/game-room/game-room.component';
 import { LoginComponent } from './pages/login/login.component';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
 import { SocialComponent } from './pages/social/social.component';
+import { ChessVsComputerComponent } from './pages/chess-vs-computer/chess-vs-computer.component';
 
 const routes: Routes = [
   {path: '', component: LoginComponent},
@@ -16,6 +17,7 @@ const routes: Routes = [
   {path: 'home', component: HomeComponent },
   {path: 'signUp', component: SignUpComponent },
   {path: 'social', component: SocialComponent },
+  {path: 'chess-computer', component: ChessVsComputerComponent },
 ];
 
 @NgModule({

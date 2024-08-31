@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import {ErrorStateMatcher} from '@angular/material/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
+import { CommonService } from 'src/app/services/common.service';
 
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -20,7 +21,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class LoginComponent {
 
   constructor(private apiServ: ApiService,
-    private router: Router
+    private router: Router,
+    private cs: CommonService
   ){}
 
   emailFormControl = new FormControl('', [Validators.required, Validators.email]);
@@ -38,6 +40,7 @@ export class LoginComponent {
     this.apiServ.login(loginForm).subscribe({
       next: (response) => {
         sessionStorage.setItem('authToken', JSON.stringify(response));
+        this.cs.isLoggedIn = true;
         this.router.navigateByUrl('home');
       },
       error: err => console.error('Observable emitted an error: ' + err)

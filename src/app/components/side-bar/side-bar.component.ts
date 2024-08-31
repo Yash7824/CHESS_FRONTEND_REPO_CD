@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InboxComponent } from '../inbox/inbox.component';
+import { CommonService } from 'src/app/services/common.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-side-bar',
@@ -9,7 +11,9 @@ import { InboxComponent } from '../inbox/inbox.component';
 })
 export class SideBarComponent {
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, 
+    public cs: CommonService,
+  private router: Router) { }
 
   openInbox(): void {
     const dialogRef = this.dialog.open(InboxComponent, {
@@ -19,5 +23,12 @@ export class SideBarComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
     });
+  }
+
+  logout(){
+    sessionStorage.clear();
+    localStorage.clear();
+    this.router.navigateByUrl('');
+    this.cs.isLoggedIn = false;
   }
 }

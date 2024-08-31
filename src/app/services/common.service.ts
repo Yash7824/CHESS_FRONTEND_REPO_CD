@@ -7,6 +7,7 @@ import { FriendRequest } from '../models/FriendRequest';
 })
 export class CommonService {
 
+  isLoggedIn: boolean = false;
   homeLoaded: boolean = false;
   socialLoaded: boolean = false;
   friendsList: User[] = [];

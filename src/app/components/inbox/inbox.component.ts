@@ -24,7 +24,7 @@ export class InboxComponent {
       this.apiServ.gets('social/getPendingFriendRequests').subscribe({
         next: (response) => {
           console.log(response);
-          this.cs.getFriendRequestList = response;
+          this.cs.getFriendRequestList = response.friendRequest;
         },
         error: (error) => console.error(error)
       })

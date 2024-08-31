@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Toast, ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/User';
 import { ApiService } from 'src/app/services/api.service';
@@ -12,7 +13,9 @@ import { CommonService } from 'src/app/services/common.service';
 export class SocialComponent implements OnInit{
 
   allFriends: any;
-  constructor(public apiServ: ApiService, public cs: CommonService){}
+  constructor(public apiServ: ApiService,
+     public cs: CommonService,
+    public toastr: ToastrService){}
 
   ngOnInit(){
     if(!this.cs.socialLoaded){
@@ -50,7 +53,15 @@ export class SocialComponent implements OnInit{
     const body = { friendId: friend.user_id }
     this.apiServ.posts('social/sendFriendRequest', body).subscribe({
       next: (response) => {
-        console.log(response);
+        if(response.statusMsg){
+          this.toastr.error(response.statusMsg);
+          return;
+        }
+
+        if(response.sender_id){
+          this.toastr.success(`Friend Request sent successfully`);
+        }
+        
       },
       error: (error) => console.error(error)
     });

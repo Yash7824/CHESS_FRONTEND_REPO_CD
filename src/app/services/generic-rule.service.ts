@@ -744,7 +744,6 @@ export class GenericRuleService {
   }
 
   IsTileSafeForKing(king: string, row: number, col: number): boolean {
-    debugger;
     let king_coordinates = this.findPiece(king);
 
     if (king === 'K' && king_coordinates && !this.IsWhitePiece(row, col)) {
@@ -1147,7 +1146,6 @@ export class GenericRuleService {
     toRow: number,
     toCol: number
   ): boolean {
-    debugger;
     if (fromRow == toRow && fromCol == toCol) return true;
 
     if(this.IsKingUnderCheckAfterPieceMovement('K', fromRow, fromCol, toRow, toCol, this.chess_Board)){

@@ -1,5 +1,9 @@
-<h2 mat-dialog-title>Modal Title</h2>
-<mat-dialog-content>
+<h2 mat-dialog-title>Friend List</h2>
+
+<div class="container flex flex-row flex-wrap text-center" *ngIf="cs.getFriendRequestList.length == 0">
+  <p class="text-danger">No Friend Request Pending</p>
+</div>
+<mat-dialog-content *ngIf="cs.getFriendRequestList.length !== 0">
   <div *ngFor="let friendReq of cs.getFriendRequestList" class="flex flex-column">
     <h2>{{friendReq.sender | titlecase}}</h2>
     <span>Sent on: {{friendReq.date | date}}</span>

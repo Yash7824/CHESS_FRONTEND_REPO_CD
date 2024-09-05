@@ -39,5 +39,8 @@ export class SocketService {
     this.socket.emit('disconnect');
   }
 
+  restartGame(){
+    this.socket.emit('restartGame')
+  }
   
 }

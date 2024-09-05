@@ -51,6 +51,17 @@ export class ChessGameComponent {
     this.route.queryParams.subscribe(params => {
       this.roomData = { player: params['playerName'], room: params['roomName'] };
     });
+
+    this.socket.restartGame();
+    this.socket.receiveEventOutput('chessBoard').subscribe({
+      next: (response: any) => {
+        debugger;
+        this.cs.chess_Board = response.chessBoard;
+        this.chess_Board = response.chessBoard;
+        this.cs.currentPlayer = response.currentPlayer;
+      }
+    })
+
   }
 
   receiveJoinedPlayers() {
@@ -65,6 +76,7 @@ export class ChessGameComponent {
       next: (response: any) => { // gets the chess board from server
         debugger;
         this.cs.chess_Board = response;
+        this.chess_Board = response;
       }
     })
   }
@@ -175,12 +187,7 @@ export class ChessGameComponent {
   //   return false;
   // }
 
-  movePiece(
-    fromRow: number,
-    fromCol: number,
-    toRow: number,
-    toCol: number
-  ): void {
+  movePiece(fromRow: number, fromCol: number, toRow: number, toCol: number): void {
     this.socket.makeMove(fromRow, fromCol, toRow, toCol);
   }
 

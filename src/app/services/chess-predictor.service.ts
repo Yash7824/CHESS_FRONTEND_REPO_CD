@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as ort from 'onnxruntime-web';
 import { environment } from 'src/environments/environment';
-import { GenericRuleService } from './generic-rule.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +9,7 @@ export class ChessPredictorService {
 
   private model: ort.InferenceSession | null = null;
 
-  constructor(private genRule: GenericRuleService) {
+  constructor() {
     this.initializeBackend();
     this.loadModel();
   }

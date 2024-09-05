@@ -1,13 +1,8 @@
 import { Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Room } from 'src/app/models/Room';
-import { BlackService } from 'src/app/services/black.service';
-import { CheckMateService } from 'src/app/services/check-mate.service';
-import { CheckService } from 'src/app/services/check.service';
-import { GenericRuleService } from 'src/app/services/generic-rule.service';
+import { CommonService } from 'src/app/services/common.service';
 import { SocketService } from 'src/app/services/socket.service';
-import { WhiteService } from 'src/app/services/white.service';
-import {whitePawnMovement} from 'is-chess';
 
 @Component({
   selector: 'app-chess-game',
@@ -25,74 +20,61 @@ export class ChessGameComponent {
   inputText!: string;
   chessPieces: any = {};
   coordinates: any = [];
-
-  constructor(private socket: SocketService, 
-    private route: ActivatedRoute, 
-    public genRule: GenericRuleService,
-    private checkServ: CheckService,
-    private checkMateServ: CheckMateService,
-    private whiteServ: WhiteService,
-  private blackServ: BlackService) {
-    this.chessPieces.whitePawn = '../../../assets/images/white_pawn.png';
-    this.chessPieces.whiteKnight = '../../../assets/images/white_knight.png';
-    this.chessPieces.whiteBishop = '../../../assets/images/white_bishop.png';
-    this.chessPieces.whiteRook = '../../../assets/images/white_rook.png';
-    this.chessPieces.whiteQueen = '../../../assets/images/white_queen.png';
-    this.chessPieces.whiteKing = '../../../assets/images/white_king.png';
-    this.chessPieces.blackPawn = '../../../assets/images/black_pawn.png';
-    this.chessPieces.blackKnight = '../../../assets/images/black_knight.png';
-    this.chessPieces.blackBishop = '../../../assets/images/black_bishop.png';
-    this.chessPieces.blackRook = '../../../assets/images/black_rook.png';
-    this.chessPieces.blackQueen = '../../../assets/images/black_queen.png';
-    this.chessPieces.blackKing = '../../../assets/images/black_king.png';
-  }
-
-  chess_Board = this.genRule.chess_Board;
+  chess_Board = this.cs.chess_Board;
   setColumnTile: any;
 
-  ngOnInit() {   
-    this.receiveJoinedPlayers();
-    this.getUpdatedChessBoardState();
+  constructor(private socket: SocketService, 
+    private route: ActivatedRoute, public cs: CommonService) {
+      this.initializeChessPieces();
+  }
+
+  private initializeChessPieces(): void {
+    const basePath = '../../../assets/images/';
+    this.chessPieces = {
+      whitePawn: `${basePath}white_pawn.png`,
+      whiteKnight: `${basePath}white_knight.png`,
+      whiteBishop: `${basePath}white_bishop.png`,
+      whiteRook: `${basePath}white_rook.png`,
+      whiteQueen: `${basePath}white_queen.png`,
+      whiteKing: `${basePath}white_king.png`,
+      blackPawn: `${basePath}black_pawn.png`,
+      blackKnight: `${basePath}black_knight.png`,
+      blackBishop: `${basePath}black_bishop.png`,
+      blackRook: `${basePath}black_rook.png`,
+      blackQueen: `${basePath}black_queen.png`,
+      blackKing: `${basePath}black_king.png`,
+    };
+  }
+
+  ngOnInit() { 
+    this.receiveUpdatedBoardState()  
     this.route.queryParams.subscribe(params => {
       this.roomData = { player: params['playerName'], room: params['roomName'] };
     });
-    this.getPlayers();
-    this.getPlayer1();
-    this.getPlayer2();
-    this.receiveMovementsTable();
   }
 
-  getPlayers(){
-    this.socket.getPlayers().subscribe({
-      next: (response: any) => { this.genRule.players = response; }
+  receiveJoinedPlayers() {
+    this.socket.receiveEventOutput('userJoined').subscribe((message: any) => {
+      this.joinedPlayerMessage = message;
+      this.hasPlayerJoined = true;
     })
   }
 
-  getPlayer1(){
-    this.socket.getPlayer1().subscribe({
-      next: (response: any) => { this.genRule.player1 = response; }
-    })
-  }
-
-  getPlayer2(){
-    this.socket.getPlayer2().subscribe({
-      next: (response: any) => { this.genRule.player2 = response; }
-    })
-  }
-
-  receiveMovementsTable(){
-    this.socket.receiveUpdatedMovementsTable().subscribe({
-      next: (response) => { this.genRule.updatedMovementsTable = response;}
-      
+  receiveUpdatedBoardState(){
+    this.socket.receiveEventOutput('updateBoard').subscribe({
+      next: (response: any) => { // gets the chess board from server
+        debugger;
+        this.cs.chess_Board = response;
+      }
     })
   }
 
   setTileStyle(row: number, column: number) {
-    if (this.genRule.IsBlackKingChecked == 'Black Under Check' && this.chess_Board[row][column] == 'k') {
+    if (this.cs.IsBlackKingChecked == 'Black Under Check' && this.chess_Board[row][column] == 'k') {
       return { 'background-color': 'red'};
     }
 
-    if (this.genRule.IsWhiteKingChecked == 'White Under Check' && this.chess_Board[row][column] == 'K') {
+    if (this.cs.IsWhiteKingChecked == 'White Under Check' && this.chess_Board[row][column] == 'K') {
       return { 'background-color': 'red'};
     }
 
@@ -174,14 +156,24 @@ export class ChessGameComponent {
     this.movePiece(fromRow, fromCol, toRow, toCol);
   }
 
-  IsPlayerTurn(player: string, row: number, col: number) {
-    if (this.genRule.IsWhitePiece(row, col) && player == 'white') {
-      return true;
-    } else if (this.genRule.IsBlackPiece(row, col) && player == 'black') {
-      return true;
-    }
-    return false;
-  }
+  // IsPlayerTurn(player: string, row: number, col: number) {
+
+  //   this.socket.receiveEventOutput('currentPlayer').subscribe({
+  //     next: (response: any) => {
+  //       this.cs.currentPlayer = response
+
+  //       if (this.cs.IsWhitePiece(row, col, this.chess_Board) && this.cs.currentPlayer == 'white') {
+  //         return true;
+  //       } else if (this.cs.IsBlackPiece(row, col, this.chess_Board) && this.cs.currentPlayer == 'black') {
+  //         return true;
+  //       }else{
+  //         return false;
+  //       }
+  //     }
+  //   })
+    
+  //   return false;
+  // }
 
   movePiece(
     fromRow: number,
@@ -189,113 +181,7 @@ export class ChessGameComponent {
     toRow: number,
     toCol: number
   ): void {
-
-    const piece = this.chess_Board[fromRow][fromCol];
-    var pieceMove = this.chess_Board[fromRow][fromCol];
-    if(pieceMove === 'P' || pieceMove === 'p') pieceMove = '';
-
-    if((fromRow !== toRow || fromCol !== toCol) &&
-  (!this.genRule.IsInvalidMove(piece, fromRow, fromCol, toRow, toCol))){
-      switch(toCol){
-        case 0: this.coordinates.push([pieceMove + 'a' + (8-toRow)]); break;
-        case 1: this.coordinates.push([pieceMove + 'b' + (8-toRow)]); break;
-        case 2: this.coordinates.push([pieceMove + 'c' + (8-toRow)]); break;
-        case 3: this.coordinates.push([pieceMove + 'd' + (8-toRow)]); break;
-        case 4: this.coordinates.push([pieceMove + 'e' + (8-toRow)]); break;
-        case 5: this.coordinates.push([pieceMove + 'f' + (8-toRow)]); break;
-        case 6: this.coordinates.push([pieceMove + 'g' + (8-toRow)]); break;
-        case 7: this.coordinates.push([pieceMove + 'h' + (8-toRow)]); break;
-      }
-    }
-
-    this.socket.sendUpdatedMovementsTable(this.roomData.room, this.coordinates);
-    //Implement logic to move the piece in your chessboard array
-    switch (piece) {
-      // case 'P': this.whiteServ.whitePawnMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'P': this.whiteServ.whitePawnMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'R': this.whiteServ.whiteRookMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'N': this.whiteServ.whiteKnightMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'B': this.whiteServ.whiteBishopMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'Q': this.whiteServ.whiteQueenMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'K': this.whiteServ.whiteKingMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'p': this.blackServ.blackPawnMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'r': this.blackServ.blackRookMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'n': this.blackServ.blackKnightMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'b': this.blackServ.blackBishopMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'q': this.blackServ.blackQueenMovement(fromRow, fromCol, toRow, toCol); break;
-      case 'k': this.blackServ.blackKingMovement(fromRow, fromCol, toRow, toCol); break;
-    }
-
-    // Checking whether the White King is Under Check
-    // here toRow and toCol are the co-ordinates of black piece after displacement.
-    if (this.checkServ.IsWhiteKingUnderCheck('K', toRow, toCol)) {
-      if (!this.checkMateServ.IsCheckMate('K', toRow, toCol)) {
-        this.genRule.IsWhiteKingChecked = 'White Under Check';
-      } else {
-        this.genRule.IsWhiteKingChecked = 'White got check mated'
-        alert('Black Wins');
-        this.chess_Board = this.genRule.chess_board_OG;
-        this.genRule.currentPlayer = 'white';
-      }
-    } else {
-      this.genRule.IsWhiteKingChecked = '';
-    }
-
-    // Checking whether the Black King is Under Check
-    if (this.checkServ.IsBlackKingUnderCheck('k', toRow, toCol)) {
-      if (!this.checkMateServ.IsCheckMate('k', toRow, toCol)) {
-        this.genRule.IsBlackKingChecked = 'Black Under Check';
-      } else {
-        this.genRule.IsBlackKingChecked = 'Black got check mated'
-        alert('White Wins');
-        this.chess_Board = this.genRule.chess_board_OG;
-        this.genRule.currentPlayer = 'white';
-      }
-
-    } else {
-      this.genRule.IsBlackKingChecked = '';
-    }
-
-    let chessBoardAttributes = {
-      IsBlackKingChecked: this.genRule.IsBlackKingChecked,
-      isWhiteKingChecked: this.genRule.IsWhiteKingChecked,
-      currentPlayer: this.genRule.currentPlayer,
-      hasBlackKingMoved: this.genRule.hasBlackKingMoved,
-      hasWhiteKingMoved: this.genRule.hasWhiteKingMoved
-    };
-    this.socket.sendUpdatedChessBoardState(this.roomData.room, this.chess_Board, chessBoardAttributes);
+    this.socket.makeMove(fromRow, fromCol, toRow, toCol);
   }
 
-  receiveJoinedPlayers() {
-    this.socket.receiveJoinedPlayers().subscribe((message: any) => {
-      this.joinedPlayerMessage = message;
-      this.hasPlayerJoined = true;
-    })
-  }
-
-  openModal() {
-    this.hasPlayerJoined = true;
-  }
-
-  closeModal() {
-    this.hasPlayerJoined = false;
-  }
-
-  getUpdatedChessBoardState() {
-
-    this.socket.getUpdatedChessBoardState().subscribe((message: any) => {
-      if (message["updatedChessBoardMatrix"].length > 0) {
-        console.log(message["updatedChessBoardMatrix"].length);
-        this.chess_Board = message["updatedChessBoardMatrix"];
-      }
-
-      if (message["updatedChessBoardAttributes"] !== null) {
-        this.genRule.IsBlackKingChecked = message["updatedChessBoardAttributes"]["IsBlackKingChecked"];
-        this.genRule.IsWhiteKingChecked = message["updatedChessBoardAttributes"]["IsWhiteKingChecked"];
-        this.genRule.currentPlayer = message["updatedChessBoardAttributes"]["currentPlayer"];
-        this.genRule.hasBlackKingMoved = message["updatedChessBoardAttributes"]["hasBlackKingMoved"];
-        this.genRule.hasWhiteKingMoved = message["updatedChessBoardAttributes"]["hasWhiteKingMoved"];
-      }
-    })
-  }
 }

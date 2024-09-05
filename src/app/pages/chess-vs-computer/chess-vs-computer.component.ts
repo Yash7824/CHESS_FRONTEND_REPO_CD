@@ -67,12 +67,55 @@ export class ChessVsComputerComponent {
   }
 
   async predictNextMove() {
-    const prediction = await this.chessPredictorService.predict(this.boardState);
-    if (prediction !== null) {
-      console.log('Predicted Move Index:', prediction);
-      // Use the predicted move in your application
+    try {
+      // Get the prediction from the chess predictor service
+      const prediction = await this.chessPredictorService.predict(this.chess_Board);
+  
+      if (prediction !== null) {
+        // Decode the predicted move (this function needs to be implemented based on your model output)
+        const move = this.decodePrediction(prediction);
+  
+        if (move) {
+          // Update the board state with the decoded move
+          this.updateBoardState(move);
+        } else {
+          console.error('Failed to decode the prediction.');
+        }
+      } else {
+        console.error('Failed to predict the computer move.');
+      }
+    } catch (error) {
+      console.error('Error during prediction:', error);
     }
   }
+
+  private decodePrediction(prediction: any): { fromRow: number, fromCol: number, toRow: number, toCol: number } | null {
+    // Implement decoding logic based on your model's output
+    // Example decoding logic; adjust as needed
+    const outputData = prediction as Float32Array; // Or whatever format your prediction uses
+  
+    if (outputData.length < 4) {
+      console.error('Invalid prediction format.');
+      return null;
+    }
+  
+    // Example: assuming outputData contains move coordinates directly
+    const fromRow = Math.floor(outputData[0]);
+    const fromCol = Math.floor(outputData[1]);
+    const toRow = Math.floor(outputData[2]);
+    const toCol = Math.floor(outputData[3]);
+  
+    return { fromRow, fromCol, toRow, toCol };
+  }
+
+  private updateBoardState(move: { fromRow: number, fromCol: number, toRow: number, toCol: number }) {
+    // Implement board update logic here
+    // Example: Move piece on the board state
+    const piece = this.chess_Board[move.fromRow][move.fromCol];
+    this.chess_Board[move.fromRow][move.fromCol] = '';
+    this.chess_Board[move.toRow][move.toCol] = piece;
+  }
+  
 
 
   getPlayers(){
@@ -277,6 +320,12 @@ export class ChessVsComputerComponent {
       hasWhiteKingMoved: this.genRule.hasWhiteKingMoved
     };
     this.socket.sendUpdatedChessBoardState(this.roomData.room, this.chess_Board, chessBoardAttributes);
+
+    debugger;
+    if (this.genRule.currentPlayer === 'black') {
+      this.predictNextMove();
+      this.genRule.currentPlayer = 'white';
+    }
   }
 
   receiveJoinedPlayers() {

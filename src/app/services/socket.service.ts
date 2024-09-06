@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,8 @@ export class SocketService {
   activeRoomArray: string[] = []
 
   constructor() {
-    this.socket = io('http://localhost:3000');
+    // this.socket = io('http://localhost:3000');
+    this.socket = io(`${environment.socket_url}`);
   }
 
   receiveEventOutput(event: string){

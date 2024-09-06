@@ -1,9 +1,10 @@
+<div class="flex">
+  <p class="font-bold text-xl">{{cs.currentPlayer}}'s turn</p>
+</div>
+
 <div id="main--container"
   class="flex h-screen flex-col xl:flex-row lg:flex-col md:flex-col sm:flex-col justify-center align-middle">
 
-  <div>
-    <p class="font-bold text-xl">{{cs.currentPlayer}}'s turn</p>
-  </div>
   <div class="">
     <div class="flex flex-row w-full h-12">
       <svg
@@ -83,9 +84,8 @@
     </div> -->
   </div>
 
-
-
 </div>
 
+<button class="btn btn-success mx-4" (click)="saveGame()">Save</button>
 
 <!-- [draggable]="IsPlayerTurn(cs.currentPlayer, i, j)" -->

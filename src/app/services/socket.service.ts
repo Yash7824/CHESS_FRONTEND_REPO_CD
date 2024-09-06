@@ -42,5 +42,9 @@ export class SocketService {
   restartGame(){
     this.socket.emit('restartGame')
   }
+
+  saveGame(authtoken: string){
+    this.socket.emit('saveGame', authtoken);
+  }
   
 }

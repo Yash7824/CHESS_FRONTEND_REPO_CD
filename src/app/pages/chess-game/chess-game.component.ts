@@ -76,6 +76,16 @@ export class ChessGameComponent {
     this.socket.receiveEventOutput('currentPlayer').subscribe((response: any) => {
       this.cs.currentPlayer = response;
     })
+
+    this.socket.receiveEventOutput('savedGameData').subscribe((response: any) => {
+      console.log(response);
+    })
+
+  }
+
+  saveGame(){
+    let authtoken = JSON.parse(sessionStorage.getItem('authToken') || '');
+    this.socket.saveGame(authtoken.authToken);
   }
 
   receiveJoinedPlayers() {

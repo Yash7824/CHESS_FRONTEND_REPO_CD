@@ -55,13 +55,27 @@ export class ChessGameComponent {
     this.socket.restartGame();
     this.socket.receiveEventOutput('chessBoard').subscribe({
       next: (response: any) => {
-        debugger;
         this.cs.chess_Board = response.chessBoard;
         this.chess_Board = response.chessBoard;
         this.cs.currentPlayer = response.currentPlayer;
       }
     })
 
+    this.socket.receiveEventOutput('gameOver').subscribe({
+      next: (response: any) => {
+        alert(`${response.winner} won the match`)
+      }
+    })
+
+    this.socket.receiveEventOutput('kingInCheck').subscribe({
+      next: (response: any) => {
+        alert(`${response.player} is in check`)
+      }
+    })
+
+    this.socket.receiveEventOutput('currentPlayer').subscribe((response: any) => {
+      this.cs.currentPlayer = response;
+    })
   }
 
   receiveJoinedPlayers() {
@@ -74,7 +88,6 @@ export class ChessGameComponent {
   receiveUpdatedBoardState(){
     this.socket.receiveEventOutput('updateBoard').subscribe({
       next: (response: any) => { // gets the chess board from server
-        debugger;
         this.cs.chess_Board = response;
         this.chess_Board = response;
       }

@@ -16,7 +16,7 @@ export class HomeComponent {
 
   ngOnInit(): void {
     if(!this.cs.homeLoaded){
-      this.apiServ.gets('auth/getUser').subscribe({
+      this.apiServ.gets('api/auth/getUser').subscribe({
         next: (response) => {
           this.cs.getUser = response;
           this.cs.homeLoaded = true;

@@ -46,40 +46,18 @@ export class ChessGameComponent {
     };
   }
 
-  ngOnInit() { 
-    this.receiveUpdatedBoardState()  
+  ngOnInit() {  
     this.route.queryParams.subscribe(params => {
       this.roomData = { player: params['playerName'], room: params['roomName'] };
     });
 
+    this.receiveUpdatedBoardState(); 
     this.socket.restartGame();
-    this.socket.receiveEventOutput('chessBoard').subscribe({
-      next: (response: any) => {
-        this.cs.chess_Board = response.chessBoard;
-        this.chess_Board = response.chessBoard;
-        this.cs.currentPlayer = response.currentPlayer;
-      }
-    })
-
-    this.socket.receiveEventOutput('gameOver').subscribe({
-      next: (response: any) => {
-        alert(`${response.winner} won the match`)
-      }
-    })
-
-    this.socket.receiveEventOutput('kingInCheck').subscribe({
-      next: (response: any) => {
-        alert(`${response.player} is in check`)
-      }
-    })
-
-    this.socket.receiveEventOutput('currentPlayer').subscribe((response: any) => {
-      this.cs.currentPlayer = response;
-    })
-
-    this.socket.receiveEventOutput('savedGameData').subscribe((response: any) => {
-      console.log(response);
-    })
+    this.receiveInitialChessBoard();
+    this.receiveGameOverStatus();
+    this.receiveKingInCheckStatus();
+    this.receiveCurrentPlayer();
+    this.receiveSaveGameData();
 
   }
 
@@ -101,6 +79,44 @@ export class ChessGameComponent {
         this.cs.chess_Board = response;
         this.chess_Board = response;
       }
+    })
+  }
+
+  receiveInitialChessBoard(){
+    this.socket.receiveEventOutput('chessBoard').subscribe({
+      next: (response: any) => {
+        this.cs.chess_Board = response.chessBoard;
+        this.chess_Board = response.chessBoard;
+        this.cs.currentPlayer = response.currentPlayer;
+      }
+    })
+  }
+
+  receiveGameOverStatus(){
+    this.socket.receiveEventOutput('gameOver').subscribe({
+      next: (response: any) => {
+        alert(`${response.winner} won the match`)
+      }
+    })
+  }
+
+  receiveKingInCheckStatus(){
+    this.socket.receiveEventOutput('kingInCheck').subscribe({
+      next: (response: any) => {
+        alert(`${response.player} is in check`)
+      }
+    })
+  }
+
+  receiveCurrentPlayer(){
+    this.socket.receiveEventOutput('currentPlayer').subscribe((response: any) => {
+      this.cs.currentPlayer = response;
+    })
+  }
+
+  receiveSaveGameData(){
+    this.socket.receiveEventOutput('savedGameData').subscribe((response: any) => {
+      console.log(response);
     })
   }
 
@@ -183,12 +199,12 @@ export class ChessGameComponent {
       toCol = col;
 
     if (this.draggedPiece) {
-      this.movePiece(fromRow, fromCol, toRow, toCol);
+      this.movePiece(fromRow, fromCol, toRow, toCol, this.roomData.room);
       this.draggedPiece = null;
       return;
     }
 
-    this.movePiece(fromRow, fromCol, toRow, toCol);
+    this.movePiece(fromRow, fromCol, toRow, toCol, this.roomData.room);
   }
 
   // IsPlayerTurn(player: string, row: number, col: number) {
@@ -210,8 +226,8 @@ export class ChessGameComponent {
   //   return false;
   // }
 
-  movePiece(fromRow: number, fromCol: number, toRow: number, toCol: number): void {
-    this.socket.makeMove(fromRow, fromCol, toRow, toCol);
+  movePiece(fromRow: number, fromCol: number, toRow: number, toCol: number, roomName: string): void {
+    this.socket.makeMove(fromRow, fromCol, toRow, toCol, roomName);
   }
 
 }

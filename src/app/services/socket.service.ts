@@ -13,7 +13,7 @@ export class SocketService {
 
   constructor() {
     // this.socket = io('http://localhost:3000');
-    this.socket = io(`${environment.socket_url}`);
+    this.socket = io(`${environment.baseURL}`);
   }
 
   receiveEventOutput(event: string){
@@ -24,8 +24,8 @@ export class SocketService {
     })
   }
 
-  makeMove(fromRow: number, fromCol: number, toRow: number, toCol: number){
-    this.socket.emit('makeMove', fromRow, fromCol, toRow, toCol)
+  makeMove(fromRow: number, fromCol: number, toRow: number, toCol: number, roomName: string){
+    this.socket.emit('makeMove', fromRow, fromCol, toRow, toCol, roomName)
   }
 
   joinRoom(userName: string, roomName: string) {

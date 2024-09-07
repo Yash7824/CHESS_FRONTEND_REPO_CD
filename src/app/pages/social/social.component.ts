@@ -27,7 +27,7 @@ export class SocialComponent implements OnInit{
   }
 
   getAllFriends() : Promise<any>{
-    return this.apiServ.get("social/getAllFriends").then((res: any) => {
+    return this.apiServ.get("api/social/getAllFriends").then((res: any) => {
       this.allFriends = res;
     }, (error: any) => console.error(error))
   }
@@ -51,7 +51,7 @@ export class SocialComponent implements OnInit{
 
   sendRequest(friend: User){
     const body = { friendId: friend.user_id }
-    this.apiServ.posts('social/sendFriendRequest', body).subscribe({
+    this.apiServ.posts('api/social/sendFriendRequest', body).subscribe({
       next: (response) => {
         if(response.statusMsg){
           this.toastr.error(response.statusMsg);

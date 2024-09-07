@@ -21,7 +21,7 @@ export class InboxComponent {
 
   ngOnInit(){
     if(this.cs.IsUndefinedOrNull(this.cs.getFriendRequestList)){
-      this.apiServ.gets('social/getPendingFriendRequests').subscribe({
+      this.apiServ.gets('api/social/getPendingFriendRequests').subscribe({
         next: (response) => {
           console.log(response);
           this.cs.getFriendRequestList = response.friendRequest;
@@ -40,7 +40,7 @@ export class InboxComponent {
       responseToId: sender_id,
       action: action
     }
-    this.apiServ.posts('social/respondFriendRequest', body).subscribe({
+    this.apiServ.posts('api/social/respondFriendRequest', body).subscribe({
       next: (response) => {
         let status = response.status
         switch(status){
